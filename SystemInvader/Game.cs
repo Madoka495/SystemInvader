@@ -12,10 +12,18 @@ namespace SystemInvader
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        public Texture2D bullet;
+        public  static Vector2 start = new Vector2(200, 200);
+        public  static Vector2 dest = new Vector2(500, 50);
+        public Projectile projectile = new Projectile(start, dest, 4);
+        public int bulletWidth = 50;
+        public int bulletHeight = 50;
+
         public Game()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            IsMouseVisible = true;
         }
 
         /// <summary>
@@ -39,6 +47,7 @@ namespace SystemInvader
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            bullet = Content.Load<Texture2D>("bullet1");
 
             // TODO: use this.Content to load your game content here
         }
@@ -59,8 +68,14 @@ namespace SystemInvader
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            System.Diagnostics.Debug.WriteLine(projectile.GetPos().X + ", " + projectile.GetPos().Y);
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            if (projectile.DestReached() == false)
+            {
+                projectile.Update();
+            }
 
             // TODO: Add your update logic here
 
@@ -75,6 +90,12 @@ namespace SystemInvader
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            spriteBatch.Begin();
+            if (projectile.DestReached() == false)
+            {
+                spriteBatch.Draw(bullet, new Rectangle((int)projectile.GetPos().X, (int)projectile.GetPos().Y, bulletWidth, bulletHeight), Color.White);
+            }
+            spriteBatch.End();
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
