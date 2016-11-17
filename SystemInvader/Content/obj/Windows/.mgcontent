@@ -4,6 +4,7 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/xd/Documents/Visual Studio 2015/Projects/SystemInvader/SystemInvader/Content/Font</File>
+    <File>C:/Users/xd/documents/visual studio 2015/Projects/SystemInvader/SystemInvader/Content/userName</File>
+    <File>C:/Users/xd/documents/visual studio 2015/Projects/SystemInvader/SystemInvader/Content/Font</File>
   </SourceFiles>
 </SourceFileCollection>

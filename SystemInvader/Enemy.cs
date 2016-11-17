@@ -19,50 +19,73 @@ namespace VirusInvader
         protected float _speed;
         protected int _price;
 
-        protected Texture2D _texture;
-
         protected Vector2 _position;
         protected Vector2 _velocity;
 
-        public Enemy(Texture2D texture, Vector2 position, int health, int bountyGiven, float speed)
+        Queue<Vector2> waypoints = new Queue<Vector2>();
+
+
+        public Enemy(Vector2 position, int health, int bountyGiven, float speed)
         {
-            _texture = texture;
             _position = position;
 
             _Health = health;
             _currentHealth = _Health;
             _price = bountyGiven;
             _speed = speed;
+
+            waypoints.Enqueue(new Vector2(2, 0) * 32);
+            waypoints.Enqueue(new Vector2(2, 2) * 32);
+            waypoints.Enqueue(new Vector2(4, 2) * 32);
+            waypoints.Enqueue(new Vector2(4, 7) * 32);
+            waypoints.Enqueue(new Vector2(1, 7) * 32);
+            waypoints.Enqueue(new Vector2(1, 4) * 32);
+            waypoints.Enqueue(new Vector2(9, 4) * 32);
+            waypoints.Enqueue(new Vector2(9, 8) * 32);
+            waypoints.Enqueue(new Vector2(14, 8) * 32);
+            waypoints.Enqueue(new Vector2(14, 5) * 32);
+            waypoints.Enqueue(new Vector2(18, 5) * 32);
+            waypoints.Enqueue(new Vector2(18, 12) * 32);
+            waypoints.Enqueue(new Vector2(16, 12) * 32);
+            waypoints.Enqueue(new Vector2(16, 10) * 32);
+            waypoints.Enqueue(new Vector2(23, 10) * 32);
+            waypoints.Enqueue(new Vector2(23, 14) * 32);
+            waypoints.Enqueue(new Vector2(12, 14) * 32);
+            waypoints.Enqueue(new Vector2(12, 11) * 32);
+            waypoints.Enqueue(new Vector2(5, 11) * 32);
+            waypoints.Enqueue(new Vector2(5, 12) * 32);
+            waypoints.Enqueue(new Vector2(4, 12) * 32);
+            waypoints.Enqueue(new Vector2(4, 14) * 32);
         }
 
-        //public bool IsDead => _currentHealth <= 0;
-        //public int BountyGiven => _price;
-        
-        private Queue<Vector2> _waypoints = new Queue<Vector2>();
+        public Vector2 GetPos()
+        {
+            return _position;
+        }
 
-        public void SetWaypoints(Queue<Vector2> waypointsRefer)
+        /* public void SetWaypoints(Queue<Vector2> waypointsRefer)
         {
             foreach (Vector2 waypoint in waypointsRefer)
                 _waypoints.Enqueue(waypoint);
 
             _position = _waypoints.Dequeue();
-        }
+        }*/ 
 
-        public float DistanceToDestination => Vector2.Distance(_position, _waypoints.Peek());
+        public float DistanceToDestination => Vector2.Distance(_position, waypoints.Peek());
 
-        public void Update(GameTime gameTime)
+        public void Update()
         {
-            if (_waypoints.Count > 0)
+            if (waypoints.Count > 0)
             {
                 if (DistanceToDestination < _speed)
                 {
-                    _position = _waypoints.Peek();
-                    _waypoints.Dequeue();
+                    _position = waypoints.Peek();
+                    waypoints.Dequeue();
                 }
 
                 else
                 {
-                    Vector2 direction = _waypoints.Peek() - _position;
+                    Vector2 direction = waypoints.Peek() - _position;
                     direction.Normalize();
 
                     _velocity = Vector2.Multiply(direction, _speed);
@@ -74,12 +97,12 @@ namespace VirusInvader
                 _alive = false;
 
         }
-
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public void Deal(int damages)
         {
-            if(_alive)
-                spriteBatch.Draw(_texture, _position, Color.White);
+            _currentHealth -= damages;
         }
+        public bool IsDead => _currentHealth <= 0;
+        public int BountyGiven => _price;
 
     }
 }

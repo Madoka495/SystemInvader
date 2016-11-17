@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using VirusInvader;
 
 namespace SystemInvader
 {
@@ -15,16 +16,23 @@ namespace SystemInvader
 
         Texture2D bullet;
         Texture2D towerSprite;
+        Texture2D path;
+        Texture2D grass;
+        Texture2D enemyTexture;
         int frame = 0;
         static Vector2 start = new Vector2(100, 100);
-        static Vector2 dest;
         int bulletWidth = 50;
         int bulletHeight = 50;
         int towerWidth = 62;
         int towerHeight = 90;
+        int enemyWidth = 32;
+        int enemyHeight = 32;
+        bool alreadyShot;
         SpriteFont font;
-        int lives = 5;
         List<Tower> _towers;
+        List<Enemy> _enemies;
+
+        Level level = new Level();
 
         public Game()
         {
@@ -44,9 +52,15 @@ namespace SystemInvader
             // TODO: Add your initialization logic here
             base.Initialize();
             _towers = new List<Tower>();
-            _towers.Add(new Tower(new Vector2(200, 50), 4, 300, 2));
-            _towers.Add(new Tower(new Vector2(50, 300), 8, 600, 1));
-            _towers.Add(new Tower(new Vector2(500, 300), 4, 1000, 2));
+            _enemies = new List<Enemy>();
+
+            _towers.Add(new Tower(new Vector2(200, 30), 8, 150, 2));
+            _towers.Add(new Tower(new Vector2(50, 300), 16, 150, 1));
+            _towers.Add(new Tower(new Vector2(530, 280), 8, 200, 2));
+
+            _enemies.Add(new Enemy(Vector2.Zero, 100, 10, 1f));
+            _enemies.Add(new Enemy(Vector2.Zero, 300, 20, 2f));
+            _enemies.Add(new Enemy(Vector2.Zero, 300, 50, 0.4f));
         }
 
         /// <summary>
@@ -60,7 +74,11 @@ namespace SystemInvader
             bullet = Content.Load<Texture2D>("bullet1");
             towerSprite = Content.Load<Texture2D>("rumia");
             font = Content.Load<SpriteFont>("font");
-
+            path = Content.Load<Texture2D>("path");
+            grass = Content.Load<Texture2D>("grass");
+            level.AddTexture(grass);
+            level.AddTexture(path);
+            enemyTexture = Content.Load<Texture2D>("enemy");
             // TODO: use this.Content to load your game content here
         }
 
@@ -82,15 +100,22 @@ namespace SystemInvader
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
-
-            MouseState mouse = Mouse.GetState();
-            System.Diagnostics.Debug.WriteLine("mouse : " + mouse.X + ", " + mouse.Y);
-
-            foreach(Tower tower in _towers)
+            
+            foreach (Enemy enemy in _enemies)
             {
-                if (mouse.X >= tower.GetPos().X - tower.GetRange() && mouse.X <= tower.GetPos().X + tower.GetRange() && mouse.Y >= tower.GetPos().Y - tower.GetRange() && mouse.Y <= tower.GetPos().Y + tower.GetRange() && frame % tower.GetRate() == 0)
+                enemy.Update();
+            }
+
+            foreach (Tower tower in _towers)
+            {
+                alreadyShot = false;
+                foreach (Enemy enemy in _enemies)
                 {
-                    tower.Shoot(new Vector2(mouse.X, mouse.Y));
+                    if (enemy.IsDead == false && alreadyShot == false && enemy.GetPos().X >= tower.GetPos().X - tower.GetRange() && enemy.GetPos().X <= tower.GetPos().X + tower.GetRange() && enemy.GetPos().Y >= tower.GetPos().Y - tower.GetRange() && enemy.GetPos().Y <= tower.GetPos().Y + tower.GetRange() && frame % tower.GetRate() == 0)
+                    {
+                        tower.Shoot(new Vector2(enemy.GetPos().X, enemy.GetPos().Y));
+                        alreadyShot = true;
+                    }
                 }
                 foreach(Projectile projectile in tower.GetProjectiles())
                 {
@@ -99,10 +124,13 @@ namespace SystemInvader
                         projectile.Update();
                     }
 
-                    if (projectile.GetPos().X <= mouse.X && projectile.GetPos().X + bullet.Width >= mouse.X && projectile.GetPos().Y <= mouse.Y && projectile.GetPos().Y + bullet.Height >= mouse.Y && projectile.DestReached == false)
+                    foreach (Enemy enemy in _enemies)
                     {
-                        projectile.DestReached = true;
-                        lives--;
+                        if (enemy.IsDead == false && projectile.GetPos().X <= enemy.GetPos().X && projectile.GetPos().X + bullet.Width >= enemy.GetPos().X && projectile.GetPos().Y <= enemy.GetPos().Y && projectile.GetPos().Y + bullet.Height >= enemy.GetPos().Y && projectile.DestReached == false)
+                        {
+                            projectile.DestReached = true;
+                            enemy.Deal(projectile.Power());
+                        }
                     }
                 }
             }
@@ -120,6 +148,16 @@ namespace SystemInvader
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
+
+            level.Draw(spriteBatch);
+            foreach (Enemy enemy in _enemies)
+            {
+                if(enemy.IsDead == false)
+                {
+                    spriteBatch.Draw(enemyTexture, new Rectangle((int)enemy.GetPos().X, (int)enemy.GetPos().Y, enemyWidth, enemyHeight), Color.White);
+                }
+            }
+
             foreach (Tower tower in _towers)
             {
                 spriteBatch.Draw(towerSprite, new Rectangle((int)tower.GetPos().X, (int)tower.GetPos().Y, towerWidth, towerHeight), Color.White);
@@ -130,15 +168,6 @@ namespace SystemInvader
                         spriteBatch.Draw(bullet, new Rectangle((int)projectile.GetPos().X, (int)projectile.GetPos().Y, bulletWidth, bulletHeight), Color.White);
                     }
                 }
-            }
-
-            if(lives > 0)
-            {
-                spriteBatch.DrawString(font, "Lives : " + lives, new Vector2(0, 0), Color.Black);
-            }
-            else
-            {
-                spriteBatch.DrawString(font, "GAME OVER", new Vector2(300, 100), Color.Black);
             }
             spriteBatch.End();
             // TODO: Add your drawing code here

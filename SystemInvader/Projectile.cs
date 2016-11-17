@@ -17,13 +17,15 @@ namespace SystemInvader
         bool _xPos;
         bool _yPos;
         bool _reached;
+        int _power;
 
-        public Projectile(Vector2 start, Vector2 dest, int speed)
+        public Projectile(Vector2 start, Vector2 dest, int speed, int power)
         {
             _current = start;
             _dest = dest;
             _start = start;
             _speed = speed;
+            _power = power;
         }
 
         public void Update()
@@ -172,6 +174,11 @@ namespace SystemInvader
             {
                 _reached = value;
             }
+        }
+
+        public int Power()
+        {
+            return _power;
         }
 
         public Vector2 GetPos()

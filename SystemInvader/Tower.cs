@@ -27,11 +27,11 @@ public class Tower
     {
         if (_type == 1)
         {
-            _projectiles.Add(new Projectile(_position, enemyPosition, 6));
+            _projectiles.Add(new Projectile(_position, enemyPosition, 6, 20));
         }
         else if (_type == 2)
         {
-            _projectiles.Add(new Projectile(_position, enemyPosition, 15));
+            _projectiles.Add(new Projectile(_position, enemyPosition, 15, 5));
         }
     }
 
