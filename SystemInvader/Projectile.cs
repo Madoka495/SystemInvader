@@ -4,30 +4,64 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace SystemInvader
 {
     public class Projectile
     {
+        //Parametres///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Vector2 _current = new Vector2();
         Vector2 _dest = new Vector2();
         Vector2 _start = new Vector2();
         Vector2 _diff = new Vector2();
+        Texture2D _texture;
+
         int _speed;
         bool _xPos;
         bool _yPos;
         bool _reached;
         int _power;
+        int _bulletWidth;
+        int _bulletHeight;
 
-        public Projectile(Vector2 start, Vector2 dest, int speed, int power)
+        //Fonctions///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        public Projectile(Texture2D texture ,Vector2 start, Vector2 dest, int speed, int power, int bulletWidth, int bulletHeight)
         {
+            _texture = texture;
             _current = start;
             _dest = dest;
             _start = start;
             _speed = speed;
             _power = power;
+            _texture = texture;
+            _bulletHeight = bulletHeight;
+            _bulletWidth = bulletWidth;
         }
 
+        public bool DestReached
+        {
+            get { return _reached; }
+            set { _reached = value; }
+        }
+        public int Power() => _power;
+
+        public Vector2 GetPos() => _current;
+
+        public bool hitEnemy(Vector2 enemy, Texture2D bullet)
+        {
+            if (_current.X <= enemy.X &&
+                _current.X + bullet.Width >= enemy.X &&
+                _current.Y <= enemy.Y &&
+                _current.Y + bullet.Height >= enemy.Y)
+                return true;
+            return false;
+        }
+
+
+
+        //Update///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public void Update()
         {
             if(_start.X < _dest.X)
@@ -164,26 +198,12 @@ namespace SystemInvader
             }
         }
 
-        public bool DestReached
+        //Draw///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        public void Draw(SpriteBatch spriteBatch)
         {
-            get
-            {
-                return _reached;
-            }
-            set
-            {
-                _reached = value;
-            }
+            spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _bulletWidth, _bulletHeight), Color.White);
         }
 
-        public int Power()
-        {
-            return _power;
-        }
 
-        public Vector2 GetPos()
-        {
-            return _current;
-        }
     }
 }

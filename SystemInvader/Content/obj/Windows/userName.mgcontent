@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SourceFile>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/userName</SourceFile>
-  <SourceTime>2016-11-16T10:40:36.7843822+01:00</SourceTime>
-  <DestFile>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/bin/Windows/userName.xnb</DestFile>
-  <DestTime>2016-11-28T09:38:39.3237499+01:00</DestTime>
+  <SourceFile>D:/Etude/Backup/SystemInvader2/SystemInvader/Content/userName</SourceFile>
+  <SourceTime>2016-11-16T10:43:12.4125068+01:00</SourceTime>
+  <DestFile>D:/Etude/Backup/SystemInvader2/SystemInvader/Content/bin/Windows/userName.xnb</DestFile>
+  <DestTime>2016-11-28T11:46:51.1370665+01:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2016-03-30T08:36:08+02:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>
