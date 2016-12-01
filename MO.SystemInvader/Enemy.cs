@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace VirusInvader
+namespace MO.SystemInvader
 {
     public class Enemy
     {
@@ -15,14 +15,12 @@ namespace VirusInvader
         protected int _Health;
         protected int _currentHealth;
         protected int _price;
-        protected int _enemyWidth;
-        protected int _enemyHeight;
 
         protected bool _alive = true;
         protected bool _atTheEnd = false;
 
         protected float _speed;
-        
+
 
         Texture2D _texture;
         Vector2 _position;
@@ -31,7 +29,7 @@ namespace VirusInvader
 
         //Fonctions///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public Enemy(Texture2D texture, Vector2 position, int health, int bountyGiven, float speed, int enemyWidth, int enemyHeight)
+        public Enemy(Texture2D texture, Vector2 position, int health, int bountyGiven, float speed)
         {
             _position = position;
             _texture = texture;
@@ -40,10 +38,8 @@ namespace VirusInvader
             _currentHealth = _Health;
             _price = bountyGiven;
             _speed = speed;
-            _enemyWidth = enemyWidth;
-            _enemyHeight = enemyHeight;
         }
-        
+
         public void SetWaypoints(Queue<Vector2> waypointsRefer)
         {
             foreach (Vector2 waypoint in waypointsRefer)
@@ -55,14 +51,12 @@ namespace VirusInvader
         public int BountyGiven => _price;
         public int GiveHealth => _Health;
         public int GiveBounty => _price;
-        public int GiveWidth => _enemyWidth;
-        public int GiveHeight => _enemyHeight;
         public int GiveCurrentHealth => _currentHealth;
 
         public float DistanceToDestination => Vector2.Distance(_position, _waypoints.Peek());
         public float GiveSpeed => _speed;
         public bool IsDead => _currentHealth <= 0;
-        
+
         public Texture2D GiveTexture => _texture;
         public Vector2 GetPos() => _position;
 
@@ -70,7 +64,7 @@ namespace VirusInvader
         {
             _currentHealth -= damages;
         }
-        
+
         public void AtTheEnd()
         {
             _atTheEnd = true;
@@ -107,11 +101,11 @@ namespace VirusInvader
         {
             if (!IsDead && !_atTheEnd)
             {
-                spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _enemyWidth, _enemyHeight), Color.White);
+                spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _texture.Width, _texture.Height), Color.White);
             }
         }
 
-        
+
 
     }
 }

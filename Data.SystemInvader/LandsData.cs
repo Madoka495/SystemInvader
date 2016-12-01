@@ -7,17 +7,14 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
-using VirusInvader;
 
-namespace SystemInvader
+namespace Data.SystemInvader
 {
     public class LandsData
     {
         List<Texture2D> _listLands1 = new List<Texture2D>();
-        List<Texture2D> _listLands2 = new List<Texture2D>();
-        List<Texture2D> _listLands3 = new List<Texture2D>();
 
-        string _folderPath = "Lands/Land1/";
+        string _folderPath = "Sprites/";
         public void AddTextureLands1(ContentManager content)
         {
             for (int i = 1; i <= 27; i++)

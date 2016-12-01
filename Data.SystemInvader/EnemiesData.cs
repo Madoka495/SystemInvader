@@ -7,14 +7,15 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
-using VirusInvader;
+using MO.SystemInvader;
 
-namespace SystemInvader
+namespace Data.SystemInvader
 {
     public class EnemiesData : Microsoft.Xna.Framework.Game
     {
         List<Texture2D> _enemyTextureEnemiesData;
         List<Enemy> _listEnemies = new List<Enemy>();
+        List<Texture2D> _enemyTexture = new List<Texture2D>();
 
         public List<Texture2D> EnemyTexture
         {
@@ -23,24 +24,17 @@ namespace SystemInvader
 
         public void AddTextureEnemies(ContentManager content)
         {
-            List<Texture2D> _enemyTexture = new List<Texture2D>();
-            Texture2D newtexture1 = content.Load<Texture2D>("Enemies/enemy1");
-            _enemyTexture.Add(newtexture1);
-            Texture2D newtexture2 = content.Load<Texture2D>("Enemies/enemy2");
-            _enemyTexture.Add(newtexture2);
-            Texture2D newtexture3 = content.Load<Texture2D>("Enemies/enemy3");
-            _enemyTexture.Add(newtexture3);
+            _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy1"));
+            _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy2"));
+            _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy3"));
             _enemyTextureEnemiesData = _enemyTexture;
         }     
 
         public void AddAllEnemy()
         {
-            Enemy enemy1 = new Enemy(EnemyTexture[0], Vector2.Zero, 50, 10, 4f, 32, 32);
-            Enemy.Add(enemy1);
-            Enemy enemy2 = new Enemy(EnemyTexture[1], Vector2.Zero, 100, 15, 0.7f, 32, 32);
-            Enemy.Add(enemy2);
-            Enemy enemy3 = new Enemy(EnemyTexture[2], Vector2.Zero, 200, 20, 0.5f, 32, 32);
-            Enemy.Add(enemy3);
+            _listEnemies.Add(new Enemy(EnemyTexture[0], Vector2.Zero, 200, 10, 4f));
+            _listEnemies.Add(new Enemy(EnemyTexture[1], Vector2.Zero, 1000, 15, 0.7f));
+            _listEnemies.Add(new Enemy(EnemyTexture[2], Vector2.Zero, 1500, 20, 0.5f));
         }
 
         public List<Enemy> Enemy

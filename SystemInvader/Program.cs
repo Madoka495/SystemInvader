@@ -6,7 +6,7 @@ namespace SystemInvader
     /// <summary>
     /// The main class.
     /// </summary>
-    public static class SystemInvader
+    public static class Program
     {
         /// <summary>
         /// The main entry point for the application.
@@ -14,7 +14,7 @@ namespace SystemInvader
         [STAThread]
         static void Main()
         {
-            using (var game = new Game())
+            using (var game = new Game1())
                 game.Run();
         }
     }

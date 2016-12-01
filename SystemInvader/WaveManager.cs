@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using VirusInvader;
+using MO.SystemInvader;
 
 namespace SystemInvader
 {
@@ -18,12 +18,12 @@ namespace SystemInvader
         int i = 0;
 
         List<Wave> _listWaves = new List<Wave>();
-        List<Wave> _WaveLv;
+        List<Wave> _wave;
 
-        public WaveManager(List<Wave> WaveLv)
+        public WaveManager(List<Wave> Wave)
         {
-            _WaveLv = WaveLv;
-            _numberWave = WaveLv.Count;
+            _wave = Wave;
+            _numberWave = Wave.Count;
         }
 
         public void AddWaves(Wave waveToBeAdd)
@@ -45,7 +45,7 @@ namespace SystemInvader
             {
                 if (_listWaves.Count == 0)
                 {
-                    _WaveLv[i].SpawMoreOrNot(true);
+                    _wave[i].SpawMoreOrNot(true);
                 }
                 int j;
                 if (i == 0)
@@ -53,12 +53,12 @@ namespace SystemInvader
                 else
                     j = i - 1;
 
-                if (_WaveLv[j].SpawnNewWave == true)
+                if (_wave[j].SpawnNewWave == true)
                 {
                     Wave _waveToBeAdd;
                     if (i == 0)
-                        _WaveLv[i].SpawMoreOrNot(false);
-                    _waveToBeAdd = _WaveLv[i];
+                        _wave[i].SpawMoreOrNot(false);
+                    _waveToBeAdd = _wave[i];
                     AddWaves(_waveToBeAdd);
                     i++;
                     _numberCurrentWave++;

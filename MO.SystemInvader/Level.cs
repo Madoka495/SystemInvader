@@ -8,11 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 
-namespace VirusInvader
+namespace MO.SystemInvader
 {
     public class Level
     {
-        List<Texture2D> _listTexture = new List<Texture2D>();
         int[,] map = new int[,]
         {
            //00,01,02,03,04,05,06,07,08,09,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34
@@ -39,11 +38,23 @@ namespace VirusInvader
             {08,08,08,08,09,10,11,08,08,08,08,08,16,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,17,18,08,08},//20
         };
 
-        private Queue<Vector2> waypoints = new Queue<Vector2>();
+        Queue<Vector2> waypoints = new Queue<Vector2>();
+
+        public int Width => map.GetLength(1);
+        public int Height => map.GetLength(0);
+        public Texture2D _texture;
+
+        public Vector2 AtTheEnd => new Vector2(5, 20) * 32;
+        List<Texture2D> _listTexture;
+
+        public Queue<Vector2> Waypoints => waypoints;
+        public int WindowsWidth => Width * 32;
+        public int WindowsHeight => Height * 32;
 
         public Level()
         {
             AddWaypoints();
+            _listTexture = new List<Texture2D>();
         }
 
         public void AddWaypoints()
@@ -74,21 +85,10 @@ namespace VirusInvader
             waypoints.Enqueue(new Vector2(5, 20) * 32);
         }
 
-        public Vector2 AtTheEnd => new Vector2(5, 20) * 32;
-
-        public Queue<Vector2> Waypoints => waypoints;
-
-        private List<Texture2D> TileTexture => _listTexture;
-        
         public void AddTexture(List<Texture2D> listTexture)
         {
             _listTexture = listTexture;
         }
-
-        public int Width => map.GetLength(1);
-        public int Height => map.GetLength(0);
-        public int WindowsWidth => Width * 32;
-        public int WindowsHeight => Height * 32;
 
 
         //Draw/////////////////////////////////////////////////////////////////////////////////
@@ -98,16 +98,11 @@ namespace VirusInvader
             {
                 for (int j = 0; j < Height; j++)
                 {
-                    int textureIndex = map[j, i];
-                    Texture2D texture = TileTexture[textureIndex];
-
-                    batch.Draw(texture, new Rectangle(i * 32, j * 32, 32, 32), Color.White);
+                    int _textureIndex = map[j, i];
+                    _texture = _listTexture[_textureIndex];
+                    batch.Draw(_texture, new Rectangle(i * 32, j * 32, 32, 32), Color.White);
                 }
             }
         }
-
-
-
-
     }
 }

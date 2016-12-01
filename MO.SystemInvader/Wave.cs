@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using VirusInvader;
 
-namespace SystemInvader
+
+namespace MO.SystemInvader
 {
     public class Wave
     {
@@ -35,7 +35,7 @@ namespace SystemInvader
 
         public void AddEnemies()
         {
-            Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.GiveBounty, _enemy.GiveSpeed, _enemy.GiveWidth, _enemy.GiveHeight);
+            Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.GiveBounty, _enemy.GiveSpeed);
             newEnemy.SetWaypoints(_currentLevel.Waypoints);
             _enemies.Add(newEnemy);
 
@@ -85,7 +85,7 @@ namespace SystemInvader
                     Enemies.Remove(enemy);
                     i--;
                 }
-                    
+
             }
         }
 
@@ -93,7 +93,7 @@ namespace SystemInvader
         //Draw/////////////////////////////////////////////////////////////////////////
         public void Draw(SpriteBatch spriteBatch)
         {
-            foreach(Enemy enemy in Enemies)
+            foreach (Enemy enemy in Enemies)
             {
                 enemy.Draw(spriteBatch);
             }
