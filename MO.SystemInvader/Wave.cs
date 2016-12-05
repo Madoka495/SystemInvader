@@ -37,7 +37,7 @@ namespace MO.SystemInvader
 
         public void AddEnemies()
         {
-            Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.BountyGiven, _enemy.GiveSpeed, _player);
+            Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.BountyGiven, _enemy.GiveStrength, _enemy.GiveSpeed, _player);
             newEnemy.SetWaypoints(_currentLevel.Waypoints);
             _enemies.Add(newEnemy);
 
@@ -67,31 +67,24 @@ namespace MO.SystemInvader
                     AddEnemies();
                 }
             }
-      
-            for (int i = 0; i < Enemies.Count; i++)
-            {
-                Enemy enemy = Enemies[i];
-                enemy.Update();
 
-                if (enemy.InGame == true && enemy.GiveCurrentHealth > 0)
+            if(Enemies.Count > 0)
+            {
+                _spawnNewWave = true;
+                foreach (Enemy enemy in Enemies)
                 {
-                    if (enemy.GetPos() == _currentLevel.AtTheEnd)
+                    enemy.Update();
+
+                    if (enemy.InGame == true)
                     {
-                        if (i == Enemies.Count - 1)
-                            _spawnNewWave = true;
-                        enemy.AtTheEnd();
+                        if (enemy.GetPos() == _currentLevel.AtTheEnd)
+                        {
+                            enemy.AtTheEnd();
+                        }
+                        _spawnNewWave = false;
                     }
                 }
-
-                if (enemy.InGame == false)
-                {
-                    Enemies.Remove(enemy);
-                    i--;
-
-                }
-
             }
-            
         }
 
 
@@ -103,6 +96,5 @@ namespace MO.SystemInvader
                 enemy.Draw(spriteBatch);
             }
         }
-
     }
 }

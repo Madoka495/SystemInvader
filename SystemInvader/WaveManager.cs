@@ -12,10 +12,10 @@ namespace SystemInvader
 {
     public class WaveManager
     {
-        int _numberWave;
-        int _numberCurrentWave = 0;
-        bool _spawnMore = true;
-        int i = 0;
+        int nbWaves = 0;
+        
+        bool _sendNextWave = false;
+        bool _won = false;
 
         List<Wave> _listWaves = new List<Wave>();
         List<Wave> _wave;
@@ -23,12 +23,41 @@ namespace SystemInvader
         public WaveManager(List<Wave> Wave)
         {
             _wave = Wave;
-            _numberWave = Wave.Count;
         }
 
         public void AddWaves(Wave waveToBeAdd)
         {
             _listWaves.Add(waveToBeAdd);
+        }
+
+        public void NextWave()
+        {
+            Wave _waveToBeAdd;
+            if(nbWaves <= _wave.Count - 1)
+            {
+                _wave[nbWaves].SpawMoreOrNot(false);
+                _waveToBeAdd = _wave[nbWaves];
+                AddWaves(_waveToBeAdd);
+                nbWaves++;
+            }
+            else
+            {
+                _won = true;
+            }
+        }
+
+        public int NbWave
+        {
+            get { return nbWaves; }
+        }
+
+        public bool SendNextWave
+        {
+            get { return _sendNextWave; }
+        }
+        public bool Won
+        {
+            get { return _won; }
         }
 
         public List<Wave> Waves
@@ -39,34 +68,26 @@ namespace SystemInvader
         //Update/////////////////////////////////////////////////////////////////////////////////////////////////////
         public void Update(GameTime gameTime)
         {
-            if (_numberCurrentWave == _numberWave)
-                _spawnMore = false;
-            if (_spawnMore == true)
+            if (_listWaves.Count == 0)
             {
-                if (_listWaves.Count == 0)
-                {
-                    _wave[i].SpawMoreOrNot(true);
-                }
-                int j;
-                if (i == 0)
-                    j = i;
-                else
-                    j = i - 1;
-
-                if (_wave[j].SpawnNewWave == true)
-                {
-                    Wave _waveToBeAdd;
-                    if (i == 0)
-                        _wave[i].SpawMoreOrNot(false);
-                    _waveToBeAdd = _wave[i];
-                    AddWaves(_waveToBeAdd);
-                    i++;
-                    _numberCurrentWave++;
-                }
+                _wave[nbWaves].SpawMoreOrNot(true);
             }
-            for (int i = 0; i < Waves.Count; i++)
+            int j;
+            if (nbWaves == 0)
+                j = nbWaves;
+            else
+                j = nbWaves - 1;
+
+            if (_wave[j].SpawnNewWave == true)
             {
-                Wave wave = Waves[i];
+                _sendNextWave = true;
+            }
+            else
+            {
+                _sendNextWave = false;
+            }
+            foreach (Wave wave in Waves)
+            {
                 wave.Update(gameTime);
             }
         }
@@ -79,10 +100,6 @@ namespace SystemInvader
             {
                 wave.Draw(spriteBatch);
             }
-
         }
-
-
-
     }
 }

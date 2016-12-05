@@ -15,6 +15,7 @@ namespace MO.SystemInvader
         int _Health;
         int _currentHealth;
         int _price;
+        int _strength;
 
         bool _atTheEnd = false;
         bool _inGame = true;
@@ -30,13 +31,14 @@ namespace MO.SystemInvader
 
         //Fonctions///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public Enemy(Texture2D texture, Vector2 position, int health, int bountyGiven, float speed, Player player)
+        public Enemy(Texture2D texture, Vector2 position, int health, int bountyGiven, int strength, float speed, Player player)
         {
             _position = position;
             _texture = texture;
             _Health = health;
             _currentHealth = _Health;
             _price = bountyGiven;
+            _strength = strength;
             _speed = speed;
             _player = player;
         }
@@ -51,7 +53,7 @@ namespace MO.SystemInvader
 
         public int BountyGiven => _price;
         public int GiveHealth => _Health;
-        public int GiveCurrentHealth => _currentHealth;
+        public int GiveStrength => _strength;
 
         public float DistanceToDestination => Vector2.Distance(_position, _waypoints.Peek());
         public float GiveSpeed => _speed;
@@ -75,17 +77,14 @@ namespace MO.SystemInvader
         {
             if (_currentHealth <= 0 && _inGame)
             {
-                // INSERER ICI LE CODE POUR DONNER DE L'ARGENT ET AUGMENTER LE SCORE
                 _player.Score++;
                 _player.CurrentGold += _price;
-              
                 _inGame = false;
             }
             else if (_atTheEnd && _inGame)
             {
+                _player.Life -= _strength;
                 _inGame = false;
-                _player.Life--;
-                
             }
 
             if (_waypoints.Count > 0)
@@ -108,6 +107,7 @@ namespace MO.SystemInvader
             }
         }
 
+
         //Draw///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public void Draw(SpriteBatch spriteBatch)
         {
@@ -115,21 +115,6 @@ namespace MO.SystemInvader
             {
                 spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _texture.Width, _texture.Height), Color.White);
             }
-        }
-
-        public int CurrentHealt()
-        {
-            return _currentHealth;
-        }
-
-        public bool INGame()
-        {
-            return _inGame;
-        }
-
-        public int Price()
-        {
-            return _price;
         }
     }
 }

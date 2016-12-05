@@ -19,8 +19,8 @@ namespace SystemInvader
         public MouseMove(Player player)
         {
             _towers = new List<TowerShop>(); // position, rate, range, width, height, type, price
-            _towers.Add(new TowerShop(new Vector2(220, 550), 10, 200, 70, 120, 1, 50));
-            _towers.Add(new TowerShop(new Vector2(320, 550), 8, 280, 70, 120, 2, 100));
+            _towers.Add(new TowerShop(new Vector2(220, 550), 10, 200, 70, 120, 1, 20));
+            _towers.Add(new TowerShop(new Vector2(320, 550), 8, 280, 70, 120, 2, 10));
 
             _placedTowers = new List<Tower>();
             _player = player;
@@ -66,12 +66,11 @@ namespace SystemInvader
                 {
                     if (tower.Old.X != -1000 && tower.Old.Y != -1000 && tower.Position != tower.Original)
                     {
-                        if(_player.CurrentGold >= tower.Price)
+                        if (_player.CurrentGold >= tower.Price)
                         {
                             _player.CurrentGold -= tower.Price;
                             _placedTowers.Add(new Tower(tower.Position, tower.Rate, tower.Range, tower.Type));
                         }
-                        
                     }
                     tower.Position = tower.Original;
                     tower.Old = new Vector2(-1000, -1000);

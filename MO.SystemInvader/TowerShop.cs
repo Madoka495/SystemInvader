@@ -57,6 +57,10 @@ namespace MO.SystemInvader
             get { return _width; }
             set { _width = value; }
         }
+        public int Price
+        {
+            get { return _price; }
+        }
 
         public Vector2 Position
         {
@@ -77,11 +81,6 @@ namespace MO.SystemInvader
         {
             get { return _wasPressed; }
             set { _wasPressed = value; }
-        }
-
-        public int Price
-        {
-            get { return _price; }
         }
     }
 }

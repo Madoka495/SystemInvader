@@ -11,32 +11,34 @@ using MO.SystemInvader;
 
 namespace Data.SystemInvader
 {
-    public class EnemiesData : Microsoft.Xna.Framework.Game
+    public class EnemiesData
     {
-        List<Texture2D> _enemyTextureEnemiesData;
         List<Enemy> _listEnemies = new List<Enemy>();
         List<Texture2D> _enemyTexture = new List<Texture2D>();
         Player _player;
 
-        public List<Texture2D> EnemyTexture
+        public EnemiesData(Player player)
         {
-            get { return _enemyTextureEnemiesData; }
+            _player = player;
         }
 
-        public void AddTextureEnemies(ContentManager content, Player player)
+        public List<Texture2D> EnemyTexture
+        {
+            get { return _enemyTexture; }
+        }
+
+        public void AddTextureEnemies(ContentManager content)
         {
             _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy1"));
             _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy2"));
             _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy3"));
-            _enemyTextureEnemiesData = _enemyTexture;
-            _player = player;
-        }     
+        }
 
         public void AddAllEnemy()
         {
-            _listEnemies.Add(new Enemy(EnemyTexture[0], Vector2.Zero, 200, 10, 4f, _player));
-            _listEnemies.Add(new Enemy(EnemyTexture[1], Vector2.Zero, 1000, 15, 0.7f, _player));
-            _listEnemies.Add(new Enemy(EnemyTexture[2], Vector2.Zero, 1500, 20, 0.5f, _player));
+            _listEnemies.Add(new Enemy(EnemyTexture[0], Vector2.Zero, 200, 10, 2, 4f, _player));
+            _listEnemies.Add(new Enemy(EnemyTexture[1], Vector2.Zero, 1000, 15, 3, 0.7f, _player));
+            _listEnemies.Add(new Enemy(EnemyTexture[2], Vector2.Zero, 1500, 20, 5, 0.5f, _player));
         }
 
         public List<Enemy> Enemy

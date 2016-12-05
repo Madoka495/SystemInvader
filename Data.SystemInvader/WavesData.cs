@@ -27,7 +27,7 @@ namespace Data.SystemInvader
         void AddInList(List<Wave> wave, int numberEnemies, Enemy enemy, Level level)
         {
             Wave newWave = new Wave(numberEnemies, enemy, level, _player);
-            wave.Add(newWave);  
+            wave.Add(newWave);
         }
 
         public void SetUpWavesData()
@@ -38,9 +38,9 @@ namespace Data.SystemInvader
         public void AddWave()
         {
             List<Wave> Wave = new List<Wave>();
-            for (int i = 0; i < 2; i++)
+            foreach (Enemy enemy in _enemiesData.Enemy)
             {
-                AddInList(Wave, 5, _enemiesData.Enemy[i], _level);
+                AddInList(Wave, 5, enemy, _level);
             }
             _wave = Wave;
         }

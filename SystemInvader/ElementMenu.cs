@@ -12,9 +12,9 @@ namespace SystemInvader
 {
     class ElementMenu
     {
-        Texture2D _menuTexture;     
+        Texture2D _menuTexture;
         Rectangle _menuRect;
-
+        bool _wasClicked = false;
         string _assetName;
 
         public string AssetName
@@ -39,15 +39,22 @@ namespace SystemInvader
 
         public void Update()
         {
-            if (_menuRect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Pressed )
+            if(Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
-                clickEvent(_assetName);
+                if (_menuRect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && _wasClicked == false)
+                {
+                    clickEvent(_assetName);
+                }
+                else
+                {
+                    _wasClicked = true;
+                }
+            }
+            else
+            {
+                _wasClicked = false;
             }
         }
-       /* public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(menuTexture, _menuRect, Color.White);
-        }*/ 
 
         public void CenterElement(int height, int width)
         {
@@ -56,17 +63,12 @@ namespace SystemInvader
 
         public void MoveElement(int x, int y)
         {
-            _menuRect = new Rectangle(_menuRect.X += x, _menuRect.Y += y, _menuRect.Width, _menuRect.Height);
+             _menuRect = new Rectangle(_menuRect.X += x, _menuRect.Y += y, _menuRect.Width, _menuRect.Height);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(_menuTexture, _menuRect, Color.White);
-        }
-
-        internal void PrintPosition()
-        {
-            Console.WriteLine("Item button menu : " + _menuRect.X + " : " + _menuRect.Y);
         }
 
     }

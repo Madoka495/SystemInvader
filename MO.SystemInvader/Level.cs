@@ -48,8 +48,8 @@ namespace MO.SystemInvader
         List<Texture2D> _listTexture;
 
         public Queue<Vector2> Waypoints => waypoints;
-        public int WindowsWidth => Width * 32;
-        public int WindowsHeight => Height * 32;
+        public int WindowWidth => Width * 32;
+        public int WindowHeight => Height * 32;
 
         public Level()
         {

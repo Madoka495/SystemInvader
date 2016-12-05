@@ -12,7 +12,7 @@ namespace Data.SystemInvader
 {
     public class LandsData
     {
-        List<Texture2D> _listLands1 = new List<Texture2D>();
+        List<Texture2D> _listLands = new List<Texture2D>();
 
         string _folderPath = "Sprites/";
         public void AddTextureLands1(ContentManager content)
@@ -21,14 +21,13 @@ namespace Data.SystemInvader
             {
                 string nameImage = "Ground" + i.ToString();
                 Texture2D newTexture = content.Load<Texture2D>(_folderPath + nameImage);
-                _listLands1.Add(newTexture);
+                _listLands.Add(newTexture);
             }
         }
 
-        public List<Texture2D> Lands1
+        public List<Texture2D> Lands
         {
-            get { return _listLands1; }
+            get { return _listLands; }
         }
-
     }
 }

@@ -34,6 +34,7 @@ namespace SystemInvader
         List<ElementMenu> shopTower = new List<ElementMenu>();
         List<ElementMenu> scores = new List<ElementMenu>();
 
+
         Keys[] lastPressedKeys = new Keys[5];
 
         string myName = string.Empty;
@@ -42,6 +43,7 @@ namespace SystemInvader
         bool _alreadyShot;
 
         SpriteFont sf;
+
         // Keyboard
         InputTextKeyboard _keyboard;
         KeyboardState _lastKeyboardState;
@@ -53,17 +55,17 @@ namespace SystemInvader
         Player _player;
 
         // Background
-        //Texture2D _backGroundMenu;
         Texture2D _backGroundUser;
         Vector2 _bgPosition;
         Texture2D _bgTexture;
         Texture2D _logo;
+
         // map
-        Level _level = new Level();
-        LandsData _landsData = new LandsData();
+        Level _level;
+        LandsData _landsData;
 
         // Ennemies
-        EnemiesData _enemiesData = new EnemiesData();
+        EnemiesData _enemiesData;
 
         //Tower
         Texture2D _towerSprite;
@@ -79,30 +81,40 @@ namespace SystemInvader
 
         // Wave
         WaveManager _waveManager;
-        WavesData _wavesData = new WavesData();
+        WavesData _wavesData;
 
         // Record Pseudo User
-        string userNameTxt = @"D:\dev\ProjetInformatique\SystemInvader\SystemInvader\Content\json\userName.txt";
+        string userNameTxt = @"..\..\..\..\Content\json\userName.txt";
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
+            
             // Player
             _player = new Player();
 
-            //Windows size
-            graphics.PreferredBackBufferHeight = _level.WindowsHeight;
-            graphics.PreferredBackBufferWidth = _level.WindowsWidth;
+            // Map
+            _level = new Level();
+            _landsData = new LandsData();
 
             //Mouse
-            IsMouseVisible = true;
             _mouseMove = new MouseMove(_player);
+            IsMouseVisible = true;
 
             // Keyboard
             _keyboard = new InputTextKeyboard();
             _lastKeyboardState = new KeyboardState();
+            
+            //Windows size
+            graphics.PreferredBackBufferHeight = _level.WindowHeight;
+            graphics.PreferredBackBufferWidth = _level.WindowWidth;
+
+            // Waves
+            _wavesData = new WavesData();
+
+            // Enemies
+            _enemiesData = new EnemiesData(_player);
 
             //Menu
             main.Add(new ElementMenu("Sprites/play"));
@@ -134,6 +146,7 @@ namespace SystemInvader
 
             // Timer
             _timerFont = Content.Load<SpriteFont>("timer");
+
             //Towers
             _towers = new List<Tower>();
           
@@ -149,13 +162,11 @@ namespace SystemInvader
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _bgTexture = Content.Load<Texture2D>("Background/mainBackground");
-            _logo= Content.Load<Texture2D>("Sprites/logo");
+            _logo = Content.Load<Texture2D>("Sprites/logo");
             // TODO: use this.Content to load your game content here
             //Menu
             ContentManager content = Content;
             sf = content.Load<SpriteFont>("userName");
-
-            //_backGroundMenu = Content.Load<Texture2D>("Background/backgroundMenu");
             _backGroundUser = Content.Load<Texture2D>("Background/enter_name");
 
             foreach (ElementMenu element in main)
@@ -198,10 +209,10 @@ namespace SystemInvader
 
             // Map
             _landsData.AddTextureLands1(this.Content);
-            _level.AddTexture(_landsData.Lands1);
+            _level.AddTexture(_landsData.Lands);
 
             //Ennemies
-            _enemiesData.AddTextureEnemies(this.Content, _player);
+            _enemiesData.AddTextureEnemies(this.Content);
             _enemiesData.AddAllEnemy();
 
             //Tower
@@ -257,20 +268,16 @@ namespace SystemInvader
                         element.Update();
                     }
                     _keyboard.Write(_lastKeyboardState);
-                    if (myName.Length > 14)
+                    if (_keyboard.NewChar == "DELETE")
                     {
-
+                        if (myName.Length > 0)
+                        {
+                            myName = myName.Substring(0, myName.Length - 1);
+                        }
                     }
                     else
                     {
-                        if (_keyboard.NewChar == "DELETE")
-                        {
-                            if (myName.Length > 0)
-                            {
-                                myName = myName.Substring(0, myName.Length - 1);
-                            }
-                        }
-                        else
+                        if (myName.Length <= 14)
                         {
                             myName += _keyboard.NewChar;
                         }
@@ -296,7 +303,7 @@ namespace SystemInvader
                         {
                             foreach (Enemy enemy in wave.Enemies)
                             {
-                                if (enemy.InGame== true && _alreadyShot == false && enemy.GetPos().X >= tower.GetPos().X - tower.GetRange() && enemy.GetPos().X <= tower.GetPos().X + tower.GetRange() && enemy.GetPos().Y >= tower.GetPos().Y - tower.GetRange() && enemy.GetPos().Y <= tower.GetPos().Y + tower.GetRange() && _frame % tower.GetRate() == 0)
+                                if (enemy.InGame == true && _alreadyShot == false && enemy.GetPos().X >= tower.GetPos().X - tower.GetRange() && enemy.GetPos().X <= tower.GetPos().X + tower.GetRange() && enemy.GetPos().Y >= tower.GetPos().Y - tower.GetRange() && enemy.GetPos().Y <= tower.GetPos().Y + tower.GetRange() && _frame % tower.GetRate() == 0)
                                 {
                                     tower.Shoot(new Vector2(enemy.GetPos().X, enemy.GetPos().Y));
                                     _alreadyShot = true;
@@ -323,6 +330,16 @@ namespace SystemInvader
                         }
                     }
 
+                    if(_waveManager.SendNextWave)
+                    {
+                        if (_waveManager.NbWave > 0)
+                        {
+                            gameState = GameState.beforeGame;
+                        }
+                        _waveManager.NextWave();
+                        _timer = 30;
+                    }
+
                     break;
                 case GameState.beforeGame:
                     foreach (ElementMenu element in beforeGame)
@@ -331,7 +348,14 @@ namespace SystemInvader
                     }
                     if (_frame % 60 == 0)
                         _timer--;
-                    break;
+                    foreach (Tower tower in _towers)
+                    {
+                        foreach(Projectile projectile in tower.GetProjectiles())
+                        {
+                            projectile.DestReached = true;
+                        }
+                    }
+                        break;
                 default:
                     break;
             }
@@ -356,11 +380,11 @@ namespace SystemInvader
             // TODO: Add your drawing code here
             _isInGame = false;
             spriteBatch.Begin();
+            spriteBatch.Draw(_bgTexture, new Rectangle(0, 0, 1920, 1080), Color.White);
 
             switch (gameState)
             {
                 case GameState.mainMenu:
-                    spriteBatch.Draw(_bgTexture, new Rectangle(0, 0, 1280, 800), Color.White);
                     spriteBatch.Draw(_logo, new Rectangle(330, 0, _logo.Width, _logo.Height), Color.White);
                     foreach (ElementMenu element in main)
                     {
@@ -368,8 +392,7 @@ namespace SystemInvader
                     }
                     break;
                 case GameState.enterName:
-                    spriteBatch.Draw(_bgTexture, new Rectangle(0, 0, 1280, 800), Color.White);
-                    spriteBatch.Draw(_backGroundUser, new Rectangle(400, 225, 300, 200), Color.White);
+                    spriteBatch.Draw(_backGroundUser, new Rectangle(400, 225, _backGroundUser.Width, _backGroundUser.Height), Color.White);
                     foreach (ElementMenu element in enterName)
                     {
                         element.Draw(spriteBatch);
@@ -380,15 +403,7 @@ namespace SystemInvader
                 case GameState.inGame:
                     _level.Draw(spriteBatch);
                     _isInGame = true;
-                    //Pseudo player
-                    _waveManager.Draw(spriteBatch);
                     spriteBatch.DrawString(sf, myName, new Vector2(150, 10), Color.White);
-                    spriteBatch.DrawString(_timerFont, "Score : " + _player.Score, new Vector2(450, 20), Color.MediumOrchid);
-                    spriteBatch.DrawString(_timerFont, "Life : " + _player.Life, new Vector2(650, 20), Color.White);
-                    spriteBatch.DrawString(_timerFont, "Vang : " + _player.CurrentGold, new Vector2(800, 20), Color.Gold);
-                    
-                    
-
                     break;
                 case GameState.shopTower:
                     _level.Draw(spriteBatch);
@@ -401,12 +416,6 @@ namespace SystemInvader
                     {
                         spriteBatch.Draw(_towerSprite, new Rectangle((int)tower.Position.X, (int)tower.Position.Y, tower.Width, tower.Height), Color.White);
                     }
-                    spriteBatch.DrawString(_timerFont, "Timer : " + _timer, new Vector2(250, 20), Color.Black);
-                    spriteBatch.DrawString(_timerFont, "Score : " + _player.Score, new Vector2(450, 20), Color.MediumOrchid);
-                    spriteBatch.DrawString(_timerFont, "Life : " + _player.Life, new Vector2(650, 20), Color.White);
-                    spriteBatch.DrawString(_timerFont, "Vang : " + _player.CurrentGold, new Vector2(800, 20), Color.Gold);
-
-
                     break;
 
                 case GameState.beforeGame:
@@ -416,10 +425,6 @@ namespace SystemInvader
                     {
                         element.Draw(spriteBatch);
                     }
-                    spriteBatch.DrawString(_timerFont, "Timer : " + _timer, new Vector2(250, 20), Color.Black);
-                    spriteBatch.DrawString(_timerFont, "Score : " + _player.Score, new Vector2(450, 20), Color.MediumOrchid);
-                    spriteBatch.DrawString(_timerFont, "Life : " + _player.Life, new Vector2(650, 20), Color.White);
-                    spriteBatch.DrawString(_timerFont, "Vang : " + _player.CurrentGold, new Vector2(800, 20), Color.Gold);
                     break;
                 default:
                     break;
@@ -438,9 +443,18 @@ namespace SystemInvader
                         }
                     }
                 }
+                spriteBatch.DrawString(_timerFont, "Score : " + _player.Score, new Vector2(350, 10), Color.MediumOrchid);
+                spriteBatch.DrawString(_timerFont, "Life : " + _player.Life, new Vector2(550, 10), Color.White);
+                spriteBatch.DrawString(_timerFont, "Vang : " + _player.CurrentGold, new Vector2(750, 10), Color.Gold);
+                if(gameState != GameState.inGame)
+                {
+                    spriteBatch.DrawString(_timerFont, "Timer : " + _timer, new Vector2(150, 10), Color.Black);
+                }
             }
             spriteBatch.End();
+
         }
+
 
         public void OnClick(string element)
         {
@@ -462,13 +476,13 @@ namespace SystemInvader
                     if (!File.Exists(userNameTxt))
                     {
                         // Create a file to write to.
-                        File.WriteAllText(userNameTxt, myName + ";" + _player.Score + Environment.NewLine);
+                        File.WriteAllText(userNameTxt, myName + Environment.NewLine);
                     }
                     else
                     {
                         // Add a new line for write into the txt
                         string myString = File.ReadAllText(userNameTxt);
-                        File.WriteAllText(userNameTxt, myString + "\n\r" + myName + ";" + _player.Score + "\n\r");
+                        File.WriteAllText(userNameTxt, myString + "\n\r" + myName + "\n\r");
                     }
                     gameState = GameState.mainMenu;
                 }
@@ -487,11 +501,6 @@ namespace SystemInvader
                 }
                 _isPressed = true;
             }
-        }
-
-        public SpriteFont TimerFont()
-        {
-            return _timerFont;
         }
     }
 }

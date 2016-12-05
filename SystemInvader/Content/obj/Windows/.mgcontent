@@ -4,7 +4,7 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>D:/dev/ProjetInformatique/SystemInvader/SystemInvader/Content/userName.spritefont</File>
-    <File>D:/dev/ProjetInformatique/SystemInvader/SystemInvader/Content/timer.spritefont</File>
+    <File>C:/Users/xd/Documents/Visual Studio 2015/Projects/SystemInvader/SystemInvader/Content/userName.spritefont</File>
+    <File>C:/Users/xd/Documents/Visual Studio 2015/Projects/SystemInvader/SystemInvader/Content/timer.spritefont</File>
   </SourceFiles>
 </SourceFileCollection>
