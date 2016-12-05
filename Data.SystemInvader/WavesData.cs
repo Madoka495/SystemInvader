@@ -15,17 +15,19 @@ namespace Data.SystemInvader
         List<Wave> _wave;
         EnemiesData _enemiesData;
         Level _level;
+        Player _player;
 
-        public void AddInfor(EnemiesData enemiesData, Level level)
+        public void AddInfor(EnemiesData enemiesData, Level level, Player player)
         {
             _enemiesData = enemiesData;
             _level = level;
+            _player = player;
         }
 
         void AddInList(List<Wave> wave, int numberEnemies, Enemy enemy, Level level)
         {
-            Wave newWave = new Wave(numberEnemies, enemy, level);
-            wave.Add(newWave);
+            Wave newWave = new Wave(numberEnemies, enemy, level, _player);
+            wave.Add(newWave);  
         }
 
         public void SetUpWavesData()

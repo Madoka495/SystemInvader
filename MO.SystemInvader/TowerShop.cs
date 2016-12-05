@@ -14,12 +14,13 @@ namespace MO.SystemInvader
         int _range;
         int _width;
         int _height;
+        int _price;
         Vector2 _position = new Vector2();
         Vector2 _original = new Vector2();
         Vector2 _old = new Vector2(-1000, -1000);
         bool _wasPressed = false;
 
-        public TowerShop(Vector2 position, int rate, int range, int width, int height, int type)
+        public TowerShop(Vector2 position, int rate, int range, int width, int height, int type, int price)
         {
             _rate = rate;
             _range = range;
@@ -28,6 +29,7 @@ namespace MO.SystemInvader
             _type = type;
             _position = position;
             _original = position;
+            _price = price;
         }
 
         public int Type
@@ -75,6 +77,11 @@ namespace MO.SystemInvader
         {
             get { return _wasPressed; }
             set { _wasPressed = value; }
+        }
+
+        public int Price
+        {
+            get { return _price; }
         }
     }
 }

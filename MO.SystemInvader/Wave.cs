@@ -22,20 +22,22 @@ namespace MO.SystemInvader
         Enemy _enemy;
         List<Enemy> _enemies = new List<Enemy>();
         Level _currentLevel;
+        Player _player;
 
         //Fonctions/////////////////////////////////////////////////////////////////////////
         public bool SpawnNewWave => _spawnNewWave;
 
-        public Wave(int numberEnemies, Enemy enemy, Level level)
+        public Wave(int numberEnemies, Enemy enemy, Level level, Player player)
         {
             _numberEnemies = numberEnemies;
             _enemy = enemy;
             _currentLevel = level;
+            _player = player;
         }
 
         public void AddEnemies()
         {
-            Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.GiveBounty, _enemy.GiveSpeed);
+            Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.BountyGiven, _enemy.GiveSpeed, _player);
             newEnemy.SetWaypoints(_currentLevel.Waypoints);
             _enemies.Add(newEnemy);
 
@@ -65,12 +67,13 @@ namespace MO.SystemInvader
                     AddEnemies();
                 }
             }
+      
             for (int i = 0; i < Enemies.Count; i++)
             {
                 Enemy enemy = Enemies[i];
                 enemy.Update();
 
-                if (enemy.IsDead == false && enemy.GiveCurrentHealth > 0)
+                if (enemy.InGame == true && enemy.GiveCurrentHealth > 0)
                 {
                     if (enemy.GetPos() == _currentLevel.AtTheEnd)
                     {
@@ -80,13 +83,15 @@ namespace MO.SystemInvader
                     }
                 }
 
-                if (enemy.IsDead)
+                if (enemy.InGame == false)
                 {
                     Enemies.Remove(enemy);
                     i--;
+
                 }
 
             }
+            
         }
 
 
