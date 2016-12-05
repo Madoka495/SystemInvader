@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 using VirusInvader;
 
@@ -19,6 +21,11 @@ namespace SystemInvader
         Texture2D path;
         Texture2D grass;
         Texture2D enemyTexture;
+        Song song;
+        SoundEffect shoot;
+        SpriteFont font;
+        List<Tower> _towers;
+        List<Enemy> _enemies;
         int frame = 0;
         static Vector2 start = new Vector2(100, 100);
         int bulletWidth = 50;
@@ -28,9 +35,6 @@ namespace SystemInvader
         int enemyWidth = 32;
         int enemyHeight = 32;
         bool alreadyShot;
-        SpriteFont font;
-        List<Tower> _towers;
-        List<Enemy> _enemies;
 
         Level level = new Level();
 
@@ -51,16 +55,17 @@ namespace SystemInvader
         {
             // TODO: Add your initialization logic here
             base.Initialize();
-            _towers = new List<Tower>();
-            _enemies = new List<Enemy>();
+            _towers = new List<Tower>(); // position, rate, range, type
+            _enemies = new List<Enemy>(); // position, health, bountyGiven, speed
 
-            _towers.Add(new Tower(new Vector2(200, 30), 8, 150, 2));
-            _towers.Add(new Tower(new Vector2(50, 300), 16, 150, 1));
-            _towers.Add(new Tower(new Vector2(530, 280), 8, 200, 2));
+            _towers.Add(new Tower(new Vector2(200, 30), 16, 150, 2));
+            _towers.Add(new Tower(new Vector2(50, 300), 32, 150, 1));
+            _towers.Add(new Tower(new Vector2(530, 280), 16, 200, 2));
 
             _enemies.Add(new Enemy(Vector2.Zero, 100, 10, 1f));
-            _enemies.Add(new Enemy(Vector2.Zero, 300, 20, 2f));
-            _enemies.Add(new Enemy(Vector2.Zero, 300, 50, 0.4f));
+            _enemies.Add(new Enemy(Vector2.Zero, 150, 20, 2f));
+            _enemies.Add(new Enemy(Vector2.Zero, 500, 50, 0.4f));
+            _enemies.Add(new Enemy(Vector2.Zero, 30, 50, 4f));
         }
 
         /// <summary>
@@ -79,6 +84,11 @@ namespace SystemInvader
             level.AddTexture(grass);
             level.AddTexture(path);
             enemyTexture = Content.Load<Texture2D>("enemy");
+            song = Content.Load<Song>("wave_1_5");
+            shoot = Content.Load<SoundEffect>("shoot");
+
+            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Play(song);
             // TODO: use this.Content to load your game content here
         }
 
@@ -114,6 +124,7 @@ namespace SystemInvader
                     if (enemy.IsDead == false && alreadyShot == false && enemy.GetPos().X >= tower.GetPos().X - tower.GetRange() && enemy.GetPos().X <= tower.GetPos().X + tower.GetRange() && enemy.GetPos().Y >= tower.GetPos().Y - tower.GetRange() && enemy.GetPos().Y <= tower.GetPos().Y + tower.GetRange() && frame % tower.GetRate() == 0)
                     {
                         tower.Shoot(new Vector2(enemy.GetPos().X, enemy.GetPos().Y));
+                        shoot.Play(0.1f, 0.0f, 0.0f);
                         alreadyShot = true;
                     }
                 }

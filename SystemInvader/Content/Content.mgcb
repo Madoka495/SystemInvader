@@ -13,15 +13,15 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin userName
+#begin userName.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:TextureFormat=Compressed
-/build:userName
+/build:userName.spritefont
 
-#begin Font
+#begin timer.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:TextureFormat=Compressed
-/build:Font
+/build:timer.spritefont
 
