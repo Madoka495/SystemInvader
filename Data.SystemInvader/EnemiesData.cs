@@ -34,7 +34,7 @@ namespace Data.SystemInvader
             _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy3"));
         }
 
-        public void AddAllEnemy()
+        public void AddAllEnemy() // texture, position, health, bountyGiven, strength, speed, player
         {
             _listEnemies.Add(new Enemy(EnemyTexture[0], Vector2.Zero, 200, 10, 2, 4f, _player));
             _listEnemies.Add(new Enemy(EnemyTexture[1], Vector2.Zero, 1000, 15, 3, 0.7f, _player));

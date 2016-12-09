@@ -7,20 +7,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MO.SystemInvader;
+using Microsoft.Xna.Framework.Content;
 
 namespace SystemInvader
 {
-    public class MouseMove
+    public class PlaceTower
     {
         List<TowerShop> _towers;
         List<Tower> _placedTowers;
         Player _player;
 
-        public MouseMove(Player player)
+        public PlaceTower(Player player, ContentManager content)
         {
-            _towers = new List<TowerShop>(); // position, rate, range, width, height, type, price
-            _towers.Add(new TowerShop(new Vector2(220, 550), 10, 200, 70, 120, 1, 20));
-            _towers.Add(new TowerShop(new Vector2(320, 550), 8, 280, 70, 120, 2, 10));
+            _towers = new List<TowerShop>(); // position, sprite, rate, range, type, price
+            _towers.Add(new TowerShop(new Vector2(150, 550), content.Load<Texture2D>("Sprites/tower"), 10, 200, 1, 20));
+            _towers.Add(new TowerShop(new Vector2(230, 550), content.Load<Texture2D>("Sprites/tower"), 8, 280, 2, 10));
+            _towers.Add(new TowerShop(new Vector2(310, 590), content.Load<Texture2D>("Sprites/tower2"), 40, 175, 3, 50));
+            _towers.Add(new TowerShop(new Vector2(390, 590), content.Load<Texture2D>("Sprites/tower2"), 16, 200, 4, 100));
 
             _placedTowers = new List<Tower>();
             _player = player;
@@ -53,7 +56,7 @@ namespace SystemInvader
                             tower.Position = new Vector2(tower.Position.X, tower.Position.Y - (tower.Old.Y - stateMouse.Y));
                         }
                     }
-                    if (stateMouse.X >= tower.Position.X && stateMouse.X <= tower.Position.X + tower.Width && stateMouse.Y >= tower.Position.Y && stateMouse.Y <= tower.Position.Y + tower.Height)
+                    if (stateMouse.X >= tower.Position.X && stateMouse.X <= tower.Position.X + tower.Sprite.Width && stateMouse.Y >= tower.Position.Y && stateMouse.Y <= tower.Position.Y + tower.Sprite.Height)
                     {
                         tower.Old = new Vector2(stateMouse.X, stateMouse.Y);
                     }
@@ -69,7 +72,7 @@ namespace SystemInvader
                         if (_player.CurrentGold >= tower.Price)
                         {
                             _player.CurrentGold -= tower.Price;
-                            _placedTowers.Add(new Tower(tower.Position, tower.Rate, tower.Range, tower.Type));
+                            _placedTowers.Add(new Tower(tower.Position, tower.Sprite, tower.Rate, tower.Range, tower.Type));
                         }
                     }
                     tower.Position = tower.Original;

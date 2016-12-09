@@ -23,7 +23,7 @@ namespace SystemInvader
         SpriteBatch spriteBatch;
 
         //Menu
-        enum GameState { mainMenu, enterName, scores, shopTower, inGame, beforeGame }
+        enum GameState { mainMenu, enterName, scores, shopTower, inGame, beforeGame, won, lost }
 
         GameState gameState;
 
@@ -33,6 +33,8 @@ namespace SystemInvader
         List<ElementMenu> beforeGame = new List<ElementMenu>();
         List<ElementMenu> shopTower = new List<ElementMenu>();
         List<ElementMenu> scores = new List<ElementMenu>();
+        List<ElementMenu> won = new List<ElementMenu>();
+        List<ElementMenu> lost = new List<ElementMenu>();
 
 
         Keys[] lastPressedKeys = new Keys[5];
@@ -42,14 +44,16 @@ namespace SystemInvader
         bool _isInGame;
         bool _alreadyShot;
 
-        SpriteFont sf;
+        SpriteFont _mainSpriteFont;
+        SpriteFont _mainFont;
+        SpriteFont _endingMessage;
 
         // Keyboard
         InputTextKeyboard _keyboard;
         KeyboardState _lastKeyboardState;
 
         //Mouse
-        MouseMove _mouseMove;
+        PlaceTower _placeTowers;
 
         // Player
         Player _player;
@@ -68,7 +72,6 @@ namespace SystemInvader
         EnemiesData _enemiesData;
 
         //Tower
-        Texture2D _towerSprite;
         List<Tower> _towers;
 
         // Bullet
@@ -77,7 +80,6 @@ namespace SystemInvader
         // Timer
         int _timer = 30;
         int _frame = 0;
-        SpriteFont _timerFont;
 
         // Wave
         WaveManager _waveManager;
@@ -99,16 +101,15 @@ namespace SystemInvader
             _landsData = new LandsData();
 
             //Mouse
-            _mouseMove = new MouseMove(_player);
             IsMouseVisible = true;
 
             // Keyboard
             _keyboard = new InputTextKeyboard();
             _lastKeyboardState = new KeyboardState();
-            
+
             //Windows size
-            graphics.PreferredBackBufferHeight = _level.WindowHeight;
             graphics.PreferredBackBufferWidth = _level.WindowWidth;
+            graphics.PreferredBackBufferHeight = _level.WindowHeight;
 
             // Waves
             _wavesData = new WavesData();
@@ -125,11 +126,26 @@ namespace SystemInvader
 
             enterName.Add(new ElementMenu("Sprites/done"));
 
+            inGame.Add(new ElementMenu("Sprites/menu"));
+            inGame.Add(new ElementMenu("Sprites/rewind"));
+
             beforeGame.Add(new ElementMenu("Sprites/towersShop"));
             beforeGame.Add(new ElementMenu("Sprites/start"));
+            beforeGame.Add(new ElementMenu("Sprites/menu"));
+            beforeGame.Add(new ElementMenu("Sprites/rewind"));
 
             shopTower.Add(new ElementMenu("Sprites/towers2"));
             shopTower.Add(new ElementMenu("Sprites/start"));
+            shopTower.Add(new ElementMenu("Sprites/menu"));
+            shopTower.Add(new ElementMenu("Sprites/rewind"));
+
+            won.Add(new ElementMenu("Sprites/menu"));
+            won.Add(new ElementMenu("Sprites/rewind"));
+            won.Add(new ElementMenu("Sprites/scores"));
+
+            lost.Add(new ElementMenu("Sprites/menu"));
+            lost.Add(new ElementMenu("Sprites/rewind"));
+            lost.Add(new ElementMenu("Sprites/scores"));
         }
 
         /// <summary>
@@ -145,7 +161,7 @@ namespace SystemInvader
             _bgPosition = new Vector2(0, 0);
 
             // Timer
-            _timerFont = Content.Load<SpriteFont>("timer");
+            _mainFont = Content.Load<SpriteFont>("timer");
 
             //Towers
             _towers = new List<Tower>();
@@ -166,7 +182,8 @@ namespace SystemInvader
             // TODO: use this.Content to load your game content here
             //Menu
             ContentManager content = Content;
-            sf = content.Load<SpriteFont>("userName");
+            _mainSpriteFont = content.Load<SpriteFont>("userName");
+            _endingMessage = content.Load<SpriteFont>("won");
             _backGroundUser = Content.Load<Texture2D>("Background/enter_name");
 
             foreach (ElementMenu element in main)
@@ -189,15 +206,6 @@ namespace SystemInvader
             }
             enterName.Find(x => x.AssetName == "Sprites/done").MoveElement(150, 80);
 
-            foreach (ElementMenu element in shopTower)
-            {
-                element.LoadContent(content);
-                element.CenterElement(600, 800);
-                element.clickEvent += OnClick;
-            }
-            shopTower.Find(x => x.AssetName == "Sprites/towers2").MoveElement(-336, 343);
-            shopTower.Find(x => x.AssetName == "Sprites/start").MoveElement(620, -265);
-
             foreach (ElementMenu element in beforeGame)
             {
                 element.LoadContent(content);
@@ -206,6 +214,48 @@ namespace SystemInvader
             }
             beforeGame.Find(x => x.AssetName == "Sprites/towersShop").MoveElement(-336, 343);
             beforeGame.Find(x => x.AssetName == "Sprites/start").MoveElement(620, -265);
+            beforeGame.Find(x => x.AssetName == "Sprites/rewind").MoveElement(620, -200);
+            beforeGame.Find(x => x.AssetName == "Sprites/menu").MoveElement(620, -135);
+
+            foreach (ElementMenu element in shopTower)
+            {
+                element.LoadContent(content);
+                element.CenterElement(600, 800);
+                element.clickEvent += OnClick;
+            }
+            shopTower.Find(x => x.AssetName == "Sprites/towers2").MoveElement(-336, 343);
+            shopTower.Find(x => x.AssetName == "Sprites/start").MoveElement(620, -265);
+            shopTower.Find(x => x.AssetName == "Sprites/rewind").MoveElement(620, -200);
+            shopTower.Find(x => x.AssetName == "Sprites/menu").MoveElement(620, -135);
+
+            foreach (ElementMenu element in inGame)
+            {
+                element.LoadContent(content);
+                element.CenterElement(600, 800);
+                element.clickEvent += OnClick;
+            }
+            inGame.Find(x => x.AssetName == "Sprites/rewind").MoveElement(620, -200);
+            inGame.Find(x => x.AssetName == "Sprites/menu").MoveElement(620, -135);
+
+            foreach (ElementMenu element in won)
+            {
+                element.LoadContent(content);
+                element.CenterElement(600, 800);
+                element.clickEvent += OnClick;
+            }
+            won.Find(x => x.AssetName == "Sprites/menu").MoveElement(-90, 200);
+            won.Find(x => x.AssetName == "Sprites/rewind").MoveElement(160, 200);
+            won.Find(x => x.AssetName == "Sprites/scores").MoveElement(430, 200);
+
+            foreach (ElementMenu element in lost)
+            {
+                element.LoadContent(content);
+                element.CenterElement(600, 800);
+                element.clickEvent += OnClick;
+            }
+            lost.Find(x => x.AssetName == "Sprites/menu").MoveElement(-90, 200);
+            lost.Find(x => x.AssetName == "Sprites/rewind").MoveElement(160, 200);
+            lost.Find(x => x.AssetName == "Sprites/scores").MoveElement(430, 200);
 
             // Map
             _landsData.AddTextureLands1(this.Content);
@@ -216,10 +266,10 @@ namespace SystemInvader
             _enemiesData.AddAllEnemy();
 
             //Tower
-            _towerSprite = Content.Load<Texture2D>("Sprites/tower");
+            _placeTowers = new PlaceTower(_player, this.Content);
 
             //Bullet
-            _bullet = Content.Load<Texture2D>("Sprites/bullet1");
+            _bullet = Content.Load<Texture2D>("Sprites/bullet2");
 
             //Wave
             _wavesData.AddInfor(_enemiesData, _level, _player);
@@ -247,8 +297,16 @@ namespace SystemInvader
                 Exit();
             // TODO: Add your update logic here
             //Menu
-            _towers = _mouseMove.PlacedTowers();
-            
+            _towers = _placeTowers.PlacedTowers();
+
+            if (_player.Life == 0)
+            {
+                gameState = GameState.lost;
+            }
+            else if (_waveManager.Won)
+            {
+                gameState = GameState.won;
+            }
 
             if (Mouse.GetState().LeftButton == ButtonState.Released)
             {
@@ -289,44 +347,50 @@ namespace SystemInvader
                     {
                         element.Update();
                     }
-                    _mouseMove.Update();
+                    _placeTowers.Update();
                     if (_frame % 60 == 0)
                         _timer--;
                     break;
                 case GameState.inGame:
-
                     _waveManager.Update(gameTime);
-                    foreach (Tower tower in _towers)
+                    if(gameState == GameState.inGame)
                     {
-                        _alreadyShot = false;
-                        foreach(Wave wave in _waveManager.Waves)
+                        foreach (Tower tower in _towers)
                         {
-                            foreach (Enemy enemy in wave.Enemies)
-                            {
-                                if (enemy.InGame == true && _alreadyShot == false && enemy.GetPos().X >= tower.GetPos().X - tower.GetRange() && enemy.GetPos().X <= tower.GetPos().X + tower.GetRange() && enemy.GetPos().Y >= tower.GetPos().Y - tower.GetRange() && enemy.GetPos().Y <= tower.GetPos().Y + tower.GetRange() && _frame % tower.GetRate() == 0)
-                                {
-                                    tower.Shoot(new Vector2(enemy.GetPos().X, enemy.GetPos().Y));
-                                    _alreadyShot = true;
-                                }
-                            }
-                        }
-                        foreach (Projectile projectile in tower.GetProjectiles())
-                        {
-                            if (projectile.DestReached == false)
-                            {
-                                projectile.Update();
-                            }
+                            _alreadyShot = false;
                             foreach (Wave wave in _waveManager.Waves)
                             {
                                 foreach (Enemy enemy in wave.Enemies)
                                 {
-                                    if (enemy.InGame == true && projectile.GetPos().X <= enemy.GetPos().X && projectile.GetPos().X + _bullet.Width >= enemy.GetPos().X && projectile.GetPos().Y <= enemy.GetPos().Y && projectile.GetPos().Y + _bullet.Height >= enemy.GetPos().Y && projectile.DestReached == false)
+                                    if (enemy.InGame == true && _alreadyShot == false && enemy.GetPos().X >= tower.GetPos().X - tower.GetRange() && enemy.GetPos().X <= tower.GetPos().X + tower.GetRange() && enemy.GetPos().Y >= tower.GetPos().Y - tower.GetRange() && enemy.GetPos().Y <= tower.GetPos().Y + tower.GetRange() && _frame % tower.GetRate() == 0)
                                     {
-                                        projectile.DestReached = true;
-                                        enemy.Deal(projectile.Power());
+                                        tower.Shoot(new Vector2(enemy.GetPos().X, enemy.GetPos().Y));
+                                        _alreadyShot = true;
                                     }
                                 }
                             }
+                            foreach (Projectile projectile in tower.GetProjectiles())
+                            {
+                                if (projectile.DestReached == false)
+                                {
+                                    projectile.Update();
+                                }
+                                foreach (Wave wave in _waveManager.Waves)
+                                {
+                                    foreach (Enemy enemy in wave.Enemies)
+                                    {
+                                        if (enemy.InGame == true && projectile.GetPos().X <= enemy.GetPos().X && projectile.GetPos().X + _bullet.Width >= enemy.GetPos().X && projectile.GetPos().Y <= enemy.GetPos().Y && projectile.GetPos().Y + _bullet.Height >= enemy.GetPos().Y && projectile.DestReached == false)
+                                        {
+                                            projectile.DestReached = true;
+                                            enemy.Deal(projectile.Power());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        foreach (ElementMenu element in inGame)
+                        {
+                            element.Update();
                         }
                     }
 
@@ -339,7 +403,6 @@ namespace SystemInvader
                         _waveManager.NextWave();
                         _timer = 30;
                     }
-
                     break;
                 case GameState.beforeGame:
                     foreach (ElementMenu element in beforeGame)
@@ -356,6 +419,18 @@ namespace SystemInvader
                         }
                     }
                         break;
+                case GameState.won:
+                    foreach (ElementMenu element in won)
+                    {
+                        element.Update();
+                    }
+                    break;
+                case GameState.lost:
+                    foreach (ElementMenu element in lost)
+                    {
+                        element.Update();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -397,13 +472,17 @@ namespace SystemInvader
                     {
                         element.Draw(spriteBatch);
                     }
-                    spriteBatch.DrawString(sf, myName, new Vector2(430, 325), Color.Black);
+                    spriteBatch.DrawString(_mainSpriteFont, myName, new Vector2(430, 325), Color.Black);
                     break;
 
                 case GameState.inGame:
                     _level.Draw(spriteBatch);
                     _isInGame = true;
-                    spriteBatch.DrawString(sf, myName, new Vector2(150, 10), Color.White);
+                    spriteBatch.DrawString(_mainSpriteFont, myName, new Vector2(150, 10), Color.White);
+                    foreach (ElementMenu element in inGame)
+                    {
+                        element.Draw(spriteBatch);
+                    }
                     break;
                 case GameState.shopTower:
                     _level.Draw(spriteBatch);
@@ -412,9 +491,9 @@ namespace SystemInvader
                     {
                         element.Draw(spriteBatch);
                     }
-                    foreach (TowerShop tower in _mouseMove.Towers())
+                    foreach (TowerShop tower in _placeTowers.Towers())
                     {
-                        spriteBatch.Draw(_towerSprite, new Rectangle((int)tower.Position.X, (int)tower.Position.Y, tower.Width, tower.Height), Color.White);
+                        spriteBatch.Draw(tower.Sprite, new Rectangle((int)tower.Position.X, (int)tower.Position.Y, tower.Sprite.Width, tower.Sprite.Height), Color.White);
                     }
                     break;
 
@@ -422,6 +501,22 @@ namespace SystemInvader
                     _level.Draw(spriteBatch);
                     _isInGame = true;
                     foreach (ElementMenu element in beforeGame)
+                    {
+                        element.Draw(spriteBatch);
+                    }
+                    break;
+                case GameState.won:
+                    spriteBatch.DrawString(_endingMessage, "SUCCESS !", new Vector2(370, 100), Color.White);
+                    spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(450, 200), Color.MediumOrchid);
+                    foreach (ElementMenu element in won)
+                    {
+                        element.Draw(spriteBatch);
+                    }
+                    break;
+                case GameState.lost:
+                    spriteBatch.DrawString(_endingMessage, "GAME OVER", new Vector2(370, 100), Color.White);
+                    spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(450, 200), Color.MediumOrchid);
+                    foreach (ElementMenu element in lost)
                     {
                         element.Draw(spriteBatch);
                     }
@@ -434,7 +529,7 @@ namespace SystemInvader
                 _waveManager.Draw(spriteBatch);
                 foreach (Tower tower in _towers)
                 {
-                    spriteBatch.Draw(_towerSprite, new Rectangle((int)tower.GetPos().X, (int)tower.GetPos().Y, _towerSprite.Width, _towerSprite.Height), Color.White);
+                    spriteBatch.Draw(tower.Sprite, new Rectangle((int)tower.GetPos().X, (int)tower.GetPos().Y, tower.Sprite.Width, tower.Sprite.Height), Color.White);
                     foreach (Projectile projectile in tower.GetProjectiles())
                     {
                         if (projectile.DestReached == false)
@@ -443,12 +538,12 @@ namespace SystemInvader
                         }
                     }
                 }
-                spriteBatch.DrawString(_timerFont, "Score : " + _player.Score, new Vector2(350, 10), Color.MediumOrchid);
-                spriteBatch.DrawString(_timerFont, "Life : " + _player.Life, new Vector2(550, 10), Color.White);
-                spriteBatch.DrawString(_timerFont, "Vang : " + _player.CurrentGold, new Vector2(750, 10), Color.Gold);
+                spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(350, 10), Color.MediumOrchid);
+                spriteBatch.DrawString(_mainFont, "Life : " + _player.Life, new Vector2(550, 10), Color.White);
+                spriteBatch.DrawString(_mainFont, "Vang : " + _player.CurrentGold, new Vector2(750, 10), Color.Gold);
                 if(gameState != GameState.inGame)
                 {
-                    spriteBatch.DrawString(_timerFont, "Timer : " + _timer, new Vector2(150, 10), Color.Black);
+                    spriteBatch.DrawString(_mainFont, "Timer : " + _timer, new Vector2(150, 10), Color.Black);
                 }
             }
             spriteBatch.End();
@@ -458,8 +553,6 @@ namespace SystemInvader
 
         public void OnClick(string element)
         {
-            /*Console.WriteLine("Onclick : " + element);
-              Console.WriteLine("Pressed : " + _isPressed);*/
             if (_isPressed == false)
             {
                 if (element == "Sprites/play")
@@ -467,11 +560,11 @@ namespace SystemInvader
                     //Play the game
                     gameState = GameState.beforeGame;
                 }
-                if (element == "Sprites/name")
+                else if (element == "Sprites/name")
                 {
                     gameState = GameState.enterName;
                 }
-                if (element == "Sprites/done")
+                else if (element == "Sprites/done")
                 {
                     if (!File.Exists(userNameTxt))
                     {
@@ -486,18 +579,40 @@ namespace SystemInvader
                     }
                     gameState = GameState.mainMenu;
                 }
-                if (element == "Sprites/towersShop")
+                else if (element == "Sprites/towersShop")
                 {
                     gameState = GameState.shopTower;
                 }
-                if (element == "Sprites/start")
+                else if (element == "Sprites/start")
                 {
                     gameState = GameState.inGame;
                 }
-                if (element == "Sprites/towers2")
+                else if (element == "Sprites/towers2")
                 {
                     gameState = GameState.beforeGame;
-                    //Console.WriteLine("gameState: " + gameState);
+                }
+                else if (element == "Sprites/menu")
+                {
+                    gameState = GameState.mainMenu;
+                    _timer = 30;
+                    _towers.Clear();
+                    _wavesData = new WavesData();
+                    _wavesData.AddInfor(_enemiesData, _level, _player);
+                    _wavesData.SetUpWavesData();
+                    _waveManager = new WaveManager(_wavesData.Wave);
+                    _player.Rewind();
+                }
+                else if (element == "Sprites/rewind")
+                {
+                    gameState = GameState.beforeGame;
+                    _timer = 30;
+                    _towers.Clear();
+                    _wavesData.Wave.Clear();
+                    _wavesData = new WavesData();
+                    _wavesData.AddInfor(_enemiesData, _level, _player);
+                    _wavesData.SetUpWavesData();
+                    _waveManager = new WaveManager(_wavesData.Wave);
+                    _player.Rewind();
                 }
                 _isPressed = true;
             }

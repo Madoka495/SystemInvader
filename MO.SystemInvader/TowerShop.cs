@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,24 +13,22 @@ namespace MO.SystemInvader
         int _type;
         int _rate;
         int _range;
-        int _width;
-        int _height;
         int _price;
         Vector2 _position = new Vector2();
         Vector2 _original = new Vector2();
         Vector2 _old = new Vector2(-1000, -1000);
+        Texture2D _sprite;
         bool _wasPressed = false;
 
-        public TowerShop(Vector2 position, int rate, int range, int width, int height, int type, int price)
+        public TowerShop(Vector2 position, Texture2D sprite, int rate, int range, int type, int price)
         {
             _rate = rate;
             _range = range;
-            _width = width;
-            _height = height;
             _type = type;
             _position = position;
             _original = position;
             _price = price;
+            _sprite = sprite;
         }
 
         public int Type
@@ -47,16 +46,11 @@ namespace MO.SystemInvader
             get { return _range; }
             set { _range = value; }
         }
-        public int Height
+        public Texture2D Sprite
         {
-            get { return _height; }
-            set { _height = value; }
+            get { return _sprite; }
         }
-        public int Width
-        {
-            get { return _width; }
-            set { _width = value; }
-        }
+
         public int Price
         {
             get { return _price; }

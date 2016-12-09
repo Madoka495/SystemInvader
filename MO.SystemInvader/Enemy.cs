@@ -12,7 +12,7 @@ namespace MO.SystemInvader
     public class Enemy
     {
         //Parametre///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        int _Health;
+        int _health;
         int _currentHealth;
         int _price;
         int _strength;
@@ -35,8 +35,8 @@ namespace MO.SystemInvader
         {
             _position = position;
             _texture = texture;
-            _Health = health;
-            _currentHealth = _Health;
+            _health = health;
+            _currentHealth = _health;
             _price = bountyGiven;
             _strength = strength;
             _speed = speed;
@@ -52,15 +52,20 @@ namespace MO.SystemInvader
         }
 
         public int BountyGiven => _price;
-        public int GiveHealth => _Health;
+        public int GiveHealth => _health;
         public int GiveStrength => _strength;
 
         public float DistanceToDestination => Vector2.Distance(_position, _waypoints.Peek());
         public float GiveSpeed => _speed;
-        public bool InGame => _inGame;
 
         public Texture2D GiveTexture => _texture;
         public Vector2 GetPos() => _position;
+
+        public bool InGame
+        {
+            get { return _inGame; }
+            set { _inGame = value; }
+        }
 
         public void Deal(int damages)
         {
@@ -77,7 +82,7 @@ namespace MO.SystemInvader
         {
             if (_currentHealth <= 0 && _inGame)
             {
-                _player.Score++;
+                _player.Score += ((int) _speed + _strength + _health);
                 _player.CurrentGold += _price;
                 _inGame = false;
             }

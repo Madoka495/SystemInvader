@@ -25,7 +25,11 @@ namespace MO.SystemInvader
         Player _player;
 
         //Fonctions/////////////////////////////////////////////////////////////////////////
-        public bool SpawnNewWave => _spawnNewWave;
+        public bool SpawnNewWave
+        {
+            get { return _spawnNewWave; }
+            set { _spawnNewWave = value; }
+        }
 
         public Wave(int numberEnemies, Enemy enemy, Level level, Player player)
         {
