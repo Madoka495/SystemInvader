@@ -42,6 +42,7 @@ namespace MO.SystemInvader
 
         public int Width => map.GetLength(1);
         public int Height => map.GetLength(0);
+
         public Texture2D _texture;
 
         public Vector2 AtTheEnd => new Vector2(5, 20) * 32;
@@ -57,6 +58,41 @@ namespace MO.SystemInvader
             _listTexture = new List<Texture2D>();
         }
 
+        public bool IsInPaths(Vector2 vectorPos, Texture2D texture)
+        {
+            int x = 0;
+            int y = 0;
+            for (int i = 0; i < Width; i++)
+            {
+                y = 0;
+                for (int j = 0; j < Height; j++)
+                {
+                    if (map[j, i] == 0 || map[j, i] == 1 || map[j, i] == 10)
+                    {
+
+                        float mapX1 = x;
+                        float mapX2 = x + 32;
+                        float mapY1 = y;
+                        float mapY2 = y + 32;
+                        float towerX1 = vectorPos.X;
+                        float towerX2 = vectorPos.X + texture.Width;
+                        float towerY1 = vectorPos.Y;
+                        float towerY2 = vectorPos.Y + texture.Height;
+
+                        if ((mapX1 > towerX1 && mapX1 < towerX2) || (mapX2 > towerX1 && mapX2 < towerX2) || (towerX1 > mapX1 && towerX1 < mapX2) || (towerX2 > mapX1 && towerX2 < mapX2))
+                        {
+                            if ((mapY1 > towerY1 && mapY1 < towerY2) || (mapY2 > towerY1 && mapY2 < towerY2) || (towerY1 > mapY1 && towerY1 < mapY2) || (towerY2 > mapY1 && towerY2 < mapY2))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    y += 32;
+                }
+                x += 32;
+            }
+            return false;
+        }
         public void AddWaypoints()
         {
             waypoints.Enqueue(new Vector2(0, 1) * 32);

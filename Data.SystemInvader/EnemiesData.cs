@@ -15,6 +15,7 @@ namespace Data.SystemInvader
     {
         List<Enemy> _listEnemies = new List<Enemy>();
         List<Texture2D> _enemyTexture = new List<Texture2D>();
+        List<Texture2D> _lifeBar = new List<Texture2D>();
         Player _player;
 
         public EnemiesData(Player player)
@@ -32,13 +33,21 @@ namespace Data.SystemInvader
             _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy1"));
             _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy2"));
             _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy3"));
+            _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy4"));
+            _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy5"));
+            _lifeBar.Add(content.Load<Texture2D>("Sprites/green"));
+            _lifeBar.Add(content.Load<Texture2D>("Sprites/yellow"));
+            _lifeBar.Add(content.Load<Texture2D>("Sprites/red"));
+            _lifeBar.Add(content.Load<Texture2D>("Sprites/black"));
         }
 
-        public void AddAllEnemy()
+        public void AddAllEnemy() // texture, position, health, bountyGiven, strength, speed, player
         {
-            _listEnemies.Add(new Enemy(EnemyTexture[0], Vector2.Zero, 200, 10, 2, 4f, _player));
-            _listEnemies.Add(new Enemy(EnemyTexture[1], Vector2.Zero, 1000, 15, 3, 0.7f, _player));
-            _listEnemies.Add(new Enemy(EnemyTexture[2], Vector2.Zero, 1500, 20, 5, 0.5f, _player));
+            _listEnemies.Add(new Enemy(EnemyTexture[0], Vector2.Zero, 200, 10, 3, 4f, _player, _lifeBar));
+            _listEnemies.Add(new Enemy(EnemyTexture[1], Vector2.Zero, 1000, 15, 5, 0.7f, _player, _lifeBar));
+            _listEnemies.Add(new Enemy(EnemyTexture[2], Vector2.Zero, 2500, 50, 10, 0.5f, _player, _lifeBar));
+            _listEnemies.Add(new Enemy(EnemyTexture[3], Vector2.Zero, 10000, 400, 50, 0.7f, _player, _lifeBar));
+            _listEnemies.Add(new Enemy(EnemyTexture[4], Vector2.Zero, 4000, 150, 15, 1f, _player, _lifeBar));
         }
 
         public List<Enemy> Enemy

@@ -38,10 +38,14 @@ namespace Data.SystemInvader
         public void AddWave()
         {
             List<Wave> Wave = new List<Wave>();
-            foreach (Enemy enemy in _enemiesData.Enemy)
-            {
-                AddInList(Wave, 5, enemy, _level);
-            }
+            AddInList(Wave, 5, _enemiesData.Enemy[0], _level);
+            AddInList(Wave, 8, _enemiesData.Enemy[0], _level);
+            AddInList(Wave, 5, _enemiesData.Enemy[1], _level);
+            AddInList(Wave, 3, _enemiesData.Enemy[2], _level);
+            AddInList(Wave, 1, _enemiesData.Enemy[3], _level);
+            AddInList(Wave, 6, _enemiesData.Enemy[2], _level);
+            AddInList(Wave, 4, _enemiesData.Enemy[4], _level);
+            AddInList(Wave, 24, _enemiesData.Enemy[0], _level);
             _wave = Wave;
         }
 
