@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,28 +9,25 @@ namespace MO.SystemInvader
 {
     public class TowerShop
     {
-        int _type;
-        int _rate;
-        int _range;
-        int _price;
+        private int _type;
+        Tower _tower;
+
         Vector2 _position = new Vector2();
         Vector2 _original = new Vector2();
+        Vector2 _posBase = new Vector2();
         Vector2 _old = new Vector2(-1000, -1000);
-        Texture2D _sprite;
-        bool _wasPressed = false;
+        bool _isSetup = false;
 
-        public TowerShop(Vector2 position, Texture2D sprite, int rate, int range, int type, int price)
+        public TowerShop(Vector2 position, Tower tower, int type)
         {
-            _rate = rate;
-            _range = range;
             _type = type;
             _position = position;
             _original = position;
-            _price = price;
-            _sprite = sprite;
+            _tower = tower;
         }
+        public Tower GiveTower => _tower;
 
-        public int Type
+        /*public int Type
         {
             get { return _type; }
             set { _type = value; }
@@ -46,15 +42,17 @@ namespace MO.SystemInvader
             get { return _range; }
             set { _range = value; }
         }
-        public Texture2D Sprite
+        public int Height
         {
-            get { return _sprite; }
+            get { return _height; }
+            set { _height = value; }
         }
+        public int Width
+        {
+            get { return _width; }
+            set { _width = value; }
 
-        public int Price
-        {
-            get { return _price; }
-        }
+        public int Price => _price;*/
 
         public Vector2 Position
         {
@@ -71,10 +69,24 @@ namespace MO.SystemInvader
             get { return _original; }
         }
 
-        public bool WasPressed
+        public bool IsSetup
         {
-            get { return _wasPressed; }
-            set { _wasPressed = value; }
+            get { return _isSetup; }
+            set { _isSetup = value; }
+        }
+
+        public Vector2 Base
+        {
+            get { return _posBase; }
+            set { _posBase = value; }
+        }
+
+        public int ConvertToNearestTile(int value)
+        {
+            int newValue = (int)(value / 32);
+            newValue = newValue * 32;
+
+            return newValue;
         }
     }
 }

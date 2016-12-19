@@ -4,9 +4,7 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>D:/dev/ProjetInformatique/SystemInvader/SystemInvader/Content/userName.spritefont</File>
-    <File>D:/dev/ProjetInformatique/SystemInvader/SystemInvader/Content/timer.spritefont</File>
-    <File>D:/dev/ProjetInformatique/SystemInvader/SystemInvader/Content/won.spritefont</File>
-    <File>D:/dev/ProjetInformatique/SystemInvader/SystemInvader/Content/score.spritefont</File>
+    <File>C:/Users/Vu Tuan Trung/Desktop/SystemInvader/SystemInvader/Content/userName.spritefont</File>
+    <File>C:/Users/Vu Tuan Trung/Desktop/SystemInvader/SystemInvader/Content/timer.spritefont</File>
   </SourceFiles>
 </SourceFileCollection>

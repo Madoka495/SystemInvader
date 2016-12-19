@@ -1,10 +1,13 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
+using MO.SystemInvader;
 
 namespace MO.SystemInvader
 {
@@ -14,26 +17,27 @@ namespace MO.SystemInvader
         Vector2 _dest = new Vector2();
         Vector2 _start = new Vector2();
         Vector2 _diff = new Vector2();
-        Texture2D _sprite;
-        int _speed;
+        Texture2D _texture;
+
+        float _speed;
         bool _xPos;
         bool _yPos;
         bool _reached;
         int _power;
+        int _bulletWidth;
+        int _bulletHeight;
 
-        public Projectile(Vector2 start, Vector2 dest, int speed, int power, Texture2D sprite)
+        public Projectile(Texture2D texture, Vector2 start, Vector2 dest, float speed, int power, int bulletWidth, int bulletHeight)
         {
+            _texture = texture;
             _current = start;
             _dest = dest;
             _start = start;
             _speed = speed;
             _power = power;
-            _sprite = sprite;
-        }
-
-        public Texture2D Sprite
-        {
-            get { return _sprite; }
+            _texture = texture;
+            _bulletHeight = bulletHeight;
+            _bulletWidth = bulletWidth;
         }
 
         public void Update()
@@ -184,14 +188,28 @@ namespace MO.SystemInvader
             }
         }
 
-        public int Power()
+        public bool hitEnemy(Vector2 enemy, Texture2D bullet)
         {
-            return _power;
+            if (_current.X <= enemy.X &&
+                _current.X + bullet.Width >= enemy.X &&
+                _current.Y <= enemy.Y &&
+                _current.Y + bullet.Height >= enemy.Y)
+                return true;
+            return false;
         }
 
-        public Vector2 GetPos()
+        public int Power() => _power;
+        public Vector2 GetPos() => _current;
+        public Texture2D GiveTexture => _texture;
+
+
+        //Draw///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        public void Draw(SpriteBatch spriteBatch)
         {
-            return _current;
+            spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _bulletWidth, _bulletHeight), Color.White);
         }
     }
+
+    
+
 }

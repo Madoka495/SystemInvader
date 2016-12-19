@@ -15,7 +15,6 @@ namespace Data.SystemInvader
     {
         List<Enemy> _listEnemies = new List<Enemy>();
         List<Texture2D> _enemyTexture = new List<Texture2D>();
-        List<Texture2D> _lifeBar = new List<Texture2D>();
         Player _player;
 
         public EnemiesData(Player player)
@@ -28,22 +27,27 @@ namespace Data.SystemInvader
             get { return _enemyTexture; }
         }
 
+        string _folderPath = "Sprites/Enemies/";
         public void AddTextureEnemies(ContentManager content)
         {
-            _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy1"));
-            _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy2"));
-            _enemyTexture.Add(content.Load<Texture2D>("Sprites/enemy3"));
-            _lifeBar.Add(content.Load<Texture2D>("Sprites/green"));
-            _lifeBar.Add(content.Load<Texture2D>("Sprites/yellow"));
-            _lifeBar.Add(content.Load<Texture2D>("Sprites/red"));
-            _lifeBar.Add(content.Load<Texture2D>("Sprites/black"));
+            for (int i = 1; i <= 8; i++)
+            {
+                string nameImage = "Monster" + i.ToString();
+                Texture2D newTexture = content.Load<Texture2D>(_folderPath + nameImage);
+                _enemyTexture.Add(newTexture);
+            }
         }
 
-        public void AddAllEnemy() // texture, position, health, bountyGiven, strength, speed, player
+        public void AddAllEnemy()
         {
-            _listEnemies.Add(new Enemy(EnemyTexture[0], Vector2.Zero, 200, 10, 2, 4f, _player, _lifeBar));
-            _listEnemies.Add(new Enemy(EnemyTexture[1], Vector2.Zero, 1000, 15, 3, 0.7f, _player, _lifeBar));
-            _listEnemies.Add(new Enemy(EnemyTexture[2], Vector2.Zero, 1500, 20, 5, 0.5f, _player, _lifeBar));
+            _listEnemies.Add(new Enemy(EnemyTexture[0], Vector2.Zero, 50, 10, 10, 1f, 48, 48, _player));
+            _listEnemies.Add(new Enemy(EnemyTexture[1], Vector2.Zero, 50, 15, 10, 1f, 48, 48, _player));
+            _listEnemies.Add(new Enemy(EnemyTexture[2], Vector2.Zero, 50, 20, 10, 1f, 48, 48, _player));
+            _listEnemies.Add(new Enemy(EnemyTexture[3], Vector2.Zero, 50, 20, 10, 1f, 48, 48, _player));
+            _listEnemies.Add(new Enemy(EnemyTexture[4], Vector2.Zero, 50, 20, 10, 1f, 48, 48, _player));
+            _listEnemies.Add(new Enemy(EnemyTexture[5], Vector2.Zero, 50, 20, 10, 1f, 48, 48, _player));
+            _listEnemies.Add(new Enemy(EnemyTexture[6], Vector2.Zero, 50, 20, 10, 1f, 48, 48, _player));
+            _listEnemies.Add(new Enemy(EnemyTexture[7], Vector2.Zero, 50, 20, 10, 1f, 48, 48, _player));
         }
 
         public List<Enemy> Enemy
