@@ -16,22 +16,26 @@ namespace MO.SystemInvader
         int _currentHealth;
         int _price;
         int _strength;
+        int i;
 
         bool _atTheEnd = false;
         bool _inGame = true;
 
         float _speed;
+        float _percent;
+        float _negativePercent;
 
 
         Texture2D _texture;
         Vector2 _position;
         Vector2 _velocity;
+        List<Texture2D> _lifeBar;
         Queue<Vector2> _waypoints = new Queue<Vector2>();
         Player _player;
 
         //Fonctions///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public Enemy(Texture2D texture, Vector2 position, int health, int bountyGiven, int strength, float speed, Player player)
+        public Enemy(Texture2D texture, Vector2 position, int health, int bountyGiven, int strength, float speed, Player player, List<Texture2D> lifeBar)
         {
             _position = position;
             _texture = texture;
@@ -41,6 +45,7 @@ namespace MO.SystemInvader
             _strength = strength;
             _speed = speed;
             _player = player;
+            _lifeBar = lifeBar;
         }
 
         public void SetWaypoints(Queue<Vector2> waypointsRefer)
@@ -75,6 +80,11 @@ namespace MO.SystemInvader
         public void AtTheEnd()
         {
             _atTheEnd = true;
+        }
+
+        public List<Texture2D> LifeBar
+        {
+            get { return _lifeBar; }
         }
 
         //Update///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,6 +129,30 @@ namespace MO.SystemInvader
             if (_inGame)
             {
                 spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _texture.Width, _texture.Height), Color.White);
+
+                _percent = ((float)_currentHealth / (float)_health) * 100;
+                Console.WriteLine("life : " + _currentHealth + " / " + _health);
+                for (int n = 0; n < _percent; n++)
+                {
+                    if(_percent < 10)
+                    {
+                        spriteBatch.Draw(_lifeBar[2], new Rectangle((int)GetPos().X + (_texture.Width / 2) - 50 + n, (int)GetPos().Y, _lifeBar[2].Width, _lifeBar[2].Height), Color.White);
+                    }
+                    else if (_percent < 50)
+                    {
+                        spriteBatch.Draw(_lifeBar[1], new Rectangle((int)GetPos().X + (_texture.Width / 2) - 50 + n, (int)GetPos().Y, _lifeBar[1].Width, _lifeBar[1].Height), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(_lifeBar[0], new Rectangle((int)GetPos().X + (_texture.Width / 2) - 50 + n, (int)GetPos().Y, _lifeBar[0].Width, _lifeBar[0].Height), Color.White);
+                    }    
+                    i = n;
+                }
+                _negativePercent = 100 - _percent;
+                for (int n = 0; n < _negativePercent; n++)
+                {
+                    spriteBatch.Draw(_lifeBar[3], new Rectangle((int)GetPos().X + (_texture.Width / 2) - 50 + n + i, (int)GetPos().Y, _lifeBar[3].Width, _lifeBar[3].Height), Color.White);
+                }
             }
         }
     }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SourceFile>C:/Users/xd/documents/visual studio 2015/Projects/SystemInvader/SystemInvader/Content/userName.spritefont</SourceFile>
-  <SourceTime>2016-12-01T09:53:54.9892705+01:00</SourceTime>
-  <DestFile>C:/Users/xd/documents/visual studio 2015/Projects/SystemInvader/SystemInvader/Content/bin/Windows/userName.xnb</DestFile>
-  <DestTime>2016-12-06T10:32:42.1252211+01:00</DestTime>
+  <SourceFile>D:/dev/ProjetInformatique/SystemInvader/SystemInvader/Content/userName.spritefont</SourceFile>
+  <SourceTime>2016-12-12T10:57:17.2821032+01:00</SourceTime>
+  <DestFile>D:/dev/ProjetInformatique/SystemInvader/SystemInvader/Content/bin/Windows/userName.xnb</DestFile>
+  <DestTime>2016-12-14T11:58:30.2911597+01:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2016-03-30T08:36:08+02:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

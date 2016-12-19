@@ -11,6 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SystemInvader;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace SystemInvader
 {
@@ -47,6 +49,7 @@ namespace SystemInvader
         SpriteFont _mainSpriteFont;
         SpriteFont _mainFont;
         SpriteFont _endingMessage;
+        SpriteFont _score;
 
         // Keyboard
         InputTextKeyboard _keyboard;
@@ -73,9 +76,7 @@ namespace SystemInvader
 
         //Tower
         List<Tower> _towers;
-
-        // Bullet
-        Texture2D _bullet;
+        
 
         // Timer
         int _timer = 30;
@@ -85,8 +86,10 @@ namespace SystemInvader
         WaveManager _waveManager;
         WavesData _wavesData;
 
-        // Record Pseudo User
-        string userNameTxt = @"..\..\..\..\Content\json\userName.txt";
+        // Random
+        Random _random = new Random();
+        
+        string path = "D:/dev/ProjetInformatique/SystemInvader/SystemInvader/Content/JSON/data.json";
 
         public Game1()
         {
@@ -95,7 +98,7 @@ namespace SystemInvader
             
             // Player
             _player = new Player();
-
+            
             // Map
             _level = new Level();
             _landsData = new LandsData();
@@ -146,6 +149,12 @@ namespace SystemInvader
             lost.Add(new ElementMenu("Sprites/menu"));
             lost.Add(new ElementMenu("Sprites/rewind"));
             lost.Add(new ElementMenu("Sprites/scores"));
+
+            scores.Add(new ElementMenu("Sprites/menu"));
+
+            // Json
+         
+
         }
 
         /// <summary>
@@ -165,7 +174,10 @@ namespace SystemInvader
 
             //Towers
             _towers = new List<Tower>();
-          
+
+            //
+            
+
         }
 
         /// <summary>
@@ -185,6 +197,8 @@ namespace SystemInvader
             _mainSpriteFont = content.Load<SpriteFont>("userName");
             _endingMessage = content.Load<SpriteFont>("won");
             _backGroundUser = Content.Load<Texture2D>("Background/enter_name");
+            _score = Content.Load<SpriteFont>("score");
+
 
             foreach (ElementMenu element in main)
             {
@@ -257,6 +271,13 @@ namespace SystemInvader
             lost.Find(x => x.AssetName == "Sprites/rewind").MoveElement(160, 200);
             lost.Find(x => x.AssetName == "Sprites/scores").MoveElement(430, 200);
 
+            foreach(ElementMenu element in scores)
+            {
+                element.LoadContent(Content);
+                element.CenterElement(600, 800);
+                element.clickEvent += OnClick;
+            }
+            scores.Find(x => x.AssetName == "Sprites/menu").MoveElement(-320, -250);
             // Map
             _landsData.AddTextureLands1(this.Content);
             _level.AddTexture(_landsData.Lands);
@@ -267,9 +288,7 @@ namespace SystemInvader
 
             //Tower
             _placeTowers = new PlaceTower(_player, this.Content);
-
-            //Bullet
-            _bullet = Content.Load<Texture2D>("Sprites/bullet2");
+            
 
             //Wave
             _wavesData.AddInfor(_enemiesData, _level, _player);
@@ -293,27 +312,58 @@ namespace SystemInvader
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            
             // TODO: Add your update logic here
-            //Menu
+            
+            // Enregistrement Pseudo + ID (si aucun pseudo)
+
             _towers = _placeTowers.PlacedTowers();
 
-            if (_player.Life == 0)
-            {
-                gameState = GameState.lost;
-            }
-            else if (_waveManager.Won)
-            {
-                gameState = GameState.won;
-            }
+            int id = _random.Next(1, 100);
+              if (_player.Life == 0)
+                {
+                    if (myName.Length >= 1)
+                    {
+                        gameState = GameState.lost;
+                        var objects = JArray.Parse(File.ReadAllText(path));
+                        objects.Add(new JArray(myName, _player.Score));
+                        File.WriteAllText(path, JsonConvert.SerializeObject(objects.ToArray()));
+                        _player.Life = 1;
+                    }
+                    else
+                    {
+                        myName = "Player" + id;
+                    }
+                }
+                else if (_waveManager.Won)
+                {
+                    if (myName.Length >= 1)
+                    {
+                        gameState = GameState.won;
+                        var objects = JArray.Parse(File.ReadAllText(path));
+                        objects.Add(new JArray(myName, _player.Score));
+                        File.WriteAllText(path, JsonConvert.SerializeObject(objects.ToArray()));
+                        _waveManager.Won = false;
+                    }
+                    else
+                    {
+                        myName = "Player" + id;
+                    }
 
+                }
+  
             if (Mouse.GetState().LeftButton == ButtonState.Released)
             {
                 _isPressed = false;
             }
             switch (gameState)
             {
+                case GameState.scores:
+                    foreach (ElementMenu element in scores)
+                    {
+                        element.Update();
+                    }
+                    break;
                 case GameState.mainMenu:
                     foreach (ElementMenu element in main)
                     {
@@ -364,7 +414,7 @@ namespace SystemInvader
                                 {
                                     if (enemy.InGame == true && _alreadyShot == false && enemy.GetPos().X >= tower.GetPos().X - tower.GetRange() && enemy.GetPos().X <= tower.GetPos().X + tower.GetRange() && enemy.GetPos().Y >= tower.GetPos().Y - tower.GetRange() && enemy.GetPos().Y <= tower.GetPos().Y + tower.GetRange() && _frame % tower.GetRate() == 0)
                                     {
-                                        tower.Shoot(new Vector2(enemy.GetPos().X, enemy.GetPos().Y));
+                                        tower.Shoot(new Vector2(enemy.GetPos().X, enemy.GetPos().Y), Content);
                                         _alreadyShot = true;
                                     }
                                 }
@@ -379,7 +429,7 @@ namespace SystemInvader
                                 {
                                     foreach (Enemy enemy in wave.Enemies)
                                     {
-                                        if (enemy.InGame == true && projectile.GetPos().X <= enemy.GetPos().X && projectile.GetPos().X + _bullet.Width >= enemy.GetPos().X && projectile.GetPos().Y <= enemy.GetPos().Y && projectile.GetPos().Y + _bullet.Height >= enemy.GetPos().Y && projectile.DestReached == false)
+                                        if (enemy.InGame == true && projectile.GetPos().X <= enemy.GetPos().X && projectile.GetPos().X + projectile.Sprite.Width >= enemy.GetPos().X && projectile.GetPos().Y <= enemy.GetPos().Y && projectile.GetPos().Y + projectile.Sprite.Height >= enemy.GetPos().Y && projectile.DestReached == false)
                                         {
                                             projectile.DestReached = true;
                                             enemy.Deal(projectile.Power());
@@ -459,6 +509,22 @@ namespace SystemInvader
 
             switch (gameState)
             {
+                case GameState.scores:
+                    spriteBatch.DrawString(_score, "Tableau des scores", new Vector2(400, 30), Color.DarkSalmon);
+                    foreach (ElementMenu element in scores)
+                    {
+                        element.Draw(spriteBatch);
+                    }
+                    var objects = JArray.Parse(File.ReadAllText(path));
+                    int y = 100;    
+                    JArray sorted = new JArray(objects.OrderBy(obj => obj[1]));
+                    foreach (JToken token in objects)
+                    {
+                        spriteBatch.DrawString(_mainFont, token[0] + " : " + token[1], new Vector2(450, y), Color.MediumOrchid);
+                        y += 50;
+                        
+                    }
+                    break;
                 case GameState.mainMenu:
                     spriteBatch.Draw(_logo, new Rectangle(330, 0, _logo.Width, _logo.Height), Color.White);
                     foreach (ElementMenu element in main)
@@ -534,7 +600,7 @@ namespace SystemInvader
                     {
                         if (projectile.DestReached == false)
                         {
-                            spriteBatch.Draw(_bullet, new Rectangle((int)projectile.GetPos().X, (int)projectile.GetPos().Y, _bullet.Width, _bullet.Height), Color.White);
+                            spriteBatch.Draw(projectile.Sprite, new Rectangle((int)projectile.GetPos().X, (int)projectile.GetPos().Y, projectile.Sprite.Width, projectile.Sprite.Height), Color.White);
                         }
                     }
                 }
@@ -566,17 +632,6 @@ namespace SystemInvader
                 }
                 else if (element == "Sprites/done")
                 {
-                    if (!File.Exists(userNameTxt))
-                    {
-                        // Create a file to write to.
-                        File.WriteAllText(userNameTxt, myName + Environment.NewLine);
-                    }
-                    else
-                    {
-                        // Add a new line for write into the txt
-                        string myString = File.ReadAllText(userNameTxt);
-                        File.WriteAllText(userNameTxt, myString + "\n\r" + myName + "\n\r");
-                    }
                     gameState = GameState.mainMenu;
                 }
                 else if (element == "Sprites/towersShop")
@@ -613,6 +668,15 @@ namespace SystemInvader
                     _wavesData.SetUpWavesData();
                     _waveManager = new WaveManager(_wavesData.Wave);
                     _player.Rewind();
+                }
+                else if (element == "Sprites/scores")
+                {
+                    
+                    gameState = GameState.scores;
+                }
+                else if (element == "Sprites/exit")
+                {
+                    Exit();
                 }
                 _isPressed = true;
             }

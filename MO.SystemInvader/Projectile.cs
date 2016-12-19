@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,19 +14,26 @@ namespace MO.SystemInvader
         Vector2 _dest = new Vector2();
         Vector2 _start = new Vector2();
         Vector2 _diff = new Vector2();
+        Texture2D _sprite;
         int _speed;
         bool _xPos;
         bool _yPos;
         bool _reached;
         int _power;
 
-        public Projectile(Vector2 start, Vector2 dest, int speed, int power)
+        public Projectile(Vector2 start, Vector2 dest, int speed, int power, Texture2D sprite)
         {
             _current = start;
             _dest = dest;
             _start = start;
             _speed = speed;
             _power = power;
+            _sprite = sprite;
+        }
+
+        public Texture2D Sprite
+        {
+            get { return _sprite; }
         }
 
         public void Update()
