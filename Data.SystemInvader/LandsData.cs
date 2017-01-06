@@ -14,10 +14,10 @@ namespace Data.SystemInvader
     {
         List<Texture2D> _listLands = new List<Texture2D>();
 
-        string _folderPath = "Sprites/Ground/";
+        string _folderPath = "Sprites/";
         public void AddTextureLands1(ContentManager content)
         {
-            for (int i = 1; i <= 34; i++)
+            for (int i = 1; i <= 27; i++)
             {
                 string nameImage = "Ground" + i.ToString();
                 Texture2D newTexture = content.Load<Texture2D>(_folderPath + nameImage);

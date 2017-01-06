@@ -12,70 +12,152 @@ namespace MO.SystemInvader
     public class Enemy
     {
         //Parametre///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        private int _Health;
-        private int _currentHealth;
-        private int _price;
-        private int _enemyWidth;
-        private int _enemyHeight;
-        private int _strength;
-        
-        private bool _atTheEnd = false;
-        private float _timeChangeSprite;
-        private float _speed;
-        
+        int _health;
+        int _currentHealth;
+        int _price;
+        int _strength;
+        int i;
+        int _frame = 0;
+        int _type;
+
+        bool _atTheEnd = false;
         bool _inGame = true;
+
+        float _speed;
+        float _baseSpeed;
+        float _percent;
+        float _negativePercent;
+
 
         Texture2D _texture;
         Vector2 _position;
-        Vector2 _oldPosition;
         Vector2 _velocity;
+        List<Texture2D> _lifeBar;
         Queue<Vector2> _waypoints = new Queue<Vector2>();
-        Point _spritesEnemy = new Point(0, 0);
-        Point _limitSprites = new Point(3, 4);
         Player _player;
+
+        int _slowDown = 0;
+        int _frozen = 0;
+        bool _psn = false;
 
         //Fonctions///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public Enemy(Texture2D texture, Vector2 position, int health, int bountyGiven, int strength, float speed, int enemyWidth, int enemyHeight, Player player)
+        public Enemy(Texture2D texture, Vector2 position, int health, int bountyGiven, int strength, float speed, int type, Player player, List<Texture2D> lifeBar)
         {
             _position = position;
             _texture = texture;
-            _Health = health;
-            _currentHealth = _Health;
+            _health = health;
+            _currentHealth = _health;
             _price = bountyGiven;
-            _speed = speed;
-            _enemyWidth = enemyWidth;
-            _enemyHeight = enemyHeight;
             _strength = strength;
+            _speed = speed;
+            _type = type;
+            _baseSpeed = speed;
             _player = player;
+            _lifeBar = lifeBar;
         }
 
-        public void SetWaypoints(Queue<Vector2> waypointsRefer)
+        public void SetWaypoints()
         {
-            foreach (Vector2 waypoint in waypointsRefer)
-                _waypoints.Enqueue(waypoint);
+            if(_type == 1) // Base
+            {
+                _waypoints.Enqueue(new Vector2(0, 1) * 32);
+                _waypoints.Enqueue(new Vector2(3, 1) * 32);
+                _waypoints.Enqueue(new Vector2(3, 2) * 32);
+                _waypoints.Enqueue(new Vector2(5, 2) * 32);
+                _waypoints.Enqueue(new Vector2(5, 8) * 32);
+                _waypoints.Enqueue(new Vector2(2, 8) * 32);
+                _waypoints.Enqueue(new Vector2(2, 5) * 32);
+                _waypoints.Enqueue(new Vector2(10, 5) * 32);
+                _waypoints.Enqueue(new Vector2(10, 8) * 32);
+                _waypoints.Enqueue(new Vector2(17, 8) * 32);
+                _waypoints.Enqueue(new Vector2(17, 5) * 32);
+                _waypoints.Enqueue(new Vector2(23, 5) * 32);
+                _waypoints.Enqueue(new Vector2(23, 16) * 32);
+                _waypoints.Enqueue(new Vector2(21, 16) * 32);
+                _waypoints.Enqueue(new Vector2(18, 13) * 32);
+                _waypoints.Enqueue(new Vector2(18, 11) * 32);
+                _waypoints.Enqueue(new Vector2(31, 11) * 32);
+                _waypoints.Enqueue(new Vector2(31, 19) * 32);
+                _waypoints.Enqueue(new Vector2(13, 19) * 32);
+                _waypoints.Enqueue(new Vector2(13, 13) * 32);
+                _waypoints.Enqueue(new Vector2(6, 13) * 32);
+                _waypoints.Enqueue(new Vector2(6, 14) * 32);
+                _waypoints.Enqueue(new Vector2(5, 14) * 32);
+                _waypoints.Enqueue(new Vector2(5, 20) * 32);
+            }
+            else if(_type == 2) // Shortcut
+            {
+                _waypoints.Enqueue(new Vector2(0, 1) * 32);
+                _waypoints.Enqueue(new Vector2(3, 1) * 32);
+                _waypoints.Enqueue(new Vector2(3, 2) * 32);
+                _waypoints.Enqueue(new Vector2(5, 2) * 32);
+                _waypoints.Enqueue(new Vector2(5, 5) * 32);
+                _waypoints.Enqueue(new Vector2(10, 5) * 32);
+                _waypoints.Enqueue(new Vector2(10, 8) * 32);
+                _waypoints.Enqueue(new Vector2(17, 8) * 32);
+                _waypoints.Enqueue(new Vector2(17, 5) * 32);
+                _waypoints.Enqueue(new Vector2(23, 5) * 32);
+                _waypoints.Enqueue(new Vector2(23, 11) * 32);
+                _waypoints.Enqueue(new Vector2(31, 11) * 32);
+                _waypoints.Enqueue(new Vector2(31, 19) * 32);
+                _waypoints.Enqueue(new Vector2(13, 19) * 32);
+                _waypoints.Enqueue(new Vector2(13, 13) * 32);
+                _waypoints.Enqueue(new Vector2(6, 13) * 32);
+                _waypoints.Enqueue(new Vector2(6, 14) * 32);
+                _waypoints.Enqueue(new Vector2(5, 14) * 32);
+                _waypoints.Enqueue(new Vector2(5, 20) * 32);
+            }
+            else if(_type == 3) // Flying
+            {
+                _waypoints.Enqueue(new Vector2(0, 1) * 32);
+                _waypoints.Enqueue(new Vector2(31, 6) * 32);
+                _waypoints.Enqueue(new Vector2(0, 11) * 32);
+                _waypoints.Enqueue(new Vector2(5, 20) * 32);
+            }
 
             _position = _waypoints.Dequeue();
         }
 
         public int BountyGiven => _price;
-        public int GiveHealth => _Health;
-        public int GiveBounty => _price;
-        public int GiveWidth => _enemyWidth;
-        public int GiveHeight => _enemyHeight;
-        public int GiveCurrentHealth => _currentHealth;
+        public int GiveHealth => _health;
         public int GiveStrength => _strength;
+        public int GiveType => _type;
 
         public float DistanceToDestination => Vector2.Distance(_position, _waypoints.Peek());
         public float GiveSpeed => _speed;
-        public bool InGame => _inGame;
 
         public Texture2D GiveTexture => _texture;
         public Vector2 GetPos() => _position;
 
-        public void Deal(int damages)
+        public bool InGame
+        {
+            get { return _inGame; }
+            set { _inGame = value; }
+        }
+
+        public void Deal(int damages, int type)
         {
             _currentHealth -= damages;
+            if(type == 2)
+            {
+                if(_slowDown < 2)
+                {
+                    _speed -= _baseSpeed / 5;
+                    _slowDown++;
+                }
+            }
+            else if(type == 3)
+            {
+                if(_frozen == 0 || _frame >= _frozen + 180)
+                {
+                    _frozen = _frame;
+                }
+            }
+            else if(type == 4)
+            {
+                _psn = true;
+            }
         }
 
         public void AtTheEnd()
@@ -83,52 +165,22 @@ namespace MO.SystemInvader
             _atTheEnd = true;
         }
 
-        //Animation////////////////////////////////////////
-        public void SpritesUpdate()
+        public List<Texture2D> LifeBar
         {
-            if (_spritesEnemy.X < _limitSprites.X - 1)
-                _spritesEnemy.X += 1;
-            else
-                _spritesEnemy.X = 0;
-            _timeChangeSprite = 0;
+            get { return _lifeBar; }
         }
 
-        public void MoveDirection(Vector2 oldPosition, Vector2 newPosition)
+        public Texture2D Sprite
         {
-            if (newPosition.X > oldPosition.X)//Left to Right
-            {
-                _spritesEnemy.Y = 2;
-            }
-            else if (newPosition.X < oldPosition.X)//Right to Left
-            {
-                _spritesEnemy.Y = 1;
-            }
-            else if (newPosition.Y > oldPosition.Y)//Down
-            {
-                _spritesEnemy.Y = 0;
-            }
-            else if (newPosition.Y < oldPosition.Y)//Up
-            {
-                _spritesEnemy.Y = 3;
-            }
+            get { return _texture; }
         }
-
 
         //Update///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        public void Update(GameTime gameTime)
+        public void Update()
         {
-            //Animation
-            MoveDirection(_oldPosition, _position);
-            _timeChangeSprite += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (_timeChangeSprite > 0.1)
-            {
-                SpritesUpdate();
-            }
-
             if (_currentHealth <= 0 && _inGame)
             {
-                _player.Score++;
+                _player.Score += ((((int) _speed * 10) + (_strength * 10) + (_health / 10)) / 2) * _player.Difficulty;
                 _player.CurrentGold += _price;
                 _inGame = false;
             }
@@ -138,24 +190,32 @@ namespace MO.SystemInvader
                 _inGame = false;
             }
 
-            if (_waypoints.Count > 0)
+            if(_frozen == 0 || _frozen + 120 < _frame)
             {
-                if (DistanceToDestination < _speed)
+                if (_waypoints.Count > 0)
                 {
-                    _position = _waypoints.Peek();
-                    _waypoints.Dequeue();
-                }
+                    if (DistanceToDestination < _speed)
+                    {
+                        _position = _waypoints.Peek();
+                        _waypoints.Dequeue();
+                    }
 
-                else
-                {
-                    Vector2 direction = _waypoints.Peek() - _position;
-                    direction.Normalize();
+                    else
+                    {
+                        Vector2 direction = _waypoints.Peek() - _position;
+                        direction.Normalize();
 
-                    _velocity = Vector2.Multiply(direction, _speed);
-                    _oldPosition = _position;
-                    _position += _velocity;
+                        _velocity = Vector2.Multiply(direction, _speed);
+
+                        _position += _velocity;
+                    }
                 }
             }
+            if(_psn == true && _frame % 30 == 0)
+            {
+                _currentHealth -= 15;
+            }
+            _frame++;
         }
 
 
@@ -164,10 +224,30 @@ namespace MO.SystemInvader
         {
             if (_inGame)
             {
-                spriteBatch.Draw(_texture, 
-                    new Rectangle((int)GetPos().X - _enemyWidth / 2, (int)GetPos().Y - _enemyHeight / 2, _enemyWidth, _enemyHeight),
-                    new Rectangle(_spritesEnemy.X * _enemyWidth, _spritesEnemy.Y * _enemyHeight, _enemyWidth, _enemyHeight), 
-                    Color.White);
+                spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _texture.Width, _texture.Height), Color.White);
+
+                _percent = ((float)_currentHealth / (float)_health) * 100;
+                for (int n = 0; n < _percent; n++)
+                {
+                    if (_percent < 10)
+                    {
+                        spriteBatch.Draw(_lifeBar[2], new Rectangle((int)GetPos().X + (_texture.Width / 2) - 50 + n, (int)GetPos().Y, _lifeBar[2].Width, _lifeBar[2].Height), Color.White);
+                    }
+                    else if (_percent < 50)
+                    {
+                        spriteBatch.Draw(_lifeBar[1], new Rectangle((int)GetPos().X + (_texture.Width / 2) - 50 + n, (int)GetPos().Y, _lifeBar[1].Width, _lifeBar[1].Height), Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(_lifeBar[0], new Rectangle((int)GetPos().X + (_texture.Width / 2) - 50 + n, (int)GetPos().Y, _lifeBar[0].Width, _lifeBar[0].Height), Color.White);
+                    }
+                    i = n;
+                }
+                _negativePercent = 100 - _percent;
+                for (int n = 0; n < _negativePercent; n++)
+                {
+                    spriteBatch.Draw(_lifeBar[3], new Rectangle((int)GetPos().X + (_texture.Width / 2) - 50 + n + i, (int)GetPos().Y, _lifeBar[3].Width, _lifeBar[3].Height), Color.White);
+                }
             }
         }
     }

@@ -25,7 +25,6 @@ namespace MO.SystemInvader
         Player _player;
 
         //Fonctions/////////////////////////////////////////////////////////////////////////
-        public bool SpawnNewWave => _spawnNewWave;
 
         public Wave(int numberEnemies, Enemy enemy, Level level, Player player)
         {
@@ -37,12 +36,18 @@ namespace MO.SystemInvader
 
         public void AddEnemies()
         {
-            Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.BountyGiven, _enemy.GiveStrength, _enemy.GiveSpeed, _enemy.GiveWidth, _enemy.GiveHeight, _player);
-            newEnemy.SetWaypoints(_currentLevel.Waypoints);
+            Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.BountyGiven, _enemy.GiveStrength, _enemy.GiveSpeed, _enemy.GiveType, _player, _enemy.LifeBar);
+            newEnemy.SetWaypoints();
             _enemies.Add(newEnemy);
 
             _numberCurrentEnemies++;
             _timeSpawnEnemies = 0;
+        }
+
+        public bool SpawnNewWave
+        {
+            get { return _spawnNewWave; }
+            set { _spawnNewWave = value; }
         }
 
         public List<Enemy> Enemies
@@ -61,7 +66,7 @@ namespace MO.SystemInvader
 
             if (_spawnMore)
             {
-                _timeSpawnEnemies += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _timeSpawnEnemies += (float)gameTime.ElapsedGameTime.TotalSeconds * 2;
                 if (_timeSpawnEnemies > 1)
                 {
                     AddEnemies();
@@ -73,7 +78,7 @@ namespace MO.SystemInvader
                 _spawnNewWave = true;
                 foreach (Enemy enemy in Enemies)
                 {
-                    enemy.Update(gameTime);
+                    enemy.Update();
 
                     if (enemy.InGame == true)
                     {
@@ -83,6 +88,10 @@ namespace MO.SystemInvader
                         }
                         _spawnNewWave = false;
                     }
+                }
+                if(_spawnMore == true)
+                {
+                    _spawnNewWave = false;
                 }
             }
         }

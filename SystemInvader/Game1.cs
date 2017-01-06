@@ -11,9 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SystemInvader;
-using System.Web.Script.Serialization;
-using System.IO;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace SystemInvader
 {
@@ -26,17 +25,20 @@ namespace SystemInvader
         SpriteBatch spriteBatch;
 
         //Menu
-        enum GameState { mainMenu, enterName, scores, shopTower, inGame, beforeGame, towerManagement }
+        enum GameState { mainMenu, enterName, scores, difficulty, shopTower, inGame, beforeGame, won, lost }
 
         GameState gameState;
 
         List<ElementMenu> main = new List<ElementMenu>();
         List<ElementMenu> enterName = new List<ElementMenu>();
+        List<ElementMenu> difficulty = new List<ElementMenu>();
         List<ElementMenu> inGame = new List<ElementMenu>();
         List<ElementMenu> beforeGame = new List<ElementMenu>();
         List<ElementMenu> shopTower = new List<ElementMenu>();
         List<ElementMenu> scores = new List<ElementMenu>();
-        List<ElementMenu> towerManagement = new List<ElementMenu>();
+        List<ElementMenu> won = new List<ElementMenu>();
+        List<ElementMenu> lost = new List<ElementMenu>();
+
 
         Keys[] lastPressedKeys = new Keys[5];
 
@@ -45,28 +47,17 @@ namespace SystemInvader
         bool _isInGame;
         bool _alreadyShot;
 
-        SpriteFont sf;
+        SpriteFont _mainSpriteFont;
+        SpriteFont _mainFont;
+        SpriteFont _endingMessage;
+        SpriteFont _score;
 
         // Keyboard
         InputTextKeyboard _keyboard;
         KeyboardState _lastKeyboardState;
 
-        // Bullet
-        Texture2D _bullet;
-        BulletsData _bulletsData = new BulletsData();
-
-        //Tower
-        //Tower tower;
-        //Texture2D _textureTower;
-
-        TowersData _towersData = new TowersData();
-        Texture2D _towerSprite;
-        List<Tower> _towers;
-
         //Mouse
-        MouseMove _mouseMove;
-
-
+        PlaceTower _placeTowers;
 
         // Player
         Player _player;
@@ -84,32 +75,32 @@ namespace SystemInvader
         // Ennemies
         EnemiesData _enemiesData;
 
+        //Tower
+        List<Tower> _towers;
+
         // Timer
         int _timer = 30;
         int _frame = 0;
-        SpriteFont _timerFont;
 
         // Wave
         WaveManager _waveManager;
         WavesData _wavesData;
 
-        // Record Pseudo User
-        String JSONstring = File.ReadAllText("Content/JSON/playerData.json");
+        // Random
+        Random _random = new Random();
 
-        //UpgradeTower
-        UpgradeTower _upGrade;
-        //SellTower
-        SellTower _sellTower;
-        //Display Tower
-        TowerDisplay _towerDisplay;
+        // Income
+        int _income = 0;
+        int _displayIncome = 0;
 
-        JavaScriptSerializer ser = new JavaScriptSerializer();
+        // Save Pseudo JSON
+        string path = @"../../../../Content/DataJson/data.json";
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
+            
             // Player
             _player = new Player();
 
@@ -117,13 +108,16 @@ namespace SystemInvader
             _level = new Level();
             _landsData = new LandsData();
 
+            //Mouse
+            IsMouseVisible = true;
+
             // Keyboard
             _keyboard = new InputTextKeyboard();
             _lastKeyboardState = new KeyboardState();
-            
+
             //Windows size
-            graphics.PreferredBackBufferHeight = _level.WindowHeight;
             graphics.PreferredBackBufferWidth = _level.WindowWidth;
+            graphics.PreferredBackBufferHeight = _level.WindowHeight;
 
             // Waves
             _wavesData = new WavesData();
@@ -140,14 +134,34 @@ namespace SystemInvader
 
             enterName.Add(new ElementMenu("Sprites/done"));
 
+            inGame.Add(new ElementMenu("Sprites/menu"));
+            inGame.Add(new ElementMenu("Sprites/rewind"));
+
             beforeGame.Add(new ElementMenu("Sprites/towersShop"));
             beforeGame.Add(new ElementMenu("Sprites/start"));
+            beforeGame.Add(new ElementMenu("Sprites/menu"));
+            beforeGame.Add(new ElementMenu("Sprites/rewind"));
 
             shopTower.Add(new ElementMenu("Sprites/towers2"));
             shopTower.Add(new ElementMenu("Sprites/start"));
+            shopTower.Add(new ElementMenu("Sprites/menu"));
+            shopTower.Add(new ElementMenu("Sprites/rewind"));
 
-            towerManagement.Add(new ElementMenu("Sprites/updateTower"));
-            towerManagement.Add(new ElementMenu("Sprites/sellTower"));
+            won.Add(new ElementMenu("Sprites/menu"));
+            won.Add(new ElementMenu("Sprites/rewind"));
+            won.Add(new ElementMenu("Sprites/scores"));
+
+            lost.Add(new ElementMenu("Sprites/menu"));
+            lost.Add(new ElementMenu("Sprites/rewind"));
+            lost.Add(new ElementMenu("Sprites/scores"));
+
+            scores.Add(new ElementMenu("Sprites/menu"));
+
+            difficulty.Add(new ElementMenu("Sprites/easy"));
+            difficulty.Add(new ElementMenu("Sprites/normal"));
+            difficulty.Add(new ElementMenu("Sprites/hard"));
+            difficulty.Add(new ElementMenu("Sprites/lunatic"));
+            difficulty.Add(new ElementMenu("Sprites/menu"));
         }
 
         /// <summary>
@@ -163,7 +177,7 @@ namespace SystemInvader
             _bgPosition = new Vector2(0, 0);
 
             // Timer
-            _timerFont = Content.Load<SpriteFont>("timer");
+            _mainFont = Content.Load<SpriteFont>("timer");
 
             //Towers
             _towers = new List<Tower>();
@@ -184,10 +198,10 @@ namespace SystemInvader
             // TODO: use this.Content to load your game content here
             //Menu
             ContentManager content = Content;
-            sf = content.Load<SpriteFont>("userName");
+            _mainSpriteFont = content.Load<SpriteFont>("userName");
+            _endingMessage = content.Load<SpriteFont>("won");
             _backGroundUser = Content.Load<Texture2D>("Background/enter_name");
-
-            
+            _score = Content.Load<SpriteFont>("score");
 
             foreach (ElementMenu element in main)
             {
@@ -198,8 +212,8 @@ namespace SystemInvader
             main.Find(x => x.AssetName == "Sprites/play").MoveElement(80, 15);
             main.Find(x => x.AssetName == "Sprites/name").MoveElement(79, 100);
             main.Find(x => x.AssetName == "Sprites/options").MoveElement(279, 100);
-            main.Find(x => x.AssetName == "Sprites/exit").MoveElement(270, 275);
-            main.Find(x => x.AssetName == "Sprites/scores").MoveElement(270, 15);
+            main.Find(x => x.AssetName == "Sprites/exit").MoveElement(180, 185);
+            main.Find(x => x.AssetName == "Sprites/scores").MoveElement(280, 15);
 
             foreach (ElementMenu element in enterName)
             {
@@ -209,94 +223,212 @@ namespace SystemInvader
             }
             enterName.Find(x => x.AssetName == "Sprites/done").MoveElement(150, 80);
 
-            foreach (ElementMenu element in shopTower)
-            {
-                element.LoadContent(content);
-                element.CenterElement(600, 800);
-                element.clickEvent += OnClick;
-            }
-            shopTower.Find(x => x.AssetName == "Sprites/towers2").MoveElement(-336, 003);
-            shopTower.Find(x => x.AssetName == "Sprites/start").MoveElement(620, -265);
-
             foreach (ElementMenu element in beforeGame)
             {
                 element.LoadContent(content);
                 element.CenterElement(600, 800);
                 element.clickEvent += OnClick;
             }
-            beforeGame.Find(x => x.AssetName == "Sprites/towersShop").MoveElement(-336, 003);
+            beforeGame.Find(x => x.AssetName == "Sprites/towersShop").MoveElement(-336, 343);
             beforeGame.Find(x => x.AssetName == "Sprites/start").MoveElement(620, -265);
+            beforeGame.Find(x => x.AssetName == "Sprites/rewind").MoveElement(620, -200);
+            beforeGame.Find(x => x.AssetName == "Sprites/menu").MoveElement(620, -135);
 
-            foreach (ElementMenu element in towerManagement)
+            foreach (ElementMenu element in shopTower)
             {
                 element.LoadContent(content);
                 element.CenterElement(600, 800);
                 element.clickEvent += OnClick;
             }
-            towerManagement.Find(x => x.AssetName == "Sprites/updateTower").MoveElement(-336, 005);
-            towerManagement.Find(x => x.AssetName == "Sprites/sellTower").MoveElement(-366, 005);
+            shopTower.Find(x => x.AssetName == "Sprites/towers2").MoveElement(-336, 343);
+            shopTower.Find(x => x.AssetName == "Sprites/start").MoveElement(620, -265);
+            shopTower.Find(x => x.AssetName == "Sprites/rewind").MoveElement(620, -200);
+            shopTower.Find(x => x.AssetName == "Sprites/menu").MoveElement(620, -135);
+
+            foreach (ElementMenu element in inGame)
+            {
+                element.LoadContent(content);
+                element.CenterElement(600, 800);
+                element.clickEvent += OnClick;
+            }
+            inGame.Find(x => x.AssetName == "Sprites/rewind").MoveElement(620, -200);
+            inGame.Find(x => x.AssetName == "Sprites/menu").MoveElement(620, -135);
+
+            foreach (ElementMenu element in won)
+            {
+                element.LoadContent(content);
+                element.CenterElement(600, 800);
+                element.clickEvent += OnClick;
+            }
+            won.Find(x => x.AssetName == "Sprites/menu").MoveElement(-90, 200);
+            won.Find(x => x.AssetName == "Sprites/rewind").MoveElement(160, 200);
+            won.Find(x => x.AssetName == "Sprites/scores").MoveElement(430, 200);
+
+            foreach (ElementMenu element in lost)
+            {
+                element.LoadContent(content);
+                element.CenterElement(600, 800);
+                element.clickEvent += OnClick;
+            }
+            lost.Find(x => x.AssetName == "Sprites/menu").MoveElement(-90, 200);
+            lost.Find(x => x.AssetName == "Sprites/rewind").MoveElement(160, 200);
+            lost.Find(x => x.AssetName == "Sprites/scores").MoveElement(430, 200);
+
+            foreach (ElementMenu element in scores)
+            {
+                element.LoadContent(Content);
+                element.CenterElement(600, 800);
+                element.clickEvent += OnClick;
+            }
+            scores.Find(x => x.AssetName == "Sprites/menu").MoveElement(-320, -250);
+
+            foreach (ElementMenu element in difficulty)
+            {
+                element.LoadContent(Content);
+                element.CenterElement(600, 800);
+                element.clickEvent += OnClick;
+            }
+            difficulty.Find(x => x.AssetName == "Sprites/easy").MoveElement(180, -150);
+            difficulty.Find(x => x.AssetName == "Sprites/normal").MoveElement(180, -50);
+            difficulty.Find(x => x.AssetName == "Sprites/hard").MoveElement(180, 50);
+            difficulty.Find(x => x.AssetName == "Sprites/lunatic").MoveElement(180, 150);
+            difficulty.Find(x => x.AssetName == "Sprites/menu").MoveElement(180, 250);
 
             // Map
             _landsData.AddTextureLands1(this.Content);
-            _level.AddTextureMap(_landsData.Lands);
+            _level.AddTexture(_landsData.Lands);
 
             //Ennemies
             _enemiesData.AddTextureEnemies(this.Content);
             _enemiesData.AddAllEnemy();
 
             //Tower
-            _towerSprite = Content.Load<Texture2D>("Sprites/tower");
-
-            //Bullet
-            _bullet = Content.Load<Texture2D>("Sprites/bullet1");
+            _placeTowers = new PlaceTower(_player, _level, this.Content);
+            
 
             //Wave
             _wavesData.AddInfor(_enemiesData, _level, _player);
             _wavesData.SetUpWavesData();
             _waveManager = new WaveManager(_wavesData.Wave);
-
-            //Bullet
-            _bulletsData.AddTextureBullets(this.Content);
-            _bulletsData.AddAllBullets();
-
-            //Towers
-            _towersData.AddTextureTowers(this.Content, _bulletsData);
-            _towersData.AddAllTowers();
-
-            //Mouse
-            _mouseMove = new MouseMove(_player, _level, _towersData);
-            IsMouseVisible = true;
-
-            //UpgradeTower
-            _upGrade = new UpgradeTower(_towersData, _player);
-
-            //SellTower
-            _sellTower = new SellTower(_player);
-
-            //TowerDisplay
-            _towerDisplay = new TowerDisplay(_player);
         }
 
-        
+
+        /// <summary>
+        /// UnloadContent will be called once per game and is the place to unload
+        /// game-specific content.
+        /// </summary>
         protected override void UnloadContent()
         {
-
+            // TODO: Unload any non ContentManager content here
         }
-
+        /// <summary>
+        /// Allows the game to run logic such as updating the world,
+        /// checking for collisions, gathering input, and playing audio.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+            // TODO: Add your update logic here
+            // Enregistrement Pseudo + ID (si aucun pseudo)
 
-            //Menu
-            _towers = _mouseMove.PlacedTowers();
+            _towers = _placeTowers.PlacedTowers();
 
+            int id = _random.Next(1, 100);
+            if (_player.Life <= 0)
+            {
+                gameState = GameState.lost;
+                var objects = JArray.Parse(File.ReadAllText(path));
+
+                if (myName.Length >= 1)
+                {
+                    objects.Add(new JArray(myName, _player.Score));
+                }
+                else
+                {
+                    objects.Add(new JArray("Player" + id, _player.Score));
+                }
+
+                JArray array = new JArray();
+
+                for (int u = 0; u < 10; u++)
+                {
+                    if (objects.Count > 0)
+                    {
+                        int i = 0;
+                        string pseudo = null;
+                        JToken currentToken = null;
+                        foreach (JToken token in objects)
+                        {
+                            if ((int)token[1] >= i)
+                            {
+                                i = (int)token[1];
+                                pseudo = (string)token[0];
+                                currentToken = token;
+                            }
+                        }
+                        objects.Remove(currentToken);
+                        array.Add(new JArray(pseudo, i));
+                    }
+                }
+                File.WriteAllText(path, JsonConvert.SerializeObject(array.ToArray()));
+                _player.Life = 1;
+            }
+            else if (_waveManager.Won)
+            {
+                gameState = GameState.won;
+                _income = _player.Income();
+                var objects = JArray.Parse(File.ReadAllText(path));
+
+                if (myName.Length >= 1)
+                {
+                    objects.Add(new JArray(myName, _player.Score));
+                }
+                else
+                {
+                    objects.Add(new JArray("Player" + id, _player.Score));
+                }
+
+                JArray array = new JArray();
+
+                for (int u = 0; u < 10; u++)
+                {
+                    if(objects.Count > 0)
+                    {
+                        int i = 0;
+                        string pseudo = null;
+                        JToken currentToken = null;
+                        foreach (JToken token in objects)
+                        {
+                            if ((int)token[1] >= i)
+                            {
+                                i = (int)token[1];
+                                pseudo = (string)token[0];
+                                currentToken = token;
+                            }
+                        }
+                        objects.Remove(currentToken);
+                        array.Add(new JArray(pseudo, i));
+                    }
+                }
+
+                File.WriteAllText(path, JsonConvert.SerializeObject(array.ToArray()));
+                _waveManager.Won = false;
+
+            }
             if (Mouse.GetState().LeftButton == ButtonState.Released)
             {
                 _isPressed = false;
             }
             switch (gameState)
             {
+                case GameState.scores:
+                    foreach (ElementMenu element in scores)
+                    {
+                        element.Update();
+                    }
+                    break;
                 case GameState.mainMenu:
                     foreach (ElementMenu element in main)
                     {
@@ -304,10 +436,6 @@ namespace SystemInvader
                     }
                     break;
                 case GameState.enterName:
-                    
-                    string _myString = string.Format("Name : {0} \nScore : ", myName, _player.Score);
-                    Console.WriteLine(_myString);
-
                     foreach (ElementMenu element in enterName)
                     {
                         element.Update();
@@ -330,71 +458,70 @@ namespace SystemInvader
                     _lastKeyboardState = Keyboard.GetState();
                     break;
                 case GameState.shopTower:
-                    
                     foreach (ElementMenu element in shopTower)
                     {
                         element.Update();
                     }
-                    _mouseMove.Update();
-
-                    foreach (ElementMenu element in towerManagement)
-                    {
-                        element.Update();
-                    }
-                    //_mouseMove.Update();
-
-                    //Upgrade
-                    //_upGrade.Update(_towers);
-                    //_towers = _upGrade.placedTower;
-                    ///////////////////////////////////////
-
-                    //SellTower
-                    //_sellTower.Update(_towers);
-                    //_towers = _sellTower.EraseTowerFromList(_sellTower.TowerSold, _towers);
-                    ///////////////////////////////////////
-
+                    _placeTowers.Update();
                     if (_frame % 60 == 0)
                         _timer--;
                     break;
                 case GameState.inGame:
-                    
                     _waveManager.Update(gameTime);
-
-                    
-
-                    foreach (Tower tower in _towers)
+                    if(gameState == GameState.inGame)
                     {
-                        _alreadyShot = false;
-                        foreach(Wave wave in _waveManager.Waves)
+                        foreach (Tower tower in _towers)
                         {
-                            foreach (Enemy enemy in wave.Enemies)
-                            {
-                                if (enemy.InGame == true && _alreadyShot == false &&
-                                    tower.Inrange(enemy.GetPos()) == true &&
-                                    _frame % tower.GiveRate == 0)
-                                {
-                                    tower.Shoot(new Vector2(enemy.GetPos().X, enemy.GetPos().Y));
-                                    _alreadyShot = true;
-                                }
-                            }
-                        }
-                        foreach (Projectile projectile in tower.GetProjectiles())
-                        {
-                            if (projectile.DestReached == false)
-                                projectile.Update();
+                            tower.GetProjectiles().RemoveAll(projectile => projectile.DestReached == true);
+                            _alreadyShot = false;
                             foreach (Wave wave in _waveManager.Waves)
                             {
                                 foreach (Enemy enemy in wave.Enemies)
                                 {
-                                    if (enemy.InGame == true &&
-                                        projectile.hitEnemy(enemy.GetPos(), _bullet) &&
-                                        projectile.DestReached == false)
+                                    if (enemy.InGame == true && _alreadyShot == false && enemy.GetPos().X >= tower.GetPos().X - tower.GetRange() && enemy.GetPos().X <= tower.GetPos().X + tower.GetRange() && enemy.GetPos().Y >= tower.GetPos().Y - tower.GetRange() && enemy.GetPos().Y <= tower.GetPos().Y + tower.GetRange() && _frame % tower.GetRate() == 0)
                                     {
-                                        projectile.DestReached = true;
-                                        enemy.Deal(projectile.Power());
+                                        tower.Shoot(new Vector2(enemy.GetPos().X, enemy.GetPos().Y), Content);
+                                        _alreadyShot = true;
                                     }
                                 }
                             }
+                            foreach (Projectile projectile in tower.GetProjectiles())
+                            {
+                                if (projectile.DestReached == false)
+                                {
+                                    projectile.Update();
+                                }
+                                foreach (Wave wave in _waveManager.Waves)
+                                {
+                                    foreach (Enemy enemy in wave.Enemies)
+                                    {
+                                        float enemyX1 = enemy.GetPos().X;
+                                        float enemyX2 = enemy.GetPos().X + enemy.Sprite.Width;
+                                        float enemyY1 = enemy.GetPos().Y;
+                                        float enemyY2 = enemy.GetPos().Y + enemy.Sprite.Height;
+                                        float projectileX1 = projectile.GetPos().X;
+                                        float projectileX2 = projectile.GetPos().X + projectile.Sprite.Width;
+                                        float projectileY1 = projectile.GetPos().Y;
+                                        float projectileY2 = projectile.GetPos().Y + projectile.Sprite.Height;
+
+                                        if (enemy.InGame == true && projectile.DestReached == false)
+                                        {
+                                            if((enemyX1 > projectileX1 && enemyX1 < projectileX2) || (enemyX2 > projectileX1 && enemyX2 < projectileX2) || (projectileX1 > enemyX1 && projectileX1 < enemyX2) || (projectileX2 > enemyX1 && projectileX2 < enemyX2))
+                                            {
+                                                if((enemyY1 > projectileY1 && enemyY1 < projectileY2) || (enemyY2 > projectileY1 && enemyY2 < projectileY2) || (projectileY1 > enemyY1 && projectileY1 < enemyY2) || (projectileY2 > enemyY1 && projectileY2 < enemyY2))
+                                                {
+                                                    projectile.DestReached = true;
+                                                    enemy.Deal(projectile.Power(), projectile.Type());
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        foreach (ElementMenu element in inGame)
+                        {
+                            element.Update();
                         }
                     }
 
@@ -403,14 +530,14 @@ namespace SystemInvader
                         if (_waveManager.NbWave > 0)
                         {
                             gameState = GameState.beforeGame;
+                            _income = _player.Income();
+                            _displayIncome = _frame;
                         }
                         _waveManager.NextWave();
                         _timer = 30;
                     }
-
                     break;
                 case GameState.beforeGame:
-                    
                     foreach (ElementMenu element in beforeGame)
                     {
                         element.Update();
@@ -425,18 +552,40 @@ namespace SystemInvader
                         }
                     }
                         break;
+                case GameState.won:
+                    foreach (ElementMenu element in won)
+                    {
+                        element.Update();
+                    }
+                    break;
+                case GameState.lost:
+                    foreach (ElementMenu element in lost)
+                    {
+                        element.Update();
+                    }
+                    break;
+                case GameState.difficulty:
+                    foreach (ElementMenu element in difficulty)
+                    {
+                        element.Update();
+                    }
+                    break;
                 default:
                     break;
             }
             if (_timer == 0)
             {
                 gameState = GameState.inGame;
-                Console.WriteLine("gameState: " + gameState);
                 _timer = 30;
             }
             _frame++;
             base.Update(gameTime);
         }
+
+        /// <summary>
+        /// This is called when the game should draw itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -444,10 +593,26 @@ namespace SystemInvader
             // TODO: Add your drawing code here
             _isInGame = false;
             spriteBatch.Begin();
-            spriteBatch.Draw(_bgTexture, new Rectangle(0, 0, 2820, 1080), Color.White);
+            spriteBatch.Draw(_bgTexture, new Rectangle(0, 0, 1920, 1080), Color.White);
 
             switch (gameState)
             {
+                case GameState.scores:
+                    spriteBatch.DrawString(_score, "Scoreboard", new Vector2(500, 30), Color.DarkSalmon);
+                    foreach (ElementMenu element in scores)
+                    {
+                        element.Draw(spriteBatch);
+                    }
+                    var objects = JArray.Parse(File.ReadAllText(path));
+                    int y = 100;
+                    JArray sorted = new JArray(objects.OrderBy(obj => obj[1]));
+                    foreach (JToken token in objects)
+                    {
+                        spriteBatch.DrawString(_mainFont, token[0] + " : " + token[1], new Vector2(450, y), Color.MediumOrchid);
+                        y += 50;
+
+                    }
+                    break;
                 case GameState.mainMenu:
                     spriteBatch.Draw(_logo, new Rectangle(330, 0, _logo.Width, _logo.Height), Color.White);
                     foreach (ElementMenu element in main)
@@ -461,39 +626,32 @@ namespace SystemInvader
                     {
                         element.Draw(spriteBatch);
                     }
-                    spriteBatch.DrawString(sf, myName, new Vector2(430, 325), Color.Black);
+                    spriteBatch.DrawString(_mainSpriteFont, myName, new Vector2(430, 325), Color.Black);
                     break;
 
                 case GameState.inGame:
                     _level.Draw(spriteBatch);
-                    //_towerDisplay.Draw(spriteBatch, _towers, _timerFont);
                     _isInGame = true;
-                    spriteBatch.DrawString(sf, myName, new Vector2(150, 10), Color.White);
-                    
-                    break;
-                case GameState.shopTower:
-                    
-                    _level.Draw(spriteBatch);
-                    _isInGame = true;
-                    /*foreach (ElementMenu element in towerManagement)
+                    spriteBatch.DrawString(_mainSpriteFont, myName, new Vector2(150, 10), Color.White);
+                    foreach (ElementMenu element in inGame)
                     {
                         element.Draw(spriteBatch);
-                    }*/
+                    }
+                    break;
+                case GameState.shopTower:
+                    _level.Draw(spriteBatch);
+                    _isInGame = true;
                     foreach (ElementMenu element in shopTower)
                     {
                         element.Draw(spriteBatch);
                     }
-                    foreach (TowerShop tower in _mouseMove.Towers)
+                    foreach (TowerShop tower in _placeTowers.Towers())
                     {
-                        spriteBatch.Draw(
-                            tower.GiveTower.GiveTextureTower, 
-                            new Rectangle((int)tower.Position.X, (int)tower.Position.Y - tower.GiveTower.GiveHeight, tower.GiveTower.GiveWidth, tower.GiveTower.GiveHeight), 
-                            Color.White);
+                        spriteBatch.Draw(tower.Sprite, new Rectangle((int)tower.Position.X, (int)tower.Position.Y, tower.Sprite.Width, tower.Sprite.Height), Color.White);
                     }
                     break;
 
                 case GameState.beforeGame:
-                    
                     _level.Draw(spriteBatch);
                     _isInGame = true;
                     foreach (ElementMenu element in beforeGame)
@@ -501,6 +659,30 @@ namespace SystemInvader
                         element.Draw(spriteBatch);
                     }
                     break;
+                case GameState.won:
+                    spriteBatch.DrawString(_endingMessage, "SUCCESS !", new Vector2(370, 100), Color.White);
+                    spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(450, 200), Color.MediumOrchid);
+                    foreach (ElementMenu element in won)
+                    {
+                        element.Draw(spriteBatch);
+                    }
+                    break;
+                case GameState.lost:
+                    spriteBatch.DrawString(_endingMessage, "GAME OVER", new Vector2(370, 100), Color.White);
+                    spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(450, 200), Color.MediumOrchid);
+                    foreach (ElementMenu element in lost)
+                    {
+                        element.Draw(spriteBatch);
+                    }
+                    break;
+                case GameState.difficulty:
+                    spriteBatch.DrawString(_mainFont, "Choose a difficulty level !", new Vector2(400, 30), Color.DarkSalmon);
+                    foreach (ElementMenu element in difficulty)
+                    {
+                        element.Draw(spriteBatch);
+                    }
+                    break;
+
                 default:
                     break;
             }
@@ -509,73 +691,118 @@ namespace SystemInvader
                 _waveManager.Draw(spriteBatch);
                 foreach (Tower tower in _towers)
                 {
-                    spriteBatch.Draw(tower.GiveTextureTower, new Rectangle((int)tower.GetPos.X, (int)tower.GetPos.Y - tower.GiveHeight, tower.GiveWidth, tower.GiveHeight), Color.White);
+                    spriteBatch.Draw(tower.Sprite, new Rectangle((int)tower.GetPos().X, (int)tower.GetPos().Y, tower.Sprite.Width, tower.Sprite.Height), Color.White);
                     foreach (Projectile projectile in tower.GetProjectiles())
                     {
                         if (projectile.DestReached == false)
                         {
-                            //spriteBatch.Draw(_bullet, new Rectangle((int)projectile.GetPos().X, (int)projectile.GetPos().Y, _bullet.Width, _bullet.Height), Color.White);
-                            projectile.Draw(spriteBatch);
+                            spriteBatch.Draw(projectile.Sprite, new Rectangle((int)projectile.GetPos().X, (int)projectile.GetPos().Y, projectile.Sprite.Width, projectile.Sprite.Height), Color.White);
                         }
                     }
                 }
-                spriteBatch.DrawString(_timerFont, "Score : " + _player.Score, new Vector2(350, 10), Color.MediumOrchid);
-                spriteBatch.DrawString(_timerFont, "Life : " + _player.Life, new Vector2(550, 10), Color.White);
-                spriteBatch.DrawString(_timerFont, "Vang : " + _player.CurrentGold, new Vector2(750, 10), Color.Gold);
-                if(gameState != GameState.inGame)
+                spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(350, 10), Color.MediumOrchid);
+                spriteBatch.DrawString(_mainFont, "Life : " + _player.Life, new Vector2(550, 10), Color.White);
+                spriteBatch.DrawString(_mainFont, "Vang : " + _player.CurrentGold, new Vector2(750, 10), Color.Gold);
+
+                if(_displayIncome + 30 > _frame && _displayIncome != 0)
                 {
-                    spriteBatch.DrawString(_timerFont, "Timer : " + _timer, new Vector2(150, 10), Color.Black);
+                    spriteBatch.DrawString(_mainFont, "+" + (_income / 2) * _player.Difficulty, new Vector2(350, 50), Color.MediumOrchid);
+                    spriteBatch.DrawString(_mainFont, "+" + _income, new Vector2(750, 50), Color.Gold);
+                }
+
+                if (gameState != GameState.inGame)
+                {
+                    spriteBatch.DrawString(_mainFont, "Timer : " + _timer, new Vector2(150, 10), Color.Black);
                 }
             }
             spriteBatch.End();
 
         }
 
+
         public void OnClick(string element)
         {
-            /*Console.WriteLine("Onclick : " + element);
-              Console.WriteLine("Pressed : " + _isPressed);*/
             if (_isPressed == false)
             {
                 if (element == "Sprites/play")
                 {
-                    //Play the game
-                    gameState = GameState.beforeGame;
+                    gameState = GameState.difficulty;
                 }
-                if (element == "Sprites/name")
+                else if (element == "Sprites/name")
                 {
                     gameState = GameState.enterName;
                 }
-                if (element == "Sprites/done")
-                //{
-                //    if (!File.Exists(userNameTxt))
-                //    {
-                //        // Create a file to write to.
-                //        File.WriteAllText(userNameTxt, myName + Environment.NewLine);
-                //    }
-                //    else
-                //    {
-                //        // Add a new line for write into the txt
-                //        string myString = File.ReadAllText(userNameTxt);
-                //        File.WriteAllText(userNameTxt, myString + "\n\r" + myName + "\n\r");
-                //    }
-                gameState = GameState.mainMenu;
+                else if (element == "Sprites/done")
+                {
+                    gameState = GameState.mainMenu;
                 }
-                if (element == "Sprites/towersShop")
+                else if (element == "Sprites/towersShop")
                 {
                     gameState = GameState.shopTower;
                 }
-                if (element == "Sprites/start")
+                else if (element == "Sprites/start")
                 {
                     gameState = GameState.inGame;
                 }
-                if (element == "Sprites/towers2")
+                else if (element == "Sprites/towers2")
                 {
                     gameState = GameState.beforeGame;
-                    //Console.WriteLine("gameState: " + gameState);
+                }
+                else if (element == "Sprites/menu")
+                {
+                    gameState = GameState.mainMenu;
+                    _timer = 30;
+                    _towers.Clear();
+                    _wavesData = new WavesData();
+                    _wavesData.AddInfor(_enemiesData, _level, _player);
+                    _wavesData.SetUpWavesData();
+                    _waveManager = new WaveManager(_wavesData.Wave);
+                    _player.Rewind();
+                }
+                else if (element == "Sprites/rewind")
+                {
+                    gameState = GameState.beforeGame;
+                    _timer = 30;
+                    _towers.Clear();
+                    _wavesData.Wave.Clear();
+                    _wavesData = new WavesData();
+                    _wavesData.AddInfor(_enemiesData, _level, _player);
+                    _wavesData.SetUpWavesData();
+                    _waveManager = new WaveManager(_wavesData.Wave);
+                    _player.Rewind();
+                }
+                else if (element == "Sprites/scores")
+                {
+                    gameState = GameState.scores;
+                }
+
+                else if (element == "Sprites/easy")
+                {
+                    _player.ChangeDifficulty(1);
+                    gameState = GameState.beforeGame;
+                }
+                else if (element == "Sprites/normal")
+                {
+                    _player.ChangeDifficulty(2);
+                    gameState = GameState.beforeGame;
+                }
+                else if (element == "Sprites/hard")
+                {
+                    _player.ChangeDifficulty(3);
+                    gameState = GameState.beforeGame;
+                }
+                else if (element == "Sprites/lunatic")
+                {
+                    _player.ChangeDifficulty(4);
+                    gameState = GameState.beforeGame;
+                }
+
+                else if (element == "Sprites/exit")
+                {
+                    Exit();
                 }
                 _isPressed = true;
             }
         }
     }
-
+}

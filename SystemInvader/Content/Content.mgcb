@@ -25,3 +25,15 @@
 /processorParam:TextureFormat=Compressed
 /build:timer.spritefont
 
+#begin won.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:won.spritefont
+
+#begin score.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:score.spritefont
+
