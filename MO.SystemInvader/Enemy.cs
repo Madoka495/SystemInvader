@@ -61,30 +61,30 @@ namespace MO.SystemInvader
         {
             if(_type == 1) // Base
             {
-                _waypoints.Enqueue(new Vector2(0, 1) * 32);
-                _waypoints.Enqueue(new Vector2(3, 1) * 32);
-                _waypoints.Enqueue(new Vector2(3, 2) * 32);
-                _waypoints.Enqueue(new Vector2(5, 2) * 32);
-                _waypoints.Enqueue(new Vector2(5, 8) * 32);
-                _waypoints.Enqueue(new Vector2(2, 8) * 32);
-                _waypoints.Enqueue(new Vector2(2, 5) * 32);
-                _waypoints.Enqueue(new Vector2(10, 5) * 32);
-                _waypoints.Enqueue(new Vector2(10, 8) * 32);
-                _waypoints.Enqueue(new Vector2(17, 8) * 32);
-                _waypoints.Enqueue(new Vector2(17, 5) * 32);
-                _waypoints.Enqueue(new Vector2(23, 5) * 32);
-                _waypoints.Enqueue(new Vector2(23, 16) * 32);
-                _waypoints.Enqueue(new Vector2(21, 16) * 32);
+                _waypoints.Enqueue(new Vector2(0, 3) * 32);
+                _waypoints.Enqueue(new Vector2(3, 3) * 32);
+                _waypoints.Enqueue(new Vector2(3, 4) * 32);
+                _waypoints.Enqueue(new Vector2(5, 4) * 32);
+                _waypoints.Enqueue(new Vector2(5, 10) * 32);
+                _waypoints.Enqueue(new Vector2(2, 10) * 32);
+                _waypoints.Enqueue(new Vector2(2, 7) * 32);
+                _waypoints.Enqueue(new Vector2(10, 7) * 32);
+                _waypoints.Enqueue(new Vector2(10, 10) * 32);
+                _waypoints.Enqueue(new Vector2(17, 10) * 32);
+                _waypoints.Enqueue(new Vector2(17, 7) * 32);
+                _waypoints.Enqueue(new Vector2(23, 7) * 32);
+                _waypoints.Enqueue(new Vector2(23, 18) * 32);
+                _waypoints.Enqueue(new Vector2(21, 18) * 32);
+                _waypoints.Enqueue(new Vector2(18, 15) * 32);
                 _waypoints.Enqueue(new Vector2(18, 13) * 32);
-                _waypoints.Enqueue(new Vector2(18, 11) * 32);
-                _waypoints.Enqueue(new Vector2(31, 11) * 32);
-                _waypoints.Enqueue(new Vector2(31, 19) * 32);
-                _waypoints.Enqueue(new Vector2(13, 19) * 32);
-                _waypoints.Enqueue(new Vector2(13, 13) * 32);
-                _waypoints.Enqueue(new Vector2(6, 13) * 32);
-                _waypoints.Enqueue(new Vector2(6, 14) * 32);
-                _waypoints.Enqueue(new Vector2(5, 14) * 32);
-                _waypoints.Enqueue(new Vector2(5, 20) * 32);
+                _waypoints.Enqueue(new Vector2(31, 13) * 32);
+                _waypoints.Enqueue(new Vector2(31, 21) * 32);
+                _waypoints.Enqueue(new Vector2(13, 21) * 32);
+                _waypoints.Enqueue(new Vector2(13, 15) * 32);
+                _waypoints.Enqueue(new Vector2(6, 15) * 32);
+                _waypoints.Enqueue(new Vector2(6, 17) * 32);
+                _waypoints.Enqueue(new Vector2(5, 17) * 32);
+                _waypoints.Enqueue(new Vector2(5, 22) * 32);
             }
             else if(_type == 2) // Shortcut
             {

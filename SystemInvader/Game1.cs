@@ -74,6 +74,7 @@ namespace SystemInvader
         Texture2D _bgTowers;
         Texture2D _sellButton;
         Rectangle _sellRect;
+        Texture2D _navBarInfo;
 
         // map
         Level _level;
@@ -210,6 +211,7 @@ namespace SystemInvader
             _bgTowers = Content.Load<Texture2D>("Sprites/towers");
             _sellButton = Content.Load<Texture2D>("Sprites/sell");
             _sellRect = new Rectangle(960, 205, _sellButton.Width, _sellButton.Height);
+            _navBarInfo = Content.Load<Texture2D>("Sprites/navBarGame");
             // TODO: use this.Content to load your game content here
             //Menu
             ContentManager content = Content;
@@ -245,9 +247,9 @@ namespace SystemInvader
                 element.clickEvent += OnClick;
             }
             beforeGame.Find(x => x.AssetName == "Sprites/towersShop").MoveElement(-336, 343);
-            beforeGame.Find(x => x.AssetName == "Sprites/start").MoveElement(620, -265);
-            beforeGame.Find(x => x.AssetName == "Sprites/rewind").MoveElement(620, -200);
-            beforeGame.Find(x => x.AssetName == "Sprites/menu").MoveElement(620, -135);
+            beforeGame.Find(x => x.AssetName == "Sprites/start").MoveElement(600, -267);
+            beforeGame.Find(x => x.AssetName == "Sprites/rewind").MoveElement(460, -267);
+            beforeGame.Find(x => x.AssetName == "Sprites/menu").MoveElement(320, -267);
 
             foreach (ElementMenu element in shopTower)
             {
@@ -256,9 +258,9 @@ namespace SystemInvader
                 element.clickEvent += OnClick;
             }
             shopTower.Find(x => x.AssetName == "Sprites/towers2").MoveElement(-336, 343);
-            shopTower.Find(x => x.AssetName == "Sprites/start").MoveElement(620, -265);
-            shopTower.Find(x => x.AssetName == "Sprites/rewind").MoveElement(620, -200);
-            shopTower.Find(x => x.AssetName == "Sprites/menu").MoveElement(620, -135);
+            shopTower.Find(x => x.AssetName == "Sprites/start").MoveElement(600, -267);
+            shopTower.Find(x => x.AssetName == "Sprites/rewind").MoveElement(460, -267);
+            shopTower.Find(x => x.AssetName == "Sprites/menu").MoveElement(320, -267);
 
             foreach (ElementMenu element in inGame)
             {
@@ -266,8 +268,8 @@ namespace SystemInvader
                 element.CenterElement(600, 800);
                 element.clickEvent += OnClick;
             }
-            inGame.Find(x => x.AssetName == "Sprites/rewind").MoveElement(620, -200);
-            inGame.Find(x => x.AssetName == "Sprites/menu").MoveElement(620, -135);
+            inGame.Find(x => x.AssetName == "Sprites/rewind").MoveElement(600, -267);
+            inGame.Find(x => x.AssetName == "Sprites/menu").MoveElement(460, -267);
 
             foreach (ElementMenu element in won)
             {
@@ -705,10 +707,29 @@ namespace SystemInvader
                         }
                     }
                 }
-                spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(350, 10), Color.MediumOrchid);
-                spriteBatch.DrawString(_mainFont, "Life : " + _player.Life, new Vector2(550, 10), Color.White);
-                spriteBatch.DrawString(_mainFont, "Vang : " + _player.CurrentGold, new Vector2(750, 10), Color.Gold);
+                spriteBatch.Draw(_navBarInfo, new Rectangle(0, 0, _navBarInfo.Width, _navBarInfo.Height), Color.White);
+                spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(500, 20), Color.MediumOrchid);
+                spriteBatch.DrawString(_mainFont, "Life : " + _player.Life, new Vector2(270, 20), Color.ForestGreen);
+                spriteBatch.DrawString(_mainFont, "Vang : " + _player.CurrentGold, new Vector2(370, 20), Color.Goldenrod);
 
+
+                switch (_player.Difficulty)
+                {
+                    case 1:
+                        spriteBatch.DrawString(_mainFont, "Difficulty : Easy ", new Vector2(120, 20), Color.Brown);
+                        break;
+                    case 2:
+                        spriteBatch.DrawString(_mainFont, "Difficulty : Normal ", new Vector2(120, 20), Color.Goldenrod);
+                        break;
+                    case 3:
+                        spriteBatch.DrawString(_mainFont, "Difficulty : Hard ", new Vector2(120, 20), Color.Goldenrod);
+                        break;
+                    case 4:
+                        spriteBatch.DrawString(_mainFont, "Difficulty : Lunatic ", new Vector2(120, 20), Color.Goldenrod);
+                        break;
+                    default:
+                        break;
+                }
                 if (_displayIncome + 30 > _frame && _displayIncome != 0)
                 {
                     spriteBatch.DrawString(_mainFont, "+" + (_income / 2) * _player.Difficulty, new Vector2(350, 50), Color.MediumOrchid);
@@ -717,7 +738,7 @@ namespace SystemInvader
 
                 if (gameState != GameState.inGame)
                 {
-                    spriteBatch.DrawString(_mainFont, "Timer : " + _timer, new Vector2(150, 10), Color.Black);
+                    spriteBatch.DrawString(_mainFont, "Timer : " + _timer, new Vector2(10, 20), Color.Black);
                 }
 
                 if (_selectedTower != null)
