@@ -45,7 +45,6 @@ namespace SystemInvader
         string myName = string.Empty;
         bool _isPressed = false;
         bool _isPressed2 = false;
-        bool _isInGame;
         bool _alreadyShot;
 
         SpriteFont _mainSpriteFont;
@@ -71,8 +70,10 @@ namespace SystemInvader
         Texture2D _bgTexture;
         Texture2D _logo;
         Texture2D _properties;
+        Texture2D _properties2;
         Texture2D _bgTowers;
         Texture2D _sellButton;
+        Rectangle _sellRect;
 
         // map
         Level _level;
@@ -205,8 +206,10 @@ namespace SystemInvader
             _bgTexture = Content.Load<Texture2D>("Background/mainBackground");
             _logo = Content.Load<Texture2D>("Sprites/logo");
             _properties = Content.Load<Texture2D>("Sprites/properties");
+            _properties2 = Content.Load<Texture2D>("Sprites/properties2");
             _bgTowers = Content.Load<Texture2D>("Sprites/towers");
             _sellButton = Content.Load<Texture2D>("Sprites/sell");
+            _sellRect = new Rectangle(960, 205, _sellButton.Width, _sellButton.Height);
             // TODO: use this.Content to load your game content here
             //Menu
             ContentManager content = Content;
@@ -443,8 +446,7 @@ namespace SystemInvader
 
                     if (_selectedTower != null)
                     {
-                        Rectangle _rec = new Rectangle(960, 205, _sellButton.Width, _sellButton.Height);
-                        if (_rec.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
+                        if (_sellRect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
                         {
                             _selectedTower.Sell();
                             _selectedTower = null;
@@ -648,127 +650,50 @@ namespace SystemInvader
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-            _isInGame = false;
             spriteBatch.Begin();
             spriteBatch.Draw(_bgTexture, new Rectangle(0, 0, 1920, 1080), Color.White);
 
-            switch (gameState)
+            if(gameState == GameState.scores)
             {
-                case GameState.scores:
-                    spriteBatch.DrawString(_score, "Scoreboard", new Vector2(500, 30), Color.DarkSalmon);
-                    foreach (ElementMenu element in scores)
-                    {
-                        element.Draw(spriteBatch);
-                    }
-                    var objects = JArray.Parse(File.ReadAllText(path));
-                    int y = 100;
-                    JArray sorted = new JArray(objects.OrderBy(obj => obj[1]));
-                    foreach (JToken token in objects)
-                    {
-                        spriteBatch.DrawString(_mainFont, token[0] + " : " + token[1], new Vector2(450, y), Color.MediumOrchid);
-                        y += 50;
+                spriteBatch.DrawString(_score, "Scoreboard", new Vector2(500, 30), Color.DarkSalmon);
+                foreach (ElementMenu element in scores)
+                {
+                    element.Draw(spriteBatch);
+                }
+                var objects = JArray.Parse(File.ReadAllText(path));
+                int y = 100;
+                JArray sorted = new JArray(objects.OrderBy(obj => obj[1]));
+                foreach (JToken token in objects)
+                {
+                    spriteBatch.DrawString(_mainFont, token[0] + " : " + token[1], new Vector2(450, y), Color.MediumOrchid);
+                    y += 50;
 
-                    }
-                    break;
-                case GameState.mainMenu:
-                    spriteBatch.Draw(_logo, new Rectangle(330, 0, _logo.Width, _logo.Height), Color.White);
-                    foreach (ElementMenu element in main)
-                    {
-                        element.Draw(spriteBatch);
-                    }
-                    break;
-                case GameState.enterName:
-                    spriteBatch.Draw(_backGroundUser, new Rectangle(400, 225, _backGroundUser.Width, _backGroundUser.Height), Color.White);
-                    foreach (ElementMenu element in enterName)
-                    {
-                        element.Draw(spriteBatch);
-                    }
-                    spriteBatch.DrawString(_mainSpriteFont, myName, new Vector2(430, 325), Color.Black);
-                    break;
-
-                case GameState.inGame:
-                    _level.Draw(spriteBatch);
-                    _isInGame = true;
-                    spriteBatch.DrawString(_mainSpriteFont, myName, new Vector2(150, 10), Color.White);
-                    foreach (ElementMenu element in inGame)
-                    {
-                        element.Draw(spriteBatch);
-                    }
-                    break;
-                case GameState.shopTower:
-                    _level.Draw(spriteBatch);
-                    _isInGame = true;
-                    foreach (ElementMenu element in shopTower)
-                    {
-                        element.Draw(spriteBatch);
-                    }
-                    if (_placeTowers.Selected() == false)
-                    {
-                        spriteBatch.Draw(_bgTowers, new Rectangle(138, 520, _bgTowers.Width, _bgTowers.Height), Color.White);
-                        foreach (TowerShop tower in _placeTowers.Towers())
-                        {
-                            spriteBatch.Draw(tower.Sprite, new Rectangle((int)tower.Position.X, (int)tower.Position.Y, tower.Sprite.Width, tower.Sprite.Height), Color.White);
-                            Rectangle _rect = new Rectangle((int)tower.Position.X, (int)tower.Position.Y, tower.Sprite.Width, tower.Sprite.Height);
-
-                            if (_rect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Released)
-                            {
-                                spriteBatch.Draw(_properties, new Rectangle(200, 350, (_properties.Width * 3) / 2, (_properties.Height * 3) / 2), Color.White);
-                                spriteBatch.DrawString(_statsFont, "Power : " + tower.Power, new Vector2(240, 360), Color.Black);
-                                spriteBatch.DrawString(_statsFont, "Speed : " + tower.Speed, new Vector2(240, 390), Color.Black);
-                                spriteBatch.DrawString(_statsFont, "Rate : " + tower.Rate, new Vector2(440, 360), Color.Black);
-                                spriteBatch.DrawString(_statsFont, "Range : " + tower.Range, new Vector2(440, 390), Color.Black);
-                                spriteBatch.DrawString(_commentFont, tower.Comment, new Vector2(230, 430), Color.Black);
-                                spriteBatch.DrawString(_statsFont, "Price : " + tower.Price, new Vector2(340, 475), Color.Black);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        spriteBatch.Draw(_placeTowers.SelectedTower().Sprite, new Rectangle((int)_placeTowers.SelectedTower().Position.X, (int)_placeTowers.SelectedTower().Position.Y, _placeTowers.SelectedTower().Sprite.Width, _placeTowers.SelectedTower().Sprite.Height), Color.White);
-                    }
-                    break;
-
-                case GameState.beforeGame:
-                    _level.Draw(spriteBatch);
-                    _isInGame = true;
-                    foreach (ElementMenu element in beforeGame)
-                    {
-                        element.Draw(spriteBatch);
-                    }
-                    break;
-                case GameState.won:
-                    spriteBatch.DrawString(_endingMessage, "SUCCESS !", new Vector2(370, 100), Color.White);
-                    spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(450, 200), Color.MediumOrchid);
-                    foreach (ElementMenu element in won)
-                    {
-                        element.Draw(spriteBatch);
-                    }
-                    break;
-                case GameState.lost:
-                    spriteBatch.DrawString(_endingMessage, "GAME OVER", new Vector2(370, 100), Color.White);
-                    spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(450, 200), Color.MediumOrchid);
-                    foreach (ElementMenu element in lost)
-                    {
-                        element.Draw(spriteBatch);
-                    }
-                    break;
-                case GameState.difficulty:
-                    spriteBatch.DrawString(_mainFont, "Choose a difficulty level !", new Vector2(400, 30), Color.DarkSalmon);
-                    foreach (ElementMenu element in difficulty)
-                    {
-                        element.Draw(spriteBatch);
-                    }
-                    break;
-
-                default:
-                    break;
+                }
             }
-            if (_isInGame == true)
+            if (gameState == GameState.mainMenu)
             {
+                spriteBatch.Draw(_logo, new Rectangle(330, 0, _logo.Width, _logo.Height), Color.White);
+                foreach (ElementMenu element in main)
+                {
+                    element.Draw(spriteBatch);
+                }
+            }
+            if (gameState == GameState.enterName)
+            {
+                spriteBatch.Draw(_backGroundUser, new Rectangle(400, 225, _backGroundUser.Width, _backGroundUser.Height), Color.White);
+                foreach (ElementMenu element in enterName)
+                {
+                    element.Draw(spriteBatch);
+                }
+                spriteBatch.DrawString(_mainSpriteFont, myName, new Vector2(430, 325), Color.Black);
+            }
+            if (gameState == GameState.inGame || gameState == GameState.beforeGame || gameState == GameState.shopTower)
+            {
+                _level.Draw(spriteBatch);
                 _waveManager.Draw(spriteBatch);
                 foreach (Tower tower in _towers)
                 {
-                    if(tower.InGame() == true)
+                    if (tower.InGame() == true)
                     {
                         spriteBatch.Draw(tower.Sprite, new Rectangle((int)tower.GetPos().X, (int)tower.GetPos().Y, tower.Sprite.Width, tower.Sprite.Height), Color.White);
                         foreach (Projectile projectile in tower.GetProjectiles())
@@ -784,7 +709,7 @@ namespace SystemInvader
                 spriteBatch.DrawString(_mainFont, "Life : " + _player.Life, new Vector2(550, 10), Color.White);
                 spriteBatch.DrawString(_mainFont, "Vang : " + _player.CurrentGold, new Vector2(750, 10), Color.Gold);
 
-                if(_displayIncome + 30 > _frame && _displayIncome != 0)
+                if (_displayIncome + 30 > _frame && _displayIncome != 0)
                 {
                     spriteBatch.DrawString(_mainFont, "+" + (_income / 2) * _player.Difficulty, new Vector2(350, 50), Color.MediumOrchid);
                     spriteBatch.DrawString(_mainFont, "+" + _income, new Vector2(750, 50), Color.Gold);
@@ -795,15 +720,116 @@ namespace SystemInvader
                     spriteBatch.DrawString(_mainFont, "Timer : " + _timer, new Vector2(150, 10), Color.Black);
                 }
 
-                if(_selectedTower != null)
+                if (_selectedTower != null)
                 {
-                    spriteBatch.Draw(_properties, new Rectangle(700, 350, (_properties.Width * 3) / 2, (_properties.Height * 3) / 2), Color.White);
+                    spriteBatch.Draw(_properties2, new Rectangle(700, 284, (_properties2.Width * 3) / 2, (_properties2.Height * 3) / 2), Color.LightGray);
                     spriteBatch.DrawString(_statsFont, "Power : " + _selectedTower.GetPower(), new Vector2(740, 360), Color.Black);
                     spriteBatch.DrawString(_statsFont, "Speed : " + _selectedTower.GetSpeed(), new Vector2(740, 390), Color.Black);
                     spriteBatch.DrawString(_statsFont, "Rate : " + _selectedTower.GetRate(), new Vector2(940, 360), Color.Black);
                     spriteBatch.DrawString(_statsFont, "Range : " + _selectedTower.GetRange(), new Vector2(940, 390), Color.Black);
                     spriteBatch.DrawString(_commentFont, _selectedTower.GetComment(), new Vector2(730, 430), Color.Black);
-                    spriteBatch.Draw(_sellButton, new Rectangle(960, 205, _sellButton.Width, _sellButton.Height), Color.White);
+
+                    if (_sellRect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Released)
+                    {
+                        spriteBatch.Draw(_sellButton, _sellRect, Color.White);
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(_sellButton, _sellRect, Color.LightGray);
+                    }
+                }
+            }
+            if(gameState == GameState.inGame)
+            {
+                spriteBatch.DrawString(_mainSpriteFont, myName, new Vector2(150, 10), Color.White);
+                foreach (ElementMenu element in inGame)
+                {
+                    element.Draw(spriteBatch);
+                }
+            }
+            if (gameState == GameState.shopTower)
+            {
+                foreach (ElementMenu element in shopTower)
+                {
+                    element.Draw(spriteBatch);
+                }
+                if (_placeTowers.Selected() == false)
+                {
+                    spriteBatch.Draw(_bgTowers, new Rectangle(138, 520, _bgTowers.Width, _bgTowers.Height), Color.LightGray);
+                    foreach (TowerShop tower in _placeTowers.Towers())
+                    {
+                        Rectangle _rect = new Rectangle((int)tower.Position.X, (int)tower.Position.Y, tower.Sprite.Width, tower.Sprite.Height);
+
+                        if(tower.Price > _player.CurrentGold)
+                        {
+                            spriteBatch.Draw(tower.Sprite, _rect, Color.Black);
+                        }
+                        else if (_rect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
+                        {
+                            spriteBatch.Draw(tower.Sprite, _rect, Color.White);
+                        }
+                        else
+                        {
+                            spriteBatch.Draw(tower.Sprite, _rect, Color.LightGray);
+                        }
+
+                        if (_rect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Released)
+                        {
+                            spriteBatch.Draw(_properties, new Rectangle(200, 350, (_properties.Width * 3) / 2, (_properties.Height * 3) / 2), Color.LightGray);
+                            spriteBatch.DrawString(_statsFont, "Power : " + tower.Power, new Vector2(240, 360), Color.Black);
+                            spriteBatch.DrawString(_statsFont, "Speed : " + tower.Speed, new Vector2(240, 390), Color.Black);
+                            spriteBatch.DrawString(_statsFont, "Rate : " + tower.Rate, new Vector2(440, 360), Color.Black);
+                            spriteBatch.DrawString(_statsFont, "Range : " + tower.Range, new Vector2(440, 390), Color.Black);
+                            spriteBatch.DrawString(_commentFont, tower.Comment, new Vector2(230, 430), Color.Black);
+
+                            if (tower.Price > _player.CurrentGold)
+                            {
+                                spriteBatch.DrawString(_statsFont, "Price : " + tower.Price + " Vang", new Vector2(300, 474), Color.Red);
+                            }
+                            else
+                            {
+                                spriteBatch.DrawString(_statsFont, "Price : " + tower.Price + " Vang", new Vector2(300, 474), Color.Green);
+                            }
+                            
+                        }
+                    }
+                }
+                else
+                {
+                    spriteBatch.Draw(_placeTowers.SelectedTower().Sprite, new Rectangle((int)_placeTowers.SelectedTower().Position.X, (int)_placeTowers.SelectedTower().Position.Y, _placeTowers.SelectedTower().Sprite.Width, _placeTowers.SelectedTower().Sprite.Height), Color.White);
+                }
+            }
+            if(gameState == GameState.beforeGame)
+            {
+                foreach (ElementMenu element in beforeGame)
+                {
+                    element.Draw(spriteBatch);
+                }
+            }
+            if (gameState == GameState.won)
+            {
+                spriteBatch.DrawString(_endingMessage, "SUCCESS !", new Vector2(370, 100), Color.White);
+                spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(450, 200), Color.MediumOrchid);
+                foreach (ElementMenu element in won)
+                {
+                    element.Draw(spriteBatch);
+                }
+            }
+            if (gameState == GameState.lost)
+            {
+                spriteBatch.DrawString(_endingMessage, "GAME OVER", new Vector2(370, 100), Color.White);
+                spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(450, 200), Color.MediumOrchid);
+                foreach (ElementMenu element in lost)
+                {
+                    element.Draw(spriteBatch);
+                }
+            }
+            if (gameState == GameState.difficulty)
+            {
+                spriteBatch.DrawString(_mainFont, "Choose a difficulty level !", new Vector2(400, 30), Color.DarkSalmon);
+                foreach (ElementMenu element in difficulty)
+                {
+                    element.Draw(spriteBatch);
                 }
             }
             spriteBatch.End();

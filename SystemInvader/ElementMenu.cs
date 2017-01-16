@@ -68,7 +68,14 @@ namespace SystemInvader
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_menuTexture, _menuRect, Color.White);
+            if(_menuRect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Released)
+            {
+                spriteBatch.Draw(_menuTexture, _menuRect, Color.White);
+            }
+            else
+            {
+                spriteBatch.Draw(_menuTexture, _menuRect, Color.LightGray);
+            }
         }
 
     }
