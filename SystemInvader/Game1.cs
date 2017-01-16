@@ -44,11 +44,14 @@ namespace SystemInvader
 
         string myName = string.Empty;
         bool _isPressed = false;
+        bool _isPressed2 = false;
         bool _isInGame;
         bool _alreadyShot;
 
         SpriteFont _mainSpriteFont;
         SpriteFont _mainFont;
+        SpriteFont _commentFont;
+        SpriteFont _statsFont;
         SpriteFont _endingMessage;
         SpriteFont _score;
 
@@ -67,6 +70,9 @@ namespace SystemInvader
         Vector2 _bgPosition;
         Texture2D _bgTexture;
         Texture2D _logo;
+        Texture2D _properties;
+        Texture2D _bgTowers;
+        Texture2D _sellButton;
 
         // map
         Level _level;
@@ -77,6 +83,7 @@ namespace SystemInvader
 
         //Tower
         List<Tower> _towers;
+        Tower _selectedTower;
 
         // Timer
         int _timer = 30;
@@ -176,8 +183,10 @@ namespace SystemInvader
             base.Initialize();
             _bgPosition = new Vector2(0, 0);
 
-            // Timer
+            // Fonts
             _mainFont = Content.Load<SpriteFont>("timer");
+            _commentFont = Content.Load<SpriteFont>("comment");
+            _statsFont = Content.Load<SpriteFont>("stats");
 
             //Towers
             _towers = new List<Tower>();
@@ -195,6 +204,9 @@ namespace SystemInvader
 
             _bgTexture = Content.Load<Texture2D>("Background/mainBackground");
             _logo = Content.Load<Texture2D>("Sprites/logo");
+            _properties = Content.Load<Texture2D>("Sprites/properties");
+            _bgTowers = Content.Load<Texture2D>("Sprites/towers");
+            _sellButton = Content.Load<Texture2D>("Sprites/sell");
             // TODO: use this.Content to load your game content here
             //Menu
             ContentManager content = Content;
@@ -417,9 +429,48 @@ namespace SystemInvader
                 _waveManager.Won = false;
 
             }
+            
             if (Mouse.GetState().LeftButton == ButtonState.Released)
             {
                 _isPressed = false;
+                _isPressed2 = false;
+            }
+            else
+            {
+                if(_isPressed2 == false)
+                {
+                    bool _selected = false;
+
+                    if (_selectedTower != null)
+                    {
+                        Rectangle _rec = new Rectangle(960, 205, _sellButton.Width, _sellButton.Height);
+                        if (_rec.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
+                        {
+                            _selectedTower.Sell();
+                            _selectedTower = null;
+                        }
+                    }
+
+                    foreach (Tower tower in _towers)
+                    {
+                        if(tower.InGame() == true)
+                        {
+                            Rectangle _rect = new Rectangle((int)tower.GetPos().X, (int)tower.GetPos().Y, tower.Sprite.Width, tower.Sprite.Height);
+                            if (_rect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
+                            {
+                                _selectedTower = tower;
+                                _selected = true;
+                            }
+                        }
+                    }
+
+                    if(_selected == false)
+                    {
+                        _selectedTower = null;
+                    }
+
+                    _isPressed2 = true;
+                }
             }
             switch (gameState)
             {
@@ -472,46 +523,49 @@ namespace SystemInvader
                     {
                         foreach (Tower tower in _towers)
                         {
-                            tower.GetProjectiles().RemoveAll(projectile => projectile.DestReached == true);
-                            _alreadyShot = false;
-                            foreach (Wave wave in _waveManager.Waves)
+                            if (tower.InGame() == true)
                             {
-                                foreach (Enemy enemy in wave.Enemies)
-                                {
-                                    if (enemy.InGame == true && _alreadyShot == false && enemy.GetPos().X >= tower.GetPos().X - tower.GetRange() && enemy.GetPos().X <= tower.GetPos().X + tower.GetRange() && enemy.GetPos().Y >= tower.GetPos().Y - tower.GetRange() && enemy.GetPos().Y <= tower.GetPos().Y + tower.GetRange() && _frame % tower.GetRate() == 0)
-                                    {
-                                        tower.Shoot(new Vector2(enemy.GetPos().X, enemy.GetPos().Y), Content);
-                                        _alreadyShot = true;
-                                    }
-                                }
-                            }
-                            foreach (Projectile projectile in tower.GetProjectiles())
-                            {
-                                if (projectile.DestReached == false)
-                                {
-                                    projectile.Update();
-                                }
+                                tower.GetProjectiles().RemoveAll(projectile => projectile.DestReached == true);
+                                _alreadyShot = false;
                                 foreach (Wave wave in _waveManager.Waves)
                                 {
                                     foreach (Enemy enemy in wave.Enemies)
                                     {
-                                        float enemyX1 = enemy.GetPos().X;
-                                        float enemyX2 = enemy.GetPos().X + enemy.Sprite.Width;
-                                        float enemyY1 = enemy.GetPos().Y;
-                                        float enemyY2 = enemy.GetPos().Y + enemy.Sprite.Height;
-                                        float projectileX1 = projectile.GetPos().X;
-                                        float projectileX2 = projectile.GetPos().X + projectile.Sprite.Width;
-                                        float projectileY1 = projectile.GetPos().Y;
-                                        float projectileY2 = projectile.GetPos().Y + projectile.Sprite.Height;
-
-                                        if (enemy.InGame == true && projectile.DestReached == false)
+                                        if (enemy.InGame == true && _alreadyShot == false && enemy.GetPos().X >= tower.GetPos().X - tower.GetRange() && enemy.GetPos().X <= tower.GetPos().X + tower.GetRange() && enemy.GetPos().Y >= tower.GetPos().Y - tower.GetRange() && enemy.GetPos().Y <= tower.GetPos().Y + tower.GetRange() && _frame % tower.GetRate() == 0)
                                         {
-                                            if((enemyX1 > projectileX1 && enemyX1 < projectileX2) || (enemyX2 > projectileX1 && enemyX2 < projectileX2) || (projectileX1 > enemyX1 && projectileX1 < enemyX2) || (projectileX2 > enemyX1 && projectileX2 < enemyX2))
+                                            tower.Shoot(new Vector2(enemy.GetPos().X, enemy.GetPos().Y), Content);
+                                            _alreadyShot = true;
+                                        }
+                                    }
+                                }
+                                foreach (Projectile projectile in tower.GetProjectiles())
+                                {
+                                    if (projectile.DestReached == false)
+                                    {
+                                        projectile.Update();
+                                    }
+                                    foreach (Wave wave in _waveManager.Waves)
+                                    {
+                                        foreach (Enemy enemy in wave.Enemies)
+                                        {
+                                            float enemyX1 = enemy.GetPos().X;
+                                            float enemyX2 = enemy.GetPos().X + enemy.Sprite.Width;
+                                            float enemyY1 = enemy.GetPos().Y;
+                                            float enemyY2 = enemy.GetPos().Y + enemy.Sprite.Height;
+                                            float projectileX1 = projectile.GetPos().X;
+                                            float projectileX2 = projectile.GetPos().X + projectile.Sprite.Width;
+                                            float projectileY1 = projectile.GetPos().Y;
+                                            float projectileY2 = projectile.GetPos().Y + projectile.Sprite.Height;
+
+                                            if (enemy.InGame == true && projectile.DestReached == false)
                                             {
-                                                if((enemyY1 > projectileY1 && enemyY1 < projectileY2) || (enemyY2 > projectileY1 && enemyY2 < projectileY2) || (projectileY1 > enemyY1 && projectileY1 < enemyY2) || (projectileY2 > enemyY1 && projectileY2 < enemyY2))
+                                                if ((enemyX1 > projectileX1 && enemyX1 < projectileX2) || (enemyX2 > projectileX1 && enemyX2 < projectileX2) || (projectileX1 > enemyX1 && projectileX1 < enemyX2) || (projectileX2 > enemyX1 && projectileX2 < enemyX2))
                                                 {
-                                                    projectile.DestReached = true;
-                                                    enemy.Deal(projectile.Power(), projectile.Type());
+                                                    if ((enemyY1 > projectileY1 && enemyY1 < projectileY2) || (enemyY2 > projectileY1 && enemyY2 < projectileY2) || (projectileY1 > enemyY1 && projectileY1 < enemyY2) || (projectileY2 > enemyY1 && projectileY2 < enemyY2))
+                                                    {
+                                                        projectile.DestReached = true;
+                                                        enemy.Deal(projectile.Power(), projectile.Type());
+                                                    }
                                                 }
                                             }
                                         }
@@ -546,9 +600,12 @@ namespace SystemInvader
                         _timer--;
                     foreach (Tower tower in _towers)
                     {
-                        foreach(Projectile projectile in tower.GetProjectiles())
+                        if(tower.InGame() == true)
                         {
-                            projectile.DestReached = true;
+                            foreach (Projectile projectile in tower.GetProjectiles())
+                            {
+                                projectile.DestReached = true;
+                            }
                         }
                     }
                         break;
@@ -645,9 +702,29 @@ namespace SystemInvader
                     {
                         element.Draw(spriteBatch);
                     }
-                    foreach (TowerShop tower in _placeTowers.Towers())
+                    if (_placeTowers.Selected() == false)
                     {
-                        spriteBatch.Draw(tower.Sprite, new Rectangle((int)tower.Position.X, (int)tower.Position.Y, tower.Sprite.Width, tower.Sprite.Height), Color.White);
+                        spriteBatch.Draw(_bgTowers, new Rectangle(138, 520, _bgTowers.Width, _bgTowers.Height), Color.White);
+                        foreach (TowerShop tower in _placeTowers.Towers())
+                        {
+                            spriteBatch.Draw(tower.Sprite, new Rectangle((int)tower.Position.X, (int)tower.Position.Y, tower.Sprite.Width, tower.Sprite.Height), Color.White);
+                            Rectangle _rect = new Rectangle((int)tower.Position.X, (int)tower.Position.Y, tower.Sprite.Width, tower.Sprite.Height);
+
+                            if (_rect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Released)
+                            {
+                                spriteBatch.Draw(_properties, new Rectangle(200, 350, (_properties.Width * 3) / 2, (_properties.Height * 3) / 2), Color.White);
+                                spriteBatch.DrawString(_statsFont, "Power : " + tower.Power, new Vector2(240, 360), Color.Black);
+                                spriteBatch.DrawString(_statsFont, "Speed : " + tower.Speed, new Vector2(240, 390), Color.Black);
+                                spriteBatch.DrawString(_statsFont, "Rate : " + tower.Rate, new Vector2(440, 360), Color.Black);
+                                spriteBatch.DrawString(_statsFont, "Range : " + tower.Range, new Vector2(440, 390), Color.Black);
+                                spriteBatch.DrawString(_commentFont, tower.Comment, new Vector2(230, 430), Color.Black);
+                                spriteBatch.DrawString(_statsFont, "Price : " + tower.Price, new Vector2(340, 475), Color.Black);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(_placeTowers.SelectedTower().Sprite, new Rectangle((int)_placeTowers.SelectedTower().Position.X, (int)_placeTowers.SelectedTower().Position.Y, _placeTowers.SelectedTower().Sprite.Width, _placeTowers.SelectedTower().Sprite.Height), Color.White);
                     }
                     break;
 
@@ -691,12 +768,15 @@ namespace SystemInvader
                 _waveManager.Draw(spriteBatch);
                 foreach (Tower tower in _towers)
                 {
-                    spriteBatch.Draw(tower.Sprite, new Rectangle((int)tower.GetPos().X, (int)tower.GetPos().Y, tower.Sprite.Width, tower.Sprite.Height), Color.White);
-                    foreach (Projectile projectile in tower.GetProjectiles())
+                    if(tower.InGame() == true)
                     {
-                        if (projectile.DestReached == false)
+                        spriteBatch.Draw(tower.Sprite, new Rectangle((int)tower.GetPos().X, (int)tower.GetPos().Y, tower.Sprite.Width, tower.Sprite.Height), Color.White);
+                        foreach (Projectile projectile in tower.GetProjectiles())
                         {
-                            spriteBatch.Draw(projectile.Sprite, new Rectangle((int)projectile.GetPos().X, (int)projectile.GetPos().Y, projectile.Sprite.Width, projectile.Sprite.Height), Color.White);
+                            if (projectile.DestReached == false)
+                            {
+                                spriteBatch.Draw(projectile.Sprite, new Rectangle((int)projectile.GetPos().X, (int)projectile.GetPos().Y, projectile.Sprite.Width, projectile.Sprite.Height), Color.White);
+                            }
                         }
                     }
                 }
@@ -713,6 +793,17 @@ namespace SystemInvader
                 if (gameState != GameState.inGame)
                 {
                     spriteBatch.DrawString(_mainFont, "Timer : " + _timer, new Vector2(150, 10), Color.Black);
+                }
+
+                if(_selectedTower != null)
+                {
+                    spriteBatch.Draw(_properties, new Rectangle(700, 350, (_properties.Width * 3) / 2, (_properties.Height * 3) / 2), Color.White);
+                    spriteBatch.DrawString(_statsFont, "Power : " + _selectedTower.GetPower(), new Vector2(740, 360), Color.Black);
+                    spriteBatch.DrawString(_statsFont, "Speed : " + _selectedTower.GetSpeed(), new Vector2(740, 390), Color.Black);
+                    spriteBatch.DrawString(_statsFont, "Rate : " + _selectedTower.GetRate(), new Vector2(940, 360), Color.Black);
+                    spriteBatch.DrawString(_statsFont, "Range : " + _selectedTower.GetRange(), new Vector2(940, 390), Color.Black);
+                    spriteBatch.DrawString(_commentFont, _selectedTower.GetComment(), new Vector2(730, 430), Color.Black);
+                    spriteBatch.Draw(_sellButton, new Rectangle(960, 205, _sellButton.Width, _sellButton.Height), Color.White);
                 }
             }
             spriteBatch.End();

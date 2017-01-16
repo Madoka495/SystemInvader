@@ -14,13 +14,16 @@ namespace MO.SystemInvader
         int _rate;
         int _range;
         int _price;
+        int _power;
+        int _speed;
+        string _comment;
         Vector2 _position = new Vector2();
         Vector2 _original = new Vector2();
         Vector2 _old = new Vector2(-1000, -1000);
         Texture2D _sprite;
         bool _wasPressed = false;
 
-        public TowerShop(Vector2 position, Texture2D sprite, int rate, int range, int type, int price)
+        public TowerShop(Vector2 position, Texture2D sprite, int rate, int range, int power, int speed, int type, int price, string comment)
         {
             _rate = rate;
             _range = range;
@@ -29,6 +32,9 @@ namespace MO.SystemInvader
             _original = position;
             _price = price;
             _sprite = sprite;
+            _power = power;
+            _speed = speed;
+            _comment = comment;
         }
 
         public int Type
@@ -41,10 +47,25 @@ namespace MO.SystemInvader
             get { return _rate; }
             set { _rate = value; }
         }
+        public int Power
+        {
+            get { return _power; }
+            set { _power = value; }
+        }
+        public int Speed
+        {
+            get { return _speed; }
+            set { _speed = value; }
+        }
         public int Range
         {
             get { return _range; }
             set { _range = value; }
+        }
+        public string Comment
+        {
+            get { return _comment; }
+            set { _comment = value; }
         }
         public Texture2D Sprite
         {

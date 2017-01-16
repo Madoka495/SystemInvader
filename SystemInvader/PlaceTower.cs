@@ -17,15 +17,17 @@ namespace SystemInvader
         List<Tower> _placedTowers;
         Player _player;
         Level _level;
+        bool _towerSelected;
+        TowerShop _selectedTower;
 
         public PlaceTower(Player player, Level level, ContentManager content)
         {
-            _towers = new List<TowerShop>(); // position, sprite, rate, range, type, price
-            _towers.Add(new TowerShop(new Vector2(150, 590), content.Load<Texture2D>("Sprites/tower2"), 40, 175, 1, 100));
-            _towers.Add(new TowerShop(new Vector2(230, 590), content.Load<Texture2D>("Sprites/tower5"), 30, 400, 2, 50));
-            _towers.Add(new TowerShop(new Vector2(310, 550), content.Load<Texture2D>("Sprites/tower6"), 8, 250, 3, 50));
-            _towers.Add(new TowerShop(new Vector2(390, 550), content.Load<Texture2D>("Sprites/tower4"), 60, 300, 4, 75));
-            _towers.Add(new TowerShop(new Vector2(470, 550), content.Load<Texture2D>("Sprites/tower3"), 10, 250, 5, 75));
+            _towers = new List<TowerShop>(); // position, sprite, rate, range, power, speed type, price, comment
+            _towers.Add(new TowerShop(new Vector2(150, 570), content.Load<Texture2D>("Sprites/tower2"), 40, 175, 10, 8, 1, 100, "Multi-shot. Fire bullets all around\r\nthe tower."));
+            _towers.Add(new TowerShop(new Vector2(230, 570), content.Load<Texture2D>("Sprites/tower5"), 30, 400, 5, 16, 2, 50, "Teleport bullets right on the foe."));
+            _towers.Add(new TowerShop(new Vector2(310, 530), content.Load<Texture2D>("Sprites/tower6"), 8, 250, 12, 24, 3, 50, "Bullets will slow down the foe."));
+            _towers.Add(new TowerShop(new Vector2(390, 530), content.Load<Texture2D>("Sprites/tower4"), 60, 300, 24, 24, 4, 75, "Bullets will freeze the foe,\r\nmaking it unable to move for 2 seconds."));
+            _towers.Add(new TowerShop(new Vector2(470, 530), content.Load<Texture2D>("Sprites/tower3"), 10, 250, 12, 8, 5, 75, "Bullets will poison the foe,\r\nwhich will progressively deal it damage."));
 
             _placedTowers = new List<Tower>();
             _player = player;
@@ -35,6 +37,7 @@ namespace SystemInvader
         internal void Update()
         {
             MouseState stateMouse = Mouse.GetState();
+            _towerSelected = false;
             foreach (TowerShop tower in _towers)
             {
                 if (stateMouse.LeftButton == ButtonState.Pressed)
@@ -62,6 +65,8 @@ namespace SystemInvader
                     if (stateMouse.X >= tower.Position.X && stateMouse.X <= tower.Position.X + tower.Sprite.Width && stateMouse.Y >= tower.Position.Y && stateMouse.Y <= tower.Position.Y + tower.Sprite.Height)
                     {
                         tower.Old = new Vector2(stateMouse.X, stateMouse.Y);
+                        _towerSelected = true;
+                        _selectedTower = tower;
                     }
                     else
                     {
@@ -95,9 +100,8 @@ namespace SystemInvader
                         if (_player.CurrentGold >= tower.Price && isOccuped == false)
                         {
                             _player.CurrentGold -= tower.Price;
-                            _placedTowers.Add(new Tower(tower.Position, tower.Sprite, tower.Rate, tower.Range, tower.Type));
+                            _placedTowers.Add(new Tower(tower.Position, tower.Sprite, tower.Rate, tower.Range, tower.Power, tower.Speed, tower.Price, tower.Type, tower.Comment, _player));
                         }
-
                     }
                     tower.Position = tower.Original;
                     tower.Old = new Vector2(-1000, -1000);
@@ -114,6 +118,14 @@ namespace SystemInvader
         public List<Tower> PlacedTowers()
         {
             return _placedTowers;
+        }
+        public TowerShop SelectedTower()
+        {
+            return _selectedTower;
+        }
+        public bool Selected()
+        {
+            return _towerSelected;
         }
     }
 }
