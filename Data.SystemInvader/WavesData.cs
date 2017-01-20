@@ -12,7 +12,9 @@ namespace Data.SystemInvader
 {
     public class WavesData
     {
-        List<Wave> _wave;
+        List<Wave> _WaveLv1;
+        List<Wave> _WaveLv2;
+        List<Wave> _WaveLv3;
         EnemiesData _enemiesData;
         Level _level;
         Player _player;
@@ -32,26 +34,52 @@ namespace Data.SystemInvader
 
         public void SetUpWavesData()
         {
-            AddWave();
+            AddWaveLv1();
+            AddWaveLv2();
+            AddWaveLv3();
         }
 
-        public void AddWave()
+        public void AddWaveLv1()
         {
-            List<Wave> Wave = new List<Wave>();
-            AddInList(Wave, 5, _enemiesData.Enemy[0], _level);
-            AddInList(Wave, 8, _enemiesData.Enemy[0], _level);
-            AddInList(Wave, 5, _enemiesData.Enemy[1], _level);
-            AddInList(Wave, 3, _enemiesData.Enemy[2], _level);
-            AddInList(Wave, 1, _enemiesData.Enemy[3], _level);
-            AddInList(Wave, 6, _enemiesData.Enemy[2], _level);
-            AddInList(Wave, 4, _enemiesData.Enemy[4], _level);
-            AddInList(Wave, 24, _enemiesData.Enemy[0], _level);
-            _wave = Wave;
+            List<Wave> WaveLv1 = new List<Wave>();
+            for (int i = 1; i <= 22; i++)
+            {
+                AddInList(WaveLv1, 5, _enemiesData.Enemy[i], _level);
+            }
+            _WaveLv1 = WaveLv1;
         }
 
-        public List<Wave> Wave
+        public void AddWaveLv2()
         {
-            get { return _wave; }
+            List<Wave> WaveLv2 = new List<Wave>();
+            for (int i = 1; i <= 2; i++)
+            {
+                AddInList(WaveLv2, 8, _enemiesData.Enemy[i], _level);
+            }
+            _WaveLv2 = WaveLv2;
+        }
+
+        public void AddWaveLv3()
+        {
+            List<Wave> WaveLv3 = new List<Wave>();
+            for (int i = 0; i < 3; i++)
+            {
+                AddInList(WaveLv3, 10, _enemiesData.Enemy[i], _level);
+            }
+            _WaveLv3 = WaveLv3;
+        }
+
+        public List<Wave> WaveLv1
+        {
+            get { return _WaveLv1; }
+        }
+        public List<Wave> WaveLv2
+        {
+            get { return _WaveLv2; }
+        }
+        public List<Wave> WaveLv3
+        {
+            get { return _WaveLv3; }
         }
     }
 }

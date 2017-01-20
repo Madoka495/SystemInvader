@@ -8,25 +8,9 @@ namespace MO.SystemInvader
 {
     public class Player
     {
-        int _life = 50;
+        int _life = 30;
         int _currentGold = 550;
         int _score = 0;
-
-        int _startLife;
-        int _startGold;
-
-        public Player()
-        {
-            _startLife = _life;
-            _startGold = _currentGold;
-        }
-
-        public void Rewind()
-        {
-            _life = _startLife;
-            _currentGold = _startGold;
-            _score = 0;
-        }
 
         public int Life
         {
