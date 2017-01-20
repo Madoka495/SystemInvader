@@ -53,6 +53,11 @@ namespace Data.SystemInvader
             AddInList(Wave, 4, _enemiesData.Enemy[9], _level);
             AddInList(Wave, 32, _enemiesData.Enemy[10], _level);
             AddInList(Wave, 1, _enemiesData.Enemy[11], _level);
+            AddInList(Wave, 16, _enemiesData.Enemy[12], _level);
+            AddInList(Wave, 5, _enemiesData.Enemy[13], _level);
+            AddInList(Wave, 12, _enemiesData.Enemy[9], _level);
+            AddInList(Wave, 14, _enemiesData.Enemy[14], _level);
+            AddInList(Wave, 1, _enemiesData.Enemy[15], _level);
             _wave = Wave;
         }
 

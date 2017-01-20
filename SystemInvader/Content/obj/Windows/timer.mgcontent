@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SourceFile>C:/Users/Rigva/Desktop/Final/SystemInvader/SystemInvader/Content/timer.spritefont</SourceFile>
-  <SourceTime>2017-01-16T14:47:01.221712+01:00</SourceTime>
-  <DestFile>C:/Users/Rigva/Desktop/Final/SystemInvader/SystemInvader/Content/bin/Windows/timer.xnb</DestFile>
-  <DestTime>2017-01-16T14:47:10.3664725+01:00</DestTime>
+  <SourceFile>C:/Users/xd/documents/visual studio 2015/Projects/SystemInvader/SystemInvader/Content/timer.spritefont</SourceFile>
+  <SourceTime>2017-01-20T10:51:44.3009244+01:00</SourceTime>
+  <DestFile>C:/Users/xd/documents/visual studio 2015/Projects/SystemInvader/SystemInvader/Content/bin/Windows/timer.xnb</DestFile>
+  <DestTime>2017-01-20T10:51:50.1733281+01:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2016-03-30T08:36:08+02:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

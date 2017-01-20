@@ -76,9 +76,14 @@ namespace SystemInvader
         Rectangle _sellRect;
         Texture2D _navBarInfo;
 
-        // map
+        // Map
         Level _level;
         LandsData _landsData;
+        Texture2D _map;
+
+        // Waterfall
+        Texture2D _waterfall1;
+        Texture2D _waterfall2;
 
         // Ennemies
         EnemiesData _enemiesData;
@@ -125,8 +130,9 @@ namespace SystemInvader
             _lastKeyboardState = new KeyboardState();
 
             //Windows size
-            graphics.PreferredBackBufferWidth = _level.WindowWidth;
-            graphics.PreferredBackBufferHeight = _level.WindowHeight;
+            graphics.PreferredBackBufferWidth = 1920;
+            graphics.PreferredBackBufferHeight = 1080;
+            graphics.IsFullScreen = true;
 
             // Waves
             _wavesData = new WavesData();
@@ -143,17 +149,17 @@ namespace SystemInvader
 
             enterName.Add(new ElementMenu("Sprites/done"));
 
-            inGame.Add(new ElementMenu("Sprites/menu"));
+            inGame.Add(new ElementMenu("Sprites/menuInGame"));
             inGame.Add(new ElementMenu("Sprites/rewind"));
 
             beforeGame.Add(new ElementMenu("Sprites/towersShop"));
             beforeGame.Add(new ElementMenu("Sprites/start"));
-            beforeGame.Add(new ElementMenu("Sprites/menu"));
+            beforeGame.Add(new ElementMenu("Sprites/menuInGame"));
             beforeGame.Add(new ElementMenu("Sprites/rewind"));
 
             shopTower.Add(new ElementMenu("Sprites/towers2"));
             shopTower.Add(new ElementMenu("Sprites/start"));
-            shopTower.Add(new ElementMenu("Sprites/menu"));
+            shopTower.Add(new ElementMenu("Sprites/menuInGame"));
             shopTower.Add(new ElementMenu("Sprites/rewind"));
 
             won.Add(new ElementMenu("Sprites/menu"));
@@ -210,7 +216,7 @@ namespace SystemInvader
             _properties2 = Content.Load<Texture2D>("Sprites/properties2");
             _bgTowers = Content.Load<Texture2D>("Sprites/towers");
             _sellButton = Content.Load<Texture2D>("Sprites/sell");
-            _sellRect = new Rectangle(960, 205, _sellButton.Width, _sellButton.Height);
+            _sellRect = new Rectangle(980, 440, _sellButton.Width, _sellButton.Height);
             _navBarInfo = Content.Load<Texture2D>("Sprites/navBarGame");
             // TODO: use this.Content to load your game content here
             //Menu
@@ -246,10 +252,10 @@ namespace SystemInvader
                 element.CenterElement(600, 800);
                 element.clickEvent += OnClick;
             }
-            beforeGame.Find(x => x.AssetName == "Sprites/towersShop").MoveElement(-336, 343);
-            beforeGame.Find(x => x.AssetName == "Sprites/start").MoveElement(600, -267);
-            beforeGame.Find(x => x.AssetName == "Sprites/rewind").MoveElement(460, -267);
-            beforeGame.Find(x => x.AssetName == "Sprites/menu").MoveElement(320, -267);
+            beforeGame.Find(x => x.AssetName == "Sprites/towersShop").MoveElement(-336, 403);
+            beforeGame.Find(x => x.AssetName == "Sprites/start").MoveElement(670, -267);
+            beforeGame.Find(x => x.AssetName == "Sprites/rewind").MoveElement(570, -267);
+            beforeGame.Find(x => x.AssetName == "Sprites/menuInGame").MoveElement(470, -267);
 
             foreach (ElementMenu element in shopTower)
             {
@@ -257,10 +263,10 @@ namespace SystemInvader
                 element.CenterElement(600, 800);
                 element.clickEvent += OnClick;
             }
-            shopTower.Find(x => x.AssetName == "Sprites/towers2").MoveElement(-336, 343);
-            shopTower.Find(x => x.AssetName == "Sprites/start").MoveElement(600, -267);
-            shopTower.Find(x => x.AssetName == "Sprites/rewind").MoveElement(460, -267);
-            shopTower.Find(x => x.AssetName == "Sprites/menu").MoveElement(320, -267);
+            shopTower.Find(x => x.AssetName == "Sprites/towers2").MoveElement(-336, 403);
+            shopTower.Find(x => x.AssetName == "Sprites/start").MoveElement(670, -267);
+            shopTower.Find(x => x.AssetName == "Sprites/rewind").MoveElement(570, -267);
+            shopTower.Find(x => x.AssetName == "Sprites/menuInGame").MoveElement(470, -267);
 
             foreach (ElementMenu element in inGame)
             {
@@ -268,8 +274,8 @@ namespace SystemInvader
                 element.CenterElement(600, 800);
                 element.clickEvent += OnClick;
             }
-            inGame.Find(x => x.AssetName == "Sprites/rewind").MoveElement(600, -267);
-            inGame.Find(x => x.AssetName == "Sprites/menu").MoveElement(460, -267);
+            inGame.Find(x => x.AssetName == "Sprites/rewind").MoveElement(670, -267);
+            inGame.Find(x => x.AssetName == "Sprites/menuInGame").MoveElement(570, -267);
 
             foreach (ElementMenu element in won)
             {
@@ -312,8 +318,13 @@ namespace SystemInvader
             difficulty.Find(x => x.AssetName == "Sprites/menu").MoveElement(180, 250);
 
             // Map
-            _landsData.AddTextureLands1(this.Content);
-            _level.AddTexture(_landsData.Lands);
+            _map = Content.Load<Texture2D>("Background/map");
+            _level.AddMap(_map);
+
+            //Waterfall
+            _waterfall1 = Content.Load<Texture2D>("Sprites/waterfall1.png");
+            _waterfall2 = Content.Load<Texture2D>("Sprites/waterfall2.png");
+            _level.AddWaterFall(_waterfall1, _waterfall2);
 
             //Ennemies
             _enemiesData.AddTextureEnemies(this.Content);
@@ -445,9 +456,25 @@ namespace SystemInvader
                 if(_isPressed2 == false)
                 {
                     bool _selected = false;
-
+                    
                     if (_selectedTower != null)
                     {
+                        Rectangle _rec = new Rectangle(700, 284, (_properties2.Width * 3) / 2, (_properties2.Height * 3) / 2);
+
+                        if (_rec.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
+                        {
+                            _selected = true;
+                        }
+
+                        foreach (Tower evolution in _selectedTower.Evolutions)
+                        {
+                            Rectangle _rect = new Rectangle((int)evolution.GetPos().X, (int)evolution.GetPos().Y, evolution.Sprite.Width, evolution.Sprite.Height);
+
+                            if (_rect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
+                            {
+                                _selectedTower.Evolve(evolution);
+                            }
+                        }
                         if (_sellRect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
                         {
                             _selectedTower.Sell();
@@ -692,7 +719,6 @@ namespace SystemInvader
             if (gameState == GameState.inGame || gameState == GameState.beforeGame || gameState == GameState.shopTower)
             {
                 _level.Draw(spriteBatch);
-                _waveManager.Draw(spriteBatch);
                 foreach (Tower tower in _towers)
                 {
                     if (tower.InGame() == true)
@@ -707,29 +733,34 @@ namespace SystemInvader
                         }
                     }
                 }
+                _waveManager.Draw(spriteBatch);
                 spriteBatch.Draw(_navBarInfo, new Rectangle(0, 0, _navBarInfo.Width, _navBarInfo.Height), Color.White);
-                spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(500, 20), Color.MediumOrchid);
-                spriteBatch.DrawString(_mainFont, "Life : " + _player.Life, new Vector2(270, 20), Color.ForestGreen);
-                spriteBatch.DrawString(_mainFont, "Vang : " + _player.CurrentGold, new Vector2(370, 20), Color.Goldenrod);
+                spriteBatch.DrawString(_mainSpriteFont, "Player : " + myName, new Vector2(5, 20), Color.Black);
+                spriteBatch.DrawString(_mainFont, "Score : " + _player.Score, new Vector2(645, 20), Color.MediumOrchid);
+                spriteBatch.DrawString(_mainFont, "Life : " + _player.Life, new Vector2(400, 20), Color.ForestGreen);
+                spriteBatch.DrawString(_mainFont, "Vang : " + _player.CurrentGold, new Vector2(500, 20), Color.Goldenrod);
 
 
                 switch (_player.Difficulty)
                 {
                     case 1:
-                        spriteBatch.DrawString(_mainFont, "Difficulty : Easy ", new Vector2(120, 20), Color.Brown);
+                        spriteBatch.DrawString(_mainFont, "Difficulty : Easy ", new Vector2(240, 20), Color.LightSeaGreen);
                         break;
                     case 2:
-                        spriteBatch.DrawString(_mainFont, "Difficulty : Normal ", new Vector2(120, 20), Color.Goldenrod);
+                        spriteBatch.DrawString(_mainFont, "Difficulty : Normal ", new Vector2(230, 20), Color.MonoGameOrange);
                         break;
                     case 3:
-                        spriteBatch.DrawString(_mainFont, "Difficulty : Hard ", new Vector2(120, 20), Color.Goldenrod);
+                        spriteBatch.DrawString(_mainFont, "Difficulty : Hard ", new Vector2(230, 20), Color.Red);
                         break;
                     case 4:
-                        spriteBatch.DrawString(_mainFont, "Difficulty : Lunatic ", new Vector2(120, 20), Color.Goldenrod);
+                        spriteBatch.DrawString(_mainFont, "Difficulty : Lunatic ", new Vector2(230, 20), Color.Blue);
                         break;
                     default:
                         break;
                 }
+
+
+
                 if (_displayIncome + 30 > _frame && _displayIncome != 0)
                 {
                     spriteBatch.DrawString(_mainFont, "+" + (_income / 2) * _player.Difficulty, new Vector2(350, 50), Color.MediumOrchid);
@@ -738,17 +769,53 @@ namespace SystemInvader
 
                 if (gameState != GameState.inGame)
                 {
-                    spriteBatch.DrawString(_mainFont, "Timer : " + _timer, new Vector2(10, 20), Color.Black);
+                    spriteBatch.DrawString(_mainFont, "Timer : " + _timer, new Vector2(120, 20), Color.Black);
                 }
 
                 if (_selectedTower != null)
                 {
                     spriteBatch.Draw(_properties2, new Rectangle(700, 284, (_properties2.Width * 3) / 2, (_properties2.Height * 3) / 2), Color.LightGray);
-                    spriteBatch.DrawString(_statsFont, "Power : " + _selectedTower.GetPower(), new Vector2(740, 360), Color.Black);
-                    spriteBatch.DrawString(_statsFont, "Speed : " + _selectedTower.GetSpeed(), new Vector2(740, 390), Color.Black);
-                    spriteBatch.DrawString(_statsFont, "Rate : " + _selectedTower.GetRate(), new Vector2(940, 360), Color.Black);
-                    spriteBatch.DrawString(_statsFont, "Range : " + _selectedTower.GetRange(), new Vector2(940, 390), Color.Black);
-                    spriteBatch.DrawString(_commentFont, _selectedTower.GetComment(), new Vector2(730, 430), Color.Black);
+                    spriteBatch.DrawString(_statsFont, "Power : " + _selectedTower.GetPower(), new Vector2(740, 295), Color.Black);
+                    spriteBatch.DrawString(_statsFont, "Speed : " + _selectedTower.GetSpeed(), new Vector2(740, 325), Color.Black);
+                    spriteBatch.DrawString(_statsFont, "Lag : " + _selectedTower.GetRate(), new Vector2(940, 295), Color.Black);
+                    spriteBatch.DrawString(_statsFont, "Range : " + _selectedTower.GetRange(), new Vector2(940, 325), Color.Black);
+                    spriteBatch.DrawString(_commentFont, _selectedTower.GetComment(), new Vector2(730, 365), Color.Black);
+
+                    foreach(Tower evolution in _selectedTower.Evolutions)
+                    {
+                        Rectangle _rect = new Rectangle((int)evolution.GetPos().X, (int)evolution.GetPos().Y, evolution.Sprite.Width, evolution.Sprite.Height);
+                        if (evolution.Price() > _player.CurrentGold)
+                        {
+                            spriteBatch.Draw(evolution.Sprite, _rect, Color.Black);
+                        }
+                        else if (_rect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
+                        {
+                            spriteBatch.Draw(evolution.Sprite, _rect, Color.White);
+                        }
+                        else
+                        {
+                            spriteBatch.Draw(evolution.Sprite, _rect, Color.LightGray);
+                        }
+
+                        if (_rect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Released)
+                        {
+                            spriteBatch.Draw(_properties, new Rectangle(200, 350, (_properties.Width * 3) / 2, (_properties.Height * 3) / 2), Color.LightGray);
+                            spriteBatch.DrawString(_statsFont, "Power : " + evolution.GetPower(), new Vector2(240, 360), Color.Black);
+                            spriteBatch.DrawString(_statsFont, "Speed : " + evolution.GetSpeed(), new Vector2(240, 390), Color.Black);
+                            spriteBatch.DrawString(_statsFont, "Lag : " + evolution.GetRate(), new Vector2(440, 360), Color.Black);
+                            spriteBatch.DrawString(_statsFont, "Range : " + evolution.GetRange(), new Vector2(440, 390), Color.Black);
+                            spriteBatch.DrawString(_commentFont, evolution.GetComment(), new Vector2(230, 430), Color.Black);
+
+                            if (evolution.Price() > _player.CurrentGold)
+                            {
+                                spriteBatch.DrawString(_statsFont, "Price : " + evolution.Price() + " Vang", new Vector2(300, 474), Color.Red);
+                            }
+                            else
+                            {
+                                spriteBatch.DrawString(_statsFont, "Price : " + evolution.Price() + " Vang", new Vector2(300, 474), Color.Green);
+                            }
+                        }
+                    }
 
                     if (_sellRect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Released)
                     {
@@ -776,7 +843,7 @@ namespace SystemInvader
                 }
                 if (_placeTowers.Selected() == false)
                 {
-                    spriteBatch.Draw(_bgTowers, new Rectangle(138, 520, _bgTowers.Width, _bgTowers.Height), Color.LightGray);
+                    spriteBatch.Draw(_bgTowers, new Rectangle(138, 580, _bgTowers.Width, _bgTowers.Height), Color.LightGray);
                     foreach (TowerShop tower in _placeTowers.Towers())
                     {
                         Rectangle _rect = new Rectangle((int)tower.Position.X, (int)tower.Position.Y, tower.Sprite.Width, tower.Sprite.Height);
@@ -799,7 +866,7 @@ namespace SystemInvader
                             spriteBatch.Draw(_properties, new Rectangle(200, 350, (_properties.Width * 3) / 2, (_properties.Height * 3) / 2), Color.LightGray);
                             spriteBatch.DrawString(_statsFont, "Power : " + tower.Power, new Vector2(240, 360), Color.Black);
                             spriteBatch.DrawString(_statsFont, "Speed : " + tower.Speed, new Vector2(240, 390), Color.Black);
-                            spriteBatch.DrawString(_statsFont, "Rate : " + tower.Rate, new Vector2(440, 360), Color.Black);
+                            spriteBatch.DrawString(_statsFont, "Lag : " + tower.Rate, new Vector2(440, 360), Color.Black);
                             spriteBatch.DrawString(_statsFont, "Range : " + tower.Range, new Vector2(440, 390), Color.Black);
                             spriteBatch.DrawString(_commentFont, tower.Comment, new Vector2(230, 430), Color.Black);
 
@@ -886,7 +953,7 @@ namespace SystemInvader
                 {
                     gameState = GameState.beforeGame;
                 }
-                else if (element == "Sprites/menu")
+                else if (element == "Sprites/menu" || element == "Sprites/menuInGame")
                 {
                     gameState = GameState.mainMenu;
                     _timer = 30;

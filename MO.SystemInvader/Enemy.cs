@@ -39,6 +39,7 @@ namespace MO.SystemInvader
         int _slowDown = 0;
         int _frozen = 0;
         bool _psn = false;
+        bool _golden = false;
 
         //Fonctions///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -61,59 +62,54 @@ namespace MO.SystemInvader
         {
             if(_type == 1) // Base
             {
-                _waypoints.Enqueue(new Vector2(0, 3) * 32);
-                _waypoints.Enqueue(new Vector2(3, 3) * 32);
-                _waypoints.Enqueue(new Vector2(3, 4) * 32);
-                _waypoints.Enqueue(new Vector2(5, 4) * 32);
-                _waypoints.Enqueue(new Vector2(5, 10) * 32);
-                _waypoints.Enqueue(new Vector2(2, 10) * 32);
-                _waypoints.Enqueue(new Vector2(2, 7) * 32);
-                _waypoints.Enqueue(new Vector2(10, 7) * 32);
-                _waypoints.Enqueue(new Vector2(10, 10) * 32);
-                _waypoints.Enqueue(new Vector2(17, 10) * 32);
-                _waypoints.Enqueue(new Vector2(17, 7) * 32);
-                _waypoints.Enqueue(new Vector2(23, 7) * 32);
-                _waypoints.Enqueue(new Vector2(23, 18) * 32);
-                _waypoints.Enqueue(new Vector2(21, 18) * 32);
-                _waypoints.Enqueue(new Vector2(18, 15) * 32);
-                _waypoints.Enqueue(new Vector2(18, 13) * 32);
-                _waypoints.Enqueue(new Vector2(31, 13) * 32);
-                _waypoints.Enqueue(new Vector2(31, 21) * 32);
-                _waypoints.Enqueue(new Vector2(13, 21) * 32);
-                _waypoints.Enqueue(new Vector2(13, 15) * 32);
-                _waypoints.Enqueue(new Vector2(6, 15) * 32);
-                _waypoints.Enqueue(new Vector2(6, 17) * 32);
-                _waypoints.Enqueue(new Vector2(5, 17) * 32);
-                _waypoints.Enqueue(new Vector2(5, 22) * 32);
+                _waypoints.Enqueue(new Vector2(4, 3) * 32);
+                _waypoints.Enqueue(new Vector2(4, 4) * 32);
+                _waypoints.Enqueue(new Vector2(6, 4) * 32);
+                _waypoints.Enqueue(new Vector2(6, 12) * 32);
+                _waypoints.Enqueue(new Vector2(13, 12) * 32);
+                _waypoints.Enqueue(new Vector2(13, 19) * 32);
+                _waypoints.Enqueue(new Vector2(10, 19) * 32);
+                _waypoints.Enqueue(new Vector2(10, 23) * 32);
+                _waypoints.Enqueue(new Vector2(11, 23) * 32);
+                _waypoints.Enqueue(new Vector2(11, 24) * 32);
+                _waypoints.Enqueue(new Vector2(49, 24) * 32);
+                _waypoints.Enqueue(new Vector2(49, 19) * 32);
+                _waypoints.Enqueue(new Vector2(53, 19) * 32);
+                _waypoints.Enqueue(new Vector2(53, 5) * 32);
             }
             else if(_type == 2) // Shortcut
             {
-                _waypoints.Enqueue(new Vector2(0, 1) * 32);
-                _waypoints.Enqueue(new Vector2(3, 1) * 32);
-                _waypoints.Enqueue(new Vector2(3, 2) * 32);
-                _waypoints.Enqueue(new Vector2(5, 2) * 32);
-                _waypoints.Enqueue(new Vector2(5, 5) * 32);
-                _waypoints.Enqueue(new Vector2(10, 5) * 32);
-                _waypoints.Enqueue(new Vector2(10, 8) * 32);
-                _waypoints.Enqueue(new Vector2(17, 8) * 32);
-                _waypoints.Enqueue(new Vector2(17, 5) * 32);
-                _waypoints.Enqueue(new Vector2(23, 5) * 32);
-                _waypoints.Enqueue(new Vector2(23, 11) * 32);
-                _waypoints.Enqueue(new Vector2(31, 11) * 32);
-                _waypoints.Enqueue(new Vector2(31, 19) * 32);
+                _waypoints.Enqueue(new Vector2(4, 3) * 32);
+                _waypoints.Enqueue(new Vector2(4, 4) * 32);
+                _waypoints.Enqueue(new Vector2(6, 4) * 32);
+                _waypoints.Enqueue(new Vector2(6, 12) * 32);
+                _waypoints.Enqueue(new Vector2(13, 12) * 32);
                 _waypoints.Enqueue(new Vector2(13, 19) * 32);
-                _waypoints.Enqueue(new Vector2(13, 13) * 32);
-                _waypoints.Enqueue(new Vector2(6, 13) * 32);
-                _waypoints.Enqueue(new Vector2(6, 14) * 32);
-                _waypoints.Enqueue(new Vector2(5, 14) * 32);
-                _waypoints.Enqueue(new Vector2(5, 20) * 32);
+                _waypoints.Enqueue(new Vector2(10, 19) * 32);
+                _waypoints.Enqueue(new Vector2(10, 23) * 32);
+                _waypoints.Enqueue(new Vector2(11, 23) * 32);
+                _waypoints.Enqueue(new Vector2(11, 24) * 32);
+                _waypoints.Enqueue(new Vector2(49, 24) * 32);
+                _waypoints.Enqueue(new Vector2(49, 19) * 32);
+                _waypoints.Enqueue(new Vector2(53, 19) * 32);
+                _waypoints.Enqueue(new Vector2(53, 5) * 32);
             }
             else if(_type == 3) // Flying
             {
-                _waypoints.Enqueue(new Vector2(0, 1) * 32);
-                _waypoints.Enqueue(new Vector2(31, 6) * 32);
-                _waypoints.Enqueue(new Vector2(0, 11) * 32);
-                _waypoints.Enqueue(new Vector2(5, 20) * 32);
+                _waypoints.Enqueue(new Vector2(4, 3) * 32);
+                _waypoints.Enqueue(new Vector2(4, 4) * 32);
+                _waypoints.Enqueue(new Vector2(6, 4) * 32);
+                _waypoints.Enqueue(new Vector2(6, 12) * 32);
+                _waypoints.Enqueue(new Vector2(13, 12) * 32);
+                _waypoints.Enqueue(new Vector2(13, 19) * 32);
+                _waypoints.Enqueue(new Vector2(10, 19) * 32);
+                _waypoints.Enqueue(new Vector2(10, 23) * 32);
+                _waypoints.Enqueue(new Vector2(11, 23) * 32);
+                _waypoints.Enqueue(new Vector2(11, 24) * 32);
+                _waypoints.Enqueue(new Vector2(49, 24) * 32);
+                _waypoints.Enqueue(new Vector2(49, 19) * 32);
+                _waypoints.Enqueue(new Vector2(53, 19) * 32);
+                _waypoints.Enqueue(new Vector2(53, 5) * 32);
             }
 
             _position = _waypoints.Dequeue();
@@ -157,6 +153,14 @@ namespace MO.SystemInvader
             else if(type == 4)
             {
                 _psn = true;
+            }
+            else if(type == 5)
+            {
+                if(_golden == false)
+                {
+                    _price = _price * 2;
+                    _golden = true;
+                }
             }
         }
 
@@ -218,13 +222,39 @@ namespace MO.SystemInvader
             _frame++;
         }
 
-
         //Draw///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public void Draw(SpriteBatch spriteBatch)
         {
             if (_inGame)
             {
-                spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _texture.Width, _texture.Height), Color.White);
+                if (_frozen != 0 && _frozen + 120 >= _frame)
+                {
+                    spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _texture.Width, _texture.Height), Color.DeepSkyBlue);
+                }
+                else if(_slowDown == 1)
+                {
+                    spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _texture.Width, _texture.Height), Color.LightGray);
+                }
+                else if(_slowDown == 2)
+                {
+                    spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _texture.Width, _texture.Height), Color.Gray);
+                }
+                else if(_slowDown == 3)
+                {
+                    spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _texture.Width, _texture.Height), Color.DarkGray);
+                }
+                else if(_psn == true)
+                {
+                    spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _texture.Width, _texture.Height), Color.Purple);
+                }
+                else if(_golden == true)
+                {
+                    spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _texture.Width, _texture.Height), Color.Gold);
+                }
+                else
+                {
+                    spriteBatch.Draw(_texture, new Rectangle((int)GetPos().X, (int)GetPos().Y, _texture.Width, _texture.Height), Color.White);
+                }
 
                 _percent = ((float)_currentHealth / (float)_health) * 100;
                 for (int n = 0; n < _percent; n++)
@@ -244,6 +274,10 @@ namespace MO.SystemInvader
                     i = n;
                 }
                 _negativePercent = 100 - _percent;
+                if(_negativePercent > 100)
+                {
+                    _negativePercent = 100;
+                }
                 for (int n = 0; n < _negativePercent; n++)
                 {
                     spriteBatch.Draw(_lifeBar[3], new Rectangle((int)GetPos().X + (_texture.Width / 2) - 50 + n + i, (int)GetPos().Y, _lifeBar[3].Width, _lifeBar[3].Height), Color.White);

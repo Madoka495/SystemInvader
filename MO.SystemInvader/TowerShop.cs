@@ -21,9 +21,10 @@ namespace MO.SystemInvader
         Vector2 _original = new Vector2();
         Vector2 _old = new Vector2(-1000, -1000);
         Texture2D _sprite;
+        List<Tower> _evolutions;
         bool _wasPressed = false;
 
-        public TowerShop(Vector2 position, Texture2D sprite, int rate, int range, int power, int speed, int type, int price, string comment)
+        public TowerShop(Vector2 position, Texture2D sprite, List<Tower> evolutions, int rate, int range, int power, int speed, int type, int price, string comment)
         {
             _rate = rate;
             _range = range;
@@ -35,6 +36,7 @@ namespace MO.SystemInvader
             _power = power;
             _speed = speed;
             _comment = comment;
+            _evolutions = evolutions;
         }
 
         public int Type
@@ -90,6 +92,10 @@ namespace MO.SystemInvader
         public Vector2 Original
         {
             get { return _original; }
+        }
+        public List<Tower> Evolutions
+        {
+            get { return _evolutions; }
         }
 
         public bool WasPressed
