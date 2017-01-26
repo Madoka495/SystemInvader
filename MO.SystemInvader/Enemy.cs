@@ -82,13 +82,11 @@ namespace MO.SystemInvader
                 _waypoints.Enqueue(new Vector2(4, 3) * 32);
                 _waypoints.Enqueue(new Vector2(4, 4) * 32);
                 _waypoints.Enqueue(new Vector2(6, 4) * 32);
-                _waypoints.Enqueue(new Vector2(6, 12) * 32);
-                _waypoints.Enqueue(new Vector2(13, 12) * 32);
-                _waypoints.Enqueue(new Vector2(13, 19) * 32);
-                _waypoints.Enqueue(new Vector2(10, 19) * 32);
-                _waypoints.Enqueue(new Vector2(10, 23) * 32);
-                _waypoints.Enqueue(new Vector2(11, 23) * 32);
-                _waypoints.Enqueue(new Vector2(11, 24) * 32);
+                _waypoints.Enqueue(new Vector2(6, 9) * 32);
+                _waypoints.Enqueue(new Vector2(3, 9) * 32);
+                _waypoints.Enqueue(new Vector2(3, 19) * 32);
+                _waypoints.Enqueue(new Vector2(21, 19) * 32);
+                _waypoints.Enqueue(new Vector2(21, 24) * 32);
                 _waypoints.Enqueue(new Vector2(49, 24) * 32);
                 _waypoints.Enqueue(new Vector2(49, 19) * 32);
                 _waypoints.Enqueue(new Vector2(53, 19) * 32);
@@ -97,18 +95,9 @@ namespace MO.SystemInvader
             else if(_type == 3) // Flying
             {
                 _waypoints.Enqueue(new Vector2(4, 3) * 32);
-                _waypoints.Enqueue(new Vector2(4, 4) * 32);
-                _waypoints.Enqueue(new Vector2(6, 4) * 32);
-                _waypoints.Enqueue(new Vector2(6, 12) * 32);
-                _waypoints.Enqueue(new Vector2(13, 12) * 32);
-                _waypoints.Enqueue(new Vector2(13, 19) * 32);
-                _waypoints.Enqueue(new Vector2(10, 19) * 32);
-                _waypoints.Enqueue(new Vector2(10, 23) * 32);
-                _waypoints.Enqueue(new Vector2(11, 23) * 32);
-                _waypoints.Enqueue(new Vector2(11, 24) * 32);
-                _waypoints.Enqueue(new Vector2(49, 24) * 32);
-                _waypoints.Enqueue(new Vector2(49, 19) * 32);
-                _waypoints.Enqueue(new Vector2(53, 19) * 32);
+                _waypoints.Enqueue(new Vector2(18, 30) * 32);
+                _waypoints.Enqueue(new Vector2(30, 2) * 32);
+                _waypoints.Enqueue(new Vector2(48, 30) * 32);
                 _waypoints.Enqueue(new Vector2(53, 5) * 32);
             }
 

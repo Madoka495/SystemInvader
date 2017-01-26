@@ -109,20 +109,25 @@ public class Tower
         else if (_type == 6)
         {
             Texture2D texture = content.Load<Texture2D>("Sprites/bullet7");
-            _projectiles.Add(new Projectile(new Vector2(1200, 600), new Vector2(300, 1300), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(1200, 500), new Vector2(250, 1200), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(1200, 400), new Vector2(200, 1100), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(1200, 300), new Vector2(150, 1000), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(1200, 200), new Vector2(100, 900), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(1200, 100), new Vector2(50, 800), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(1200, 0), new Vector2(0, 700), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(1100, 0), new Vector2(-50, 600), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(1000, 0), new Vector2(-100, 500), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(900, 0), new Vector2(-150, 400), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(800, 0), new Vector2(-200, 300), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(700, 0), new Vector2(-250, 200), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(600, 0), new Vector2(-300, 100), _speed, _power, texture, 1));
-            _projectiles.Add(new Projectile(new Vector2(500, 0), new Vector2(-350, 0), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 1100), new Vector2(250, 1700), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 1000), new Vector2(200, 1600), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 900), new Vector2(150, 1500), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 800), new Vector2(100, 1400), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 700), new Vector2(50, 1300), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 600), new Vector2(0, 1200), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 500), new Vector2(-50, 1100), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 400), new Vector2(-100, 1000), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 300), new Vector2(-150, 900), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 200), new Vector2(-200, 800), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 100), new Vector2(-250, 700), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 0), new Vector2(-300, 600), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1800, 0), new Vector2(-350, 500), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1700, 0), new Vector2(-400, 400), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1600, 0), new Vector2(-450, 300), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1500, 0), new Vector2(-500, 200), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1400, 0), new Vector2(-550, 100), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1300, 0), new Vector2(-600, 0), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1200, 0), new Vector2(-650, -100), _speed, _power, texture, 1));
         }
         else if (_type == 7)
         {
