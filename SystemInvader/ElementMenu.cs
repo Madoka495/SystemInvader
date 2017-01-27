@@ -14,6 +14,7 @@ namespace SystemInvader
     {
         Texture2D _menuTexture;
         Rectangle _menuRect;
+        Vector2 _mouse;
         bool _wasClicked = false;
         string _assetName;
 
@@ -39,9 +40,10 @@ namespace SystemInvader
 
         public void Update()
         {
-            if(Mouse.GetState().LeftButton == ButtonState.Pressed)
+            _mouse = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
-                if (_menuRect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && _wasClicked == false)
+                if (_menuRect.Contains(new Point((int)_mouse.X, (int)_mouse.Y)) && _wasClicked == false)
                 {
                     clickEvent(_assetName);
                 }
@@ -68,7 +70,7 @@ namespace SystemInvader
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if(_menuRect.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Mouse.GetState().LeftButton == ButtonState.Released)
+            if(_menuRect.Contains(new Point((int)_mouse.X, (int)_mouse.Y)) && Mouse.GetState().LeftButton == ButtonState.Released)
             {
                 spriteBatch.Draw(_menuTexture, _menuRect, Color.White);
             }

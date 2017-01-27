@@ -19,6 +19,7 @@ namespace SystemInvader
         List<Tower> _2ndEvolutions;
         Player _player;
         Level _level;
+        Vector2 _mouse;
         bool _towerSelected;
         TowerShop _selectedTower = null;
 
@@ -58,37 +59,37 @@ namespace SystemInvader
  
         internal void Update()
         {
-            MouseState stateMouse = Mouse.GetState();
+            _mouse = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             _towerSelected = false;
             foreach (TowerShop tower in _towers)
             {
                 if (tower.Price <= _player.CurrentGold)
                 {
-                    if (stateMouse.LeftButton == ButtonState.Pressed)
+                    if (Mouse.GetState().LeftButton == ButtonState.Pressed)
                     {
                         if (tower.Old.X != -1000 && tower.Old.Y != -1000 && tower.WasPressed == false)
                         {
-                            if (tower.Old.X < stateMouse.X)
+                            if (tower.Old.X < _mouse.X)
                             {
-                                tower.Position = new Vector2(tower.Position.X + (stateMouse.X - tower.Old.X), tower.Position.Y);
+                                tower.Position = new Vector2(tower.Position.X + (_mouse.X - tower.Old.X), tower.Position.Y);
                             }
-                            else if (tower.Old.X > stateMouse.X)
+                            else if (tower.Old.X > _mouse.X)
                             {
-                                tower.Position = new Vector2(tower.Position.X - (tower.Old.X - stateMouse.X), tower.Position.Y);
+                                tower.Position = new Vector2(tower.Position.X - (tower.Old.X - _mouse.X), tower.Position.Y);
                             }
 
-                            if (tower.Old.Y < stateMouse.Y)
+                            if (tower.Old.Y < _mouse.Y)
                             {
-                                tower.Position = new Vector2(tower.Position.X, tower.Position.Y + (stateMouse.Y - tower.Old.Y));
+                                tower.Position = new Vector2(tower.Position.X, tower.Position.Y + (_mouse.Y - tower.Old.Y));
                             }
-                            else if (tower.Old.Y > stateMouse.Y)
+                            else if (tower.Old.Y > _mouse.Y)
                             {
-                                tower.Position = new Vector2(tower.Position.X, tower.Position.Y - (tower.Old.Y - stateMouse.Y));
+                                tower.Position = new Vector2(tower.Position.X, tower.Position.Y - (tower.Old.Y - _mouse.Y));
                             }
                         }
-                        if (stateMouse.X >= tower.Position.X && stateMouse.X <= tower.Position.X + tower.Sprite.Width && stateMouse.Y >= tower.Position.Y && stateMouse.Y <= tower.Position.Y + tower.Sprite.Height)
+                        if (_mouse.X >= tower.Position.X && _mouse.X <= tower.Position.X + tower.Sprite.Width && _mouse.Y >= tower.Position.Y && _mouse.Y <= tower.Position.Y + tower.Sprite.Height)
                         {
-                            tower.Old = new Vector2(stateMouse.X, stateMouse.Y);
+                            tower.Old = new Vector2(_mouse.X, _mouse.Y);
                             _towerSelected = true;
 
                             if (_selectedTower == null)
