@@ -36,7 +36,7 @@ namespace MO.SystemInvader
 
         public void AddEnemies()
         {
-            Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.BountyGiven, _enemy.GiveStrength, _enemy.GiveSpeed, _enemy.GiveType, _player, _enemy.LifeBar);
+            Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.BountyGiven, _enemy.GiveStrength, _enemy.GiveSpeed, _enemy.GiveType, _enemy.GiveWidth, _enemy.GiveHeight, _player, _enemy.LifeBar);
             newEnemy.SetWaypoints();
             _enemies.Add(newEnemy);
 
@@ -78,7 +78,7 @@ namespace MO.SystemInvader
                 _spawnNewWave = true;
                 foreach (Enemy enemy in Enemies)
                 {
-                    enemy.Update();
+                    enemy.Update(gameTime);
 
                     if (enemy.InGame == true)
                     {

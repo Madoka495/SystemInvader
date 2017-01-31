@@ -49,21 +49,3 @@
 /processorParam:TextureFormat=Compressed
 /build:stats.spritefont
 
-#begin Sound/title.wma
-/importer:WmaImporter
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Sound/title.wma
-
-#begin Sound/stage2.wma
-/importer:WmaImporter
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Sound/stage2.wma
-
-#begin Sound/stage1.wma
-/importer:WmaImporter
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Sound/stage1.wma
-

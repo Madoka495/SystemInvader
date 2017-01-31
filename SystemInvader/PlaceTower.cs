@@ -19,7 +19,6 @@ namespace SystemInvader
         List<Tower> _2ndEvolutions;
         Player _player;
         Level _level;
-        Vector2 _mouse;
         bool _towerSelected;
         TowerShop _selectedTower = null;
 
@@ -29,28 +28,28 @@ namespace SystemInvader
 
             _evolutions = new List<Tower>();
             _2ndEvolutions = new List<Tower>();
-            _2ndEvolutions.Add(new Tower(new Vector2(780, 755), content.Load<Texture2D>("Sprites/tower2-3"), new List<Tower>(), 14, 350, 20, 16, 400, 8, "Elemental bullets ! This tower can fire\r\nbullets with different effects.", _player));
-            _evolutions.Add(new Tower(new Vector2(710, 749), content.Load<Texture2D>("Sprites/tower2-2"), _2ndEvolutions, 16, 350, 18, 12, 250, 7, "Bullets from another dimension...\r\nFaster and stronger than the previous\r\nones.", _player));
-            _towers.Add(new TowerShop(new Vector2(150, 970), content.Load<Texture2D>("Sprites/tower2"), _evolutions, 40, 175, 10, 8, 1, 100, "Multi-shot. Fire bullets all around\r\nthe tower."));
+            _2ndEvolutions.Add(new Tower(new Vector2(780, 415), content.Load<Texture2D>("Sprites/tower2-3"), new List<Tower>(), 14, 350, 20, 16, 400, 8, "Elemental bullets ! This tower can fire\r\nbullets with different effects.", _player));
+            _evolutions.Add(new Tower(new Vector2(710, 409), content.Load<Texture2D>("Sprites/tower2-2"), _2ndEvolutions, 16, 350, 18, 12, 250, 7, "Bullets from another dimension...\r\nFaster and stronger than the previous\r\nones.", _player));
+            _towers.Add(new TowerShop(new Vector2(150, 630), content.Load<Texture2D>("Sprites/tower2"), _evolutions, 40, 175, 10, 8, 1, 100, "Multi-shot. Fire bullets all around\r\nthe tower."));
 
             _evolutions = new List<Tower>();
             _2ndEvolutions = new List<Tower>();
-            _evolutions.Add(new Tower(new Vector2(710, 770), content.Load<Texture2D>("Sprites/tower5-2"), _2ndEvolutions, 10, 9999, 16, 16, 400, 6, "Fire a literal storm of bullets at the\r\nentire map !", _player));
+            _evolutions.Add(new Tower(new Vector2(710, 430), content.Load<Texture2D>("Sprites/tower5-2"), _2ndEvolutions, 12, 9999, 16, 14, 400, 6, "Fire a literal storm of bullets at the\r\nentire map !", _player));
             _2ndEvolutions = new List<Tower>();
-            _evolutions.Add(new Tower(new Vector2(810, 770), content.Load<Texture2D>("Sprites/tower5-3"), _2ndEvolutions, 120, 600, 2000, 25, 300, 9, "A living tower that fire extremely\r\npowerful bullets, but needs to load\r\nthem.", _player));
-            _towers.Add(new TowerShop(new Vector2(230, 970), content.Load<Texture2D>("Sprites/tower5"), _evolutions, 30, 400, 5, 16, 2, 150, "Teleport bullets right on the foe."));
+            _evolutions.Add(new Tower(new Vector2(810, 430), content.Load<Texture2D>("Sprites/tower5-3"), _2ndEvolutions, 120, 600, 2000, 25, 300, 9, "A living tower that fire extremely\r\npowerful bullets, but needs to load\r\nthem.", _player));
+            _towers.Add(new TowerShop(new Vector2(230, 630), content.Load<Texture2D>("Sprites/tower5"), _evolutions, 30, 400, 5, 16, 2, 150, "Teleport bullets right on the foe."));
 
             _evolutions = new List<Tower>();
-            _towers.Add(new TowerShop(new Vector2(310, 930), content.Load<Texture2D>("Sprites/tower6"), _evolutions, 8, 250, 12, 24, 3, 50, "Bullets will slow down the foe."));
+            _towers.Add(new TowerShop(new Vector2(310, 590), content.Load<Texture2D>("Sprites/tower6"), _evolutions, 8, 250, 12, 24, 3, 50, "Bullets will slow down the foe."));
 
             _evolutions = new List<Tower>();
-            _towers.Add(new TowerShop(new Vector2(390, 930), content.Load<Texture2D>("Sprites/tower4"), _evolutions, 60, 300, 24, 24, 4, 75, "Bullets will freeze the foe,\r\nmaking it unable to move for 2 seconds."));
+            _towers.Add(new TowerShop(new Vector2(390, 590), content.Load<Texture2D>("Sprites/tower4"), _evolutions, 60, 300, 24, 24, 4, 75, "Bullets will freeze the foe,\r\nmaking it unable to move for 2 seconds."));
 
             _evolutions = new List<Tower>();
-            _towers.Add(new TowerShop(new Vector2(470, 930), content.Load<Texture2D>("Sprites/tower3"), _evolutions, 10, 250, 12, 8, 5, 75, "Bullets will poison the foe,\r\nwhich will progressively deal it damage."));
+            _towers.Add(new TowerShop(new Vector2(470, 590), content.Load<Texture2D>("Sprites/tower3"), _evolutions, 10, 250, 12, 8, 5, 75, "Bullets will poison the foe,\r\nwhich will progressively deal it damage."));
 
             _evolutions = new List<Tower>();
-            _towers.Add(new TowerShop(new Vector2(550, 940), content.Load<Texture2D>("Sprites/tower7"), _evolutions, 8, 250, 16, 10, 10, 50, "Bullets will change the foe\r\ninto gold, making its drop two times\r\nbigger."));
+            _towers.Add(new TowerShop(new Vector2(550, 600), content.Load<Texture2D>("Sprites/tower7"), _evolutions, 8, 250, 16, 10, 10, 50, "Bullets will change the foe\r\ninto gold, making its drop two times\r\nbigger."));
 
             _placedTowers = new List<Tower>();
             _player = player;
@@ -59,37 +58,37 @@ namespace SystemInvader
  
         internal void Update()
         {
-            _mouse = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            MouseState stateMouse = Mouse.GetState();
             _towerSelected = false;
             foreach (TowerShop tower in _towers)
             {
                 if (tower.Price <= _player.CurrentGold)
                 {
-                    if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+                    if (stateMouse.LeftButton == ButtonState.Pressed)
                     {
                         if (tower.Old.X != -1000 && tower.Old.Y != -1000 && tower.WasPressed == false)
                         {
-                            if (tower.Old.X < _mouse.X)
+                            if (tower.Old.X < stateMouse.X)
                             {
-                                tower.Position = new Vector2(tower.Position.X + (_mouse.X - tower.Old.X), tower.Position.Y);
+                                tower.Position = new Vector2(tower.Position.X + (stateMouse.X - tower.Old.X), tower.Position.Y);
                             }
-                            else if (tower.Old.X > _mouse.X)
+                            else if (tower.Old.X > stateMouse.X)
                             {
-                                tower.Position = new Vector2(tower.Position.X - (tower.Old.X - _mouse.X), tower.Position.Y);
+                                tower.Position = new Vector2(tower.Position.X - (tower.Old.X - stateMouse.X), tower.Position.Y);
                             }
 
-                            if (tower.Old.Y < _mouse.Y)
+                            if (tower.Old.Y < stateMouse.Y)
                             {
-                                tower.Position = new Vector2(tower.Position.X, tower.Position.Y + (_mouse.Y - tower.Old.Y));
+                                tower.Position = new Vector2(tower.Position.X, tower.Position.Y + (stateMouse.Y - tower.Old.Y));
                             }
-                            else if (tower.Old.Y > _mouse.Y)
+                            else if (tower.Old.Y > stateMouse.Y)
                             {
-                                tower.Position = new Vector2(tower.Position.X, tower.Position.Y - (tower.Old.Y - _mouse.Y));
+                                tower.Position = new Vector2(tower.Position.X, tower.Position.Y - (tower.Old.Y - stateMouse.Y));
                             }
                         }
-                        if (_mouse.X >= tower.Position.X && _mouse.X <= tower.Position.X + tower.Sprite.Width && _mouse.Y >= tower.Position.Y && _mouse.Y <= tower.Position.Y + tower.Sprite.Height)
+                        if (stateMouse.X >= tower.Position.X && stateMouse.X <= tower.Position.X + tower.Sprite.Width && stateMouse.Y >= tower.Position.Y && stateMouse.Y <= tower.Position.Y + tower.Sprite.Height)
                         {
-                            tower.Old = new Vector2(_mouse.X, _mouse.Y);
+                            tower.Old = new Vector2(stateMouse.X, stateMouse.Y);
                             _towerSelected = true;
 
                             if (_selectedTower == null)
