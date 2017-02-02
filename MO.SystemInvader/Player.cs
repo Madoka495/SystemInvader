@@ -14,7 +14,7 @@ namespace MO.SystemInvader
         int _startGold = 500;
         int _score = 0;
         int _difficulty = 2;
-        int _map = 2;
+        int _map = 0;
 
         public void Rewind()
         {

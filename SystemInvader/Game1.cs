@@ -27,7 +27,7 @@ namespace SystemInvader
         SpriteBatch spriteBatch;
 
         //Menu
-        enum GameState { mainMenu, enterName, scores, difficulty, shopTower, inGame, beforeGame, won, lost }
+        enum GameState { mainMenu, enterName, scores, difficulty, chooseMap, shopTower, inGame, beforeGame, won, lost }
 
         GameState gameState;
 
@@ -40,6 +40,7 @@ namespace SystemInvader
         List<ElementMenu> scores = new List<ElementMenu>();
         List<ElementMenu> won = new List<ElementMenu>();
         List<ElementMenu> lost = new List<ElementMenu>();
+        List<ElementMenu> chooseMap = new List<ElementMenu>();
 
 
         Keys[] lastPressedKeys = new Keys[5];
@@ -87,8 +88,6 @@ namespace SystemInvader
         Texture2D _sellButton;
         Rectangle _sellRect;
         Texture2D _navBarInfo;
-        List<Texture2D> _snow;
-
 
         // Map
         Level _level;
@@ -191,6 +190,9 @@ namespace SystemInvader
             difficulty.Add(new ElementMenu("Sprites/hard"));
             difficulty.Add(new ElementMenu("Sprites/lunatic"));
             difficulty.Add(new ElementMenu("Sprites/menu"));
+
+            chooseMap.Add(new ElementMenu ("Background/mapButton"));
+            chooseMap.Add(new ElementMenu("Background/mapButtonSnow"));
         }
 
         /// <summary>
@@ -339,23 +341,26 @@ namespace SystemInvader
             difficulty.Find(x => x.AssetName == "Sprites/lunatic").MoveElement(580, 250);
             difficulty.Find(x => x.AssetName == "Sprites/menu").MoveElement(580, 350);
 
+            foreach(ElementMenu element in chooseMap)
+            {
+                element.LoadContent(Content);
+                element.CenterElement(600, 800);
+                element.clickEvent += OnClick;
+            }
+            chooseMap.Find(x => x.AssetName == "Background/mapButton").MoveElement(100, 250);
+            chooseMap.Find(x => x.AssetName == "Background/mapButtonSnow").MoveElement(1000, 250);
+
             // Map
             _map = Content.Load<Texture2D>("Background/map");
             _mapSnow = Content.Load<Texture2D>("Background/mapSnow");
             _level.AddMap(_map, _mapSnow);
 
             //Effects
-            if(_player.Map == 1)
-            {
-                _waterfall1 = Content.Load<Texture2D>("Sprites/waterfall1.png");
-                _waterfall2 = Content.Load<Texture2D>("Sprites/waterfall2.png");
-                _level.AddWaterFall(_waterfall1, _waterfall2);
-            }
-            else if(_player.Map == 2)
-            {
-                _level.AddTextureSnow(content);
-                _level.AddSnowFall(_random);
-            }
+            _waterfall1 = Content.Load<Texture2D>("Sprites/waterfall1.png");
+            _waterfall2 = Content.Load<Texture2D>("Sprites/waterfall2.png");
+            _level.AddWaterFall(_waterfall1, _waterfall2);
+            _level.AddTextureSnow(content);
+            _level.AddSnowFall(_random);
 
             //Ennemies
             _enemiesData.AddTextureEnemies(this.Content);
@@ -392,7 +397,7 @@ namespace SystemInvader
             // TODO: Add your update logic here
             // Enregistrement Pseudo + ID (si aucun pseudo)
 
-            _mouse = new Vector2(Mouse.GetState().X * (float)1.4, Mouse.GetState().Y * (float)1.4);
+            _mouse = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             _towers = _placeTowers.PlacedTowers();
             if(_waveManager.NbWave == 0)
             {
@@ -737,6 +742,12 @@ namespace SystemInvader
                         element.Update();
                     }
                     break;
+                case GameState.chooseMap:
+                    foreach (ElementMenu element in chooseMap)
+                    {
+                        element.Update();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -794,6 +805,13 @@ namespace SystemInvader
                     element.Draw(spriteBatch);
                 }
                 spriteBatch.DrawString(_mainSpriteFont, myName, new Vector2(880, 425), Color.Black);
+            }
+            if (gameState == GameState.chooseMap)
+            {
+                foreach (ElementMenu element in chooseMap)
+                {
+                    element.Draw(spriteBatch);
+                }
             }
             if (gameState == GameState.inGame || gameState == GameState.beforeGame || gameState == GameState.shopTower)
             {
@@ -1093,24 +1111,32 @@ namespace SystemInvader
                 else if (element == "Sprites/easy")
                 {
                     _player.ChangeDifficulty(1);
-                    gameState = GameState.beforeGame;
-                    MediaPlayer.Stop();
+                    gameState = GameState.chooseMap;
                 }
                 else if (element == "Sprites/normal")
                 {
                     _player.ChangeDifficulty(2);
-                    gameState = GameState.beforeGame;
-                    MediaPlayer.Stop();
+                    gameState = GameState.chooseMap;
                 }
                 else if (element == "Sprites/hard")
                 {
                     _player.ChangeDifficulty(3);
-                    gameState = GameState.beforeGame;
-                    MediaPlayer.Stop();
+                    gameState = GameState.chooseMap;
                 }
                 else if (element == "Sprites/lunatic")
                 {
                     _player.ChangeDifficulty(4);
+                    gameState = GameState.chooseMap;
+                }
+                else if (element == "Background/mapButton")
+                {
+                    _player.Map = 1;
+                    gameState = GameState.beforeGame;
+                    MediaPlayer.Stop();
+                }
+                else if (element == "Background/mapButtonSnow")
+                {
+                    _player.Map = 2;
                     gameState = GameState.beforeGame;
                     MediaPlayer.Stop();
                 }

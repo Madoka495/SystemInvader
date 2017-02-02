@@ -60,7 +60,7 @@ namespace SystemInvader
  
         internal void Update()
         {
-            _mouse = new Vector2(Mouse.GetState().X * (float)1.4, Mouse.GetState().Y * (float)1.4);
+            _mouse = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             _towerSelected = false;
             foreach (TowerShop tower in _towers)
             {

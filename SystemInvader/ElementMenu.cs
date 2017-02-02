@@ -40,7 +40,7 @@ namespace SystemInvader
 
         public void Update()
         {
-            _mouse = new Vector2(Mouse.GetState().X * (float)1.4, Mouse.GetState().Y * (float)1.4);
+            _mouse = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
                 if (_menuRect.Contains(new Point((int)_mouse.X, (int)_mouse.Y)) && _wasClicked == false)
