@@ -103,3 +103,39 @@
 /processorParam:Quality=Best
 /build:Sound/Effect/shoot3.wav
 
+#begin Sound/stage3.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sound/stage3.mp3
+
+#begin Sound/stage4.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sound/stage4.mp3
+
+#begin Sound\boss4.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sound\boss4.mp3
+
+#begin Sound/boss3.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sound/boss3.mp3
+
+#begin Sound/Effect/hurt.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Effect/hurt.wav
+
+#begin Sound/Effect/dead.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Effect/dead.wav
+

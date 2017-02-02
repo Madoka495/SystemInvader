@@ -58,7 +58,7 @@ namespace Data.SystemInvader
             _listEnemies.Add(new Enemy(EnemyTexture[1], Vector2.Zero, 1000, 15, 5, 0.7f, 1, 46, 46, _player, _lifeBar));
             _listEnemies.Add(new Enemy(EnemyTexture[2], Vector2.Zero, 2500, 50, 10, 0.5f, 2, 46, 46, _player, _lifeBar));
             _listEnemies.Add(new Enemy(EnemyTexture[3], Vector2.Zero, 10000, 1000, 80, 0.7f, 3, 64, 64, _player, _lifeBar));
-            _listEnemies.Add(new Enemy(EnemyTexture[4], Vector2.Zero, 4000, 75, 25, 1f, 4, 48, 48, _player, _lifeBar));
+            _listEnemies.Add(new Enemy(EnemyTexture[4], Vector2.Zero, 4000, 75, 25, 1f, 4, 63, 63, _player, _lifeBar));
             _listEnemies.Add(new Enemy(EnemyTexture[5], Vector2.Zero, 1000, 20, 10, 4.5f, 1, 46, 46, _player, _lifeBar));
             _listEnemies.Add(new Enemy(EnemyTexture[6], Vector2.Zero, 4500, 80, 20, 1f, 1, 46, 46, _player, _lifeBar));
             _listEnemies.Add(new Enemy(EnemyTexture[7], Vector2.Zero, 15000, 100, 30, 0.8f, 2, 46, 46, _player, _lifeBar));

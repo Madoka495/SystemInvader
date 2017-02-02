@@ -89,7 +89,7 @@ namespace MO.SystemInvader
 
                     if (enemy.InGame == true)
                     {
-                        if (enemy.GetPos() == _currentLevel.AtTheEnd && _player.Map == 1 || enemy.GetPos() == _currentLevel.AtTheEndSnow && _player.Map == 2)
+                        if (enemy.GetPos() == _currentLevel.AtTheEnd - new Vector2(1, 1) * (enemy.GiveHeight / 4) && _player.Map == 1 || enemy.GetPos() == _currentLevel.AtTheEndSnow - new Vector2(1, 1) * (enemy.GiveHeight / 4) && _player.Map == 2)
                         {
                             enemy.AtTheEnd();
                         }

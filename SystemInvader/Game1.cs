@@ -63,6 +63,10 @@ namespace SystemInvader
         Song _boss1;
         Song _stage2;
         Song _boss2;
+        Song _stage3;
+        Song _boss3;
+        Song _stage4;
+        Song _boss4;
         int _music = 0;
         SoundEffect _incomeEffect;
 
@@ -108,11 +112,11 @@ namespace SystemInvader
         // Timer
         int _timer = 30;
         int _frame = 0;
-        int _wave = 1;
 
         // Wave
         WaveManager _waveManager;
         WavesData _wavesData;
+        int _wave = 1;
 
         // Random
         Random _random = new Random();
@@ -128,9 +132,9 @@ namespace SystemInvader
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            
+
             // Player
-            _player = new Player();
+            _player = new Player(Content);
 
             // Map
             _level = new Level();
@@ -191,7 +195,7 @@ namespace SystemInvader
             difficulty.Add(new ElementMenu("Sprites/lunatic"));
             difficulty.Add(new ElementMenu("Sprites/menu"));
 
-            chooseMap.Add(new ElementMenu ("Background/mapButton"));
+            chooseMap.Add(new ElementMenu("Background/mapButton"));
             chooseMap.Add(new ElementMenu("Background/mapButtonSnow"));
         }
 
@@ -214,7 +218,7 @@ namespace SystemInvader
 
             //Towers
             _towers = new List<Tower>();
-          
+
         }
 
         /// <summary>
@@ -247,6 +251,10 @@ namespace SystemInvader
             _boss1 = Content.Load<Song>("Sound/boss1");
             _stage2 = Content.Load<Song>("Sound/stage2");
             _boss2 = Content.Load<Song>("Sound/boss2");
+            _stage3 = Content.Load<Song>("Sound/stage3");
+            _boss3 = Content.Load<Song>("Sound/boss3");
+            _stage4 = Content.Load<Song>("Sound/stage4");
+            _boss4 = Content.Load<Song>("Sound/boss4");
             MediaPlayer.IsRepeating = true;
             _incomeEffect = Content.Load<SoundEffect>("Sound/Effect/income");
 
@@ -341,7 +349,7 @@ namespace SystemInvader
             difficulty.Find(x => x.AssetName == "Sprites/lunatic").MoveElement(580, 250);
             difficulty.Find(x => x.AssetName == "Sprites/menu").MoveElement(580, 350);
 
-            foreach(ElementMenu element in chooseMap)
+            foreach (ElementMenu element in chooseMap)
             {
                 element.LoadContent(Content);
                 element.CenterElement(600, 800);
@@ -368,7 +376,7 @@ namespace SystemInvader
 
             //Tower
             _placeTowers = new PlaceTower(_player, _level, this.Content);
-            
+
 
             //Wave
             _wavesData.AddInfor(_enemiesData, _level, _player);
@@ -397,9 +405,9 @@ namespace SystemInvader
             // TODO: Add your update logic here
             // Enregistrement Pseudo + ID (si aucun pseudo)
 
-            _mouse = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            _mouse = new Vector2(Mouse.GetState().X * (float)1.4, Mouse.GetState().Y * (float)1.4);
             _towers = _placeTowers.PlacedTowers();
-            if(_waveManager.NbWave == 0)
+            if (_waveManager.NbWave == 0)
             {
                 _wave = 1;
             }
@@ -407,11 +415,12 @@ namespace SystemInvader
             {
                 _wave = _waveManager.NbWave;
             }
-            
+
             int id = _random.Next(1, 100);
             if (_player.Life <= 0)
             {
                 gameState = GameState.lost;
+                MediaPlayer.Stop();
                 var objects = JArray.Parse(File.ReadAllText(path));
 
                 if (myName.Length >= 1)
@@ -467,7 +476,7 @@ namespace SystemInvader
 
                 for (int u = 0; u < 10; u++)
                 {
-                    if(objects.Count > 0)
+                    if (objects.Count > 0)
                     {
                         int i = 0;
                         string pseudo = null;
@@ -490,7 +499,7 @@ namespace SystemInvader
                 _waveManager.Won = false;
 
             }
-            
+
             if (Mouse.GetState().LeftButton == ButtonState.Released)
             {
                 _isPressed = false;
@@ -498,10 +507,10 @@ namespace SystemInvader
             }
             else
             {
-                if(_isPressed2 == false)
+                if (_isPressed2 == false)
                 {
                     bool _selected = false;
-                    
+
                     if (_selectedTower != null)
                     {
                         Rectangle _rec = new Rectangle(700, 624, (_properties2.Width * 3) / 2, (_properties2.Height * 3) / 2);
@@ -529,7 +538,7 @@ namespace SystemInvader
 
                     foreach (Tower tower in _towers)
                     {
-                        if(tower.InGame() == true)
+                        if (tower.InGame() == true)
                         {
                             Rectangle _rect = new Rectangle((int)tower.GetPos().X, (int)tower.GetPos().Y, tower.Sprite.Width, tower.Sprite.Height);
                             if (_rect.Contains(new Point((int)_mouse.X, (int)_mouse.Y)))
@@ -540,7 +549,7 @@ namespace SystemInvader
                         }
                     }
 
-                    if(_selected == false)
+                    if (_selected == false)
                     {
                         _selectedTower = null;
                     }
@@ -600,7 +609,7 @@ namespace SystemInvader
                 case GameState.inGame:
                     _waveManager.Update(gameTime);
                     _level.Update(gameTime);
-                    if ((_wave == 5 && _music == 0) || (_wave == 10 && _music == 2))
+                    if ((_wave == 5 && _music == 0) || (_wave == 10 && _music == 2) || (_wave == 15 && _music == 4) || (_wave == 20 && _music == 6))
                     {
                         MediaPlayer.Stop();
                     }
@@ -611,10 +620,20 @@ namespace SystemInvader
                             MediaPlayer.Play(_boss1);
                             _music = 1;
                         }
-                        if (_wave == 10)
+                        else if (_wave == 10)
                         {
                             MediaPlayer.Play(_boss2);
                             _music = 3;
+                        }
+                        else if (_wave == 15)
+                        {
+                            MediaPlayer.Play(_boss3);
+                            _music = 5;
+                        }
+                        else if (_wave == 20)
+                        {
+                            MediaPlayer.Play(_boss4);
+                            _music = 7;
                         }
                     }
                     if (gameState == GameState.inGame)
@@ -677,7 +696,7 @@ namespace SystemInvader
                         }
                     }
 
-                    if(_waveManager.SendNextWave)
+                    if (_waveManager.SendNextWave)
                     {
                         if (_waveManager.NbWave > 0)
                         {
@@ -691,20 +710,30 @@ namespace SystemInvader
                     }
                     break;
                 case GameState.beforeGame:
-                    if((_wave == 6 && _music == 1) || (_wave == 11 && _music == 3))
+                    if ((_wave == 6 && _music == 1) || (_wave == 11 && _music == 3) || (_wave == 16 && _music == 5))
                     {
                         MediaPlayer.Stop();
                     }
                     if (MediaPlayer.State != MediaState.Playing)
                     {
-                        if(_wave < 6)
+                        if (_wave < 6)
                         {
                             MediaPlayer.Play(_stage1);
                         }
-                        else if(_wave < 11)
+                        else if (_wave < 11)
                         {
                             MediaPlayer.Play(_stage2);
                             _music = 2;
+                        }
+                        else if (_wave < 16)
+                        {
+                            MediaPlayer.Play(_stage3);
+                            _music = 4;
+                        }
+                        else
+                        {
+                            MediaPlayer.Play(_stage4);
+                            _music = 6;
                         }
                     }
                     foreach (ElementMenu element in beforeGame)
@@ -715,7 +744,7 @@ namespace SystemInvader
                         _timer--;
                     foreach (Tower tower in _towers)
                     {
-                        if(tower.InGame() == true)
+                        if (tower.InGame() == true)
                         {
                             foreach (Projectile projectile in tower.GetProjectiles())
                             {
@@ -723,7 +752,7 @@ namespace SystemInvader
                             }
                         }
                     }
-                        break;
+                    break;
                 case GameState.won:
                     foreach (ElementMenu element in won)
                     {
@@ -772,7 +801,7 @@ namespace SystemInvader
             spriteBatch.Begin();
             spriteBatch.Draw(_bgTexture, new Rectangle(0, 0, 1920, 1080), Color.White);
 
-            if(gameState == GameState.scores)
+            if (gameState == GameState.scores)
             {
                 spriteBatch.DrawString(_score, "Scoreboard", new Vector2(900, 30), Color.DarkSalmon);
                 foreach (ElementMenu element in scores)
@@ -832,7 +861,7 @@ namespace SystemInvader
                 }
                 _waveManager.Draw(spriteBatch);
                 spriteBatch.Draw(_navBarInfo, new Rectangle(0, 0, _navBarInfo.Width, _navBarInfo.Height), Color.White);
-                if(myName != "")
+                if (myName != "")
                 {
                     spriteBatch.DrawString(_mainFont, "Player : " + myName, new Vector2(10, 20), Color.Gray);
                 }
@@ -873,7 +902,7 @@ namespace SystemInvader
 
                 if (gameState != GameState.inGame)
                 {
-                    if(_timer < 10)
+                    if (_timer < 10)
                     {
                         spriteBatch.DrawString(_mainFont, "Timer : " + _timer, new Vector2(420, 20), Color.Red);
                     }
@@ -902,7 +931,7 @@ namespace SystemInvader
                     spriteBatch.DrawString(_statsFont, "Range : " + _selectedTower.GetRange(), new Vector2(940, 665), Color.Black);
                     spriteBatch.DrawString(_commentFont, _selectedTower.GetComment(), new Vector2(730, 705), Color.Black);
 
-                    foreach(Tower evolution in _selectedTower.Evolutions)
+                    foreach (Tower evolution in _selectedTower.Evolutions)
                     {
                         Rectangle _rect = new Rectangle((int)evolution.GetPos().X, (int)evolution.GetPos().Y, evolution.Sprite.Width, evolution.Sprite.Height);
                         if (evolution.Price() > _player.CurrentGold)
@@ -948,7 +977,7 @@ namespace SystemInvader
                     }
                 }
             }
-            if(gameState == GameState.inGame)
+            if (gameState == GameState.inGame)
             {
                 foreach (ElementMenu element in inGame)
                 {
@@ -968,7 +997,7 @@ namespace SystemInvader
                     {
                         Rectangle _rect = new Rectangle((int)tower.Position.X, (int)tower.Position.Y, tower.Sprite.Width, tower.Sprite.Height);
 
-                        if(tower.Price > _player.CurrentGold)
+                        if (tower.Price > _player.CurrentGold)
                         {
                             spriteBatch.Draw(tower.Sprite, _rect, Color.Black);
                         }
@@ -998,7 +1027,7 @@ namespace SystemInvader
                             {
                                 spriteBatch.DrawString(_statsFont, "Price : " + tower.Price + " Vang", new Vector2(300, 814), Color.Green);
                             }
-                            
+
                         }
                     }
                 }
@@ -1007,7 +1036,7 @@ namespace SystemInvader
                     spriteBatch.Draw(_placeTowers.SelectedTower().Sprite, new Rectangle((int)_placeTowers.SelectedTower().Position.X, (int)_placeTowers.SelectedTower().Position.Y, _placeTowers.SelectedTower().Sprite.Width, _placeTowers.SelectedTower().Sprite.Height), Color.White);
                 }
             }
-            if(gameState == GameState.beforeGame)
+            if (gameState == GameState.beforeGame)
             {
                 foreach (ElementMenu element in beforeGame)
                 {
@@ -1076,7 +1105,7 @@ namespace SystemInvader
                 else if (element == "Sprites/menu" || element == "Sprites/menuInGame")
                 {
                     gameState = GameState.mainMenu;
-                    if(element == "Sprites/menuInGame")
+                    if (element == "Sprites/menuInGame")
                     {
                         MediaPlayer.Stop();
                     }

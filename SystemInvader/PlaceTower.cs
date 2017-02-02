@@ -30,28 +30,28 @@ namespace SystemInvader
 
             _evolutions = new List<Tower>();
             _2ndEvolutions = new List<Tower>();
-            _2ndEvolutions.Add(new Tower(new Vector2(780, 755), content.Load<Texture2D>("Sprites/tower2-3"), new List<Tower>(), 14, 350, 20, 16, 400, 8, "Elemental bullets ! This tower can fire\r\nbullets with different effects.", content.Load<SoundEffect>("Sound/Effect/shoot"), _player));
-            _evolutions.Add(new Tower(new Vector2(710, 749), content.Load<Texture2D>("Sprites/tower2-2"), _2ndEvolutions, 16, 350, 18, 12, 250, 7, "Bullets from another dimension...\r\nFaster and stronger than the previous\r\nones.", content.Load<SoundEffect>("Sound/Effect/shoot"), _player));
-            _towers.Add(new TowerShop(new Vector2(150, 970), content.Load<Texture2D>("Sprites/tower2"), _evolutions, 40, 175, 10, 8, 1, 100, "Multi-shot. Fire bullets all around\r\nthe tower.", content.Load<SoundEffect>("Sound/Effect/shoot")));
+            _2ndEvolutions.Add(new Tower(new Vector2(780, 755), content.Load<Texture2D>("Sprites/tower2-3"), new List<Tower>(), 14, 350, 20, 16, 500, 8, "Elemental bullets ! This portal can fire\r\nbullets with different effects.", content.Load<SoundEffect>("Sound/Effect/shoot"), _player));
+            _evolutions.Add(new Tower(new Vector2(710, 749), content.Load<Texture2D>("Sprites/tower2-2"), _2ndEvolutions, 16, 350, 18, 12, 300, 7, "Bullets from another dimension...\r\nFaster and stronger than the previous\r\nones.", content.Load<SoundEffect>("Sound/Effect/shoot"), _player));
+            _towers.Add(new TowerShop(new Vector2(470, 960), content.Load<Texture2D>("Sprites/tower2"), _evolutions, 36, 200, 20, 8, 1, 200, "Multi-shot. Fire bullets all around\r\nthe portal.", content.Load<SoundEffect>("Sound/Effect/shoot")));
 
             _evolutions = new List<Tower>();
             _2ndEvolutions = new List<Tower>();
             _evolutions.Add(new Tower(new Vector2(710, 770), content.Load<Texture2D>("Sprites/tower5-2"), _2ndEvolutions, 10, 9999, 16, 16, 400, 6, "Fire a literal storm of bullets at the\r\nentire map !", content.Load<SoundEffect>("Sound/Effect/shoot2"), _player));
             _2ndEvolutions = new List<Tower>();
-            _evolutions.Add(new Tower(new Vector2(810, 770), content.Load<Texture2D>("Sprites/tower5-3"), _2ndEvolutions, 90, 600, 2000, 36, 300, 9, "A living tower that fire extremely\r\npowerful bullets, but needs to load\r\nthem.", content.Load<SoundEffect>("Sound/Effect/shoot"), _player));
-            _towers.Add(new TowerShop(new Vector2(230, 970), content.Load<Texture2D>("Sprites/tower5"), _evolutions, 30, 400, 5, 16, 2, 150, "Teleport bullets right on the foe.", content.Load<SoundEffect>("Sound/Effect/shoot")));
+            _evolutions.Add(new Tower(new Vector2(810, 770), content.Load<Texture2D>("Sprites/tower5-3"), _2ndEvolutions, 90, 600, 2000, 36, 450, 9, "A living portal that fire extremely\r\npowerful bullets, but needs to load\r\nthem.", content.Load<SoundEffect>("Sound/Effect/shoot"), _player));
+            _towers.Add(new TowerShop(new Vector2(530, 965), content.Load<Texture2D>("Sprites/tower5"), _evolutions, 30, 450, 14, 16, 2, 150, "Teleport bullets right on the foe.", content.Load<SoundEffect>("Sound/Effect/shoot")));
 
             _evolutions = new List<Tower>();
-            _towers.Add(new TowerShop(new Vector2(310, 930), content.Load<Texture2D>("Sprites/tower6"), _evolutions, 8, 250, 12, 24, 3, 50, "Bullets will slow down the foe.", content.Load<SoundEffect>("Sound/Effect/shoot3")));
+            _towers.Add(new TowerShop(new Vector2(150, 962), content.Load<Texture2D>("Sprites/tower6"), _evolutions, 8, 250, 16, 24, 3, 50, "Bullets will slow down the foe.", content.Load<SoundEffect>("Sound/Effect/shoot3")));
 
             _evolutions = new List<Tower>();
-            _towers.Add(new TowerShop(new Vector2(390, 930), content.Load<Texture2D>("Sprites/tower4"), _evolutions, 60, 300, 24, 24, 4, 50, "Bullets will freeze the foe,\r\nmaking it unable to move for 2 seconds.", content.Load<SoundEffect>("Sound/Effect/shoot")));
+            _towers.Add(new TowerShop(new Vector2(230, 962), content.Load<Texture2D>("Sprites/tower4"), _evolutions, 60, 300, 30, 24, 4, 50, "Bullets will freeze the foe,\r\nmaking it unable to move for 2 seconds.", content.Load<SoundEffect>("Sound/Effect/shoot3")));
 
             _evolutions = new List<Tower>();
-            _towers.Add(new TowerShop(new Vector2(470, 930), content.Load<Texture2D>("Sprites/tower3"), _evolutions, 10, 250, 12, 8, 5, 50, "Bullets will poison the foe,\r\nwhich will progressively deal it damage.", content.Load<SoundEffect>("Sound/Effect/shoot3")));
+            _towers.Add(new TowerShop(new Vector2(310, 962), content.Load<Texture2D>("Sprites/tower3"), _evolutions, 10, 250, 18, 8, 5, 50, "Bullets will poison the foe,\r\nwhich will progressively deal it damage.", content.Load<SoundEffect>("Sound/Effect/shoot3")));
 
             _evolutions = new List<Tower>();
-            _towers.Add(new TowerShop(new Vector2(550, 940), content.Load<Texture2D>("Sprites/tower7"), _evolutions, 8, 250, 16, 10, 10, 50, "Bullets will change the foe\r\ninto gold, making its drop two times\r\nbigger.", content.Load<SoundEffect>("Sound/Effect/shoot3")));
+            _towers.Add(new TowerShop(new Vector2(390, 962), content.Load<Texture2D>("Sprites/tower7"), _evolutions, 8, 250, 22, 10, 10, 50, "Bullets will change the foe\r\ninto gold, making its drop two times\r\nbigger.", content.Load<SoundEffect>("Sound/Effect/shoot3")));
 
             _placedTowers = new List<Tower>();
             _player = player;
@@ -60,7 +60,7 @@ namespace SystemInvader
  
         internal void Update()
         {
-            _mouse = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+            _mouse = new Vector2(Mouse.GetState().X * (float)1.4, Mouse.GetState().Y * (float)1.4);
             _towerSelected = false;
             foreach (TowerShop tower in _towers)
             {
