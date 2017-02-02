@@ -37,7 +37,14 @@ namespace MO.SystemInvader
         public void AddEnemies()
         {
             Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.BountyGiven, _enemy.GiveStrength, _enemy.GiveSpeed, _enemy.GiveType, _enemy.GiveWidth, _enemy.GiveHeight, _player, _enemy.LifeBar);
-            newEnemy.SetWaypoints();
+            if(_player.Map == 1)
+            {
+                newEnemy.SetWaypoints();
+            }
+            else if(_player.Map == 2)
+            {
+                newEnemy.SetWaypointsSnow();
+            }
             _enemies.Add(newEnemy);
 
             _numberCurrentEnemies++;
@@ -82,7 +89,7 @@ namespace MO.SystemInvader
 
                     if (enemy.InGame == true)
                     {
-                        if (enemy.GetPos() == _currentLevel.AtTheEnd)
+                        if (enemy.GetPos() == _currentLevel.AtTheEnd && _player.Map == 1 || enemy.GetPos() == _currentLevel.AtTheEndSnow && _player.Map == 2)
                         {
                             enemy.AtTheEnd();
                         }

@@ -14,6 +14,7 @@ namespace MO.SystemInvader
         int _startGold = 500;
         int _score = 0;
         int _difficulty = 2;
+        int _map = 2;
 
         public void Rewind()
         {
@@ -59,6 +60,12 @@ namespace MO.SystemInvader
         public int Difficulty
         {
             get { return _difficulty; }
+        }
+
+        public int Map
+        {
+            get { return _map; }
+            set { _map = value; }
         }
 
         public int Life

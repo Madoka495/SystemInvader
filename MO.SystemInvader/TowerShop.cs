@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -22,9 +23,10 @@ namespace MO.SystemInvader
         Vector2 _old = new Vector2(-1000, -1000);
         Texture2D _sprite;
         List<Tower> _evolutions;
+        SoundEffect _shoot;
         bool _wasPressed = false;
 
-        public TowerShop(Vector2 position, Texture2D sprite, List<Tower> evolutions, int rate, int range, int power, int speed, int type, int price, string comment)
+        public TowerShop(Vector2 position, Texture2D sprite, List<Tower> evolutions, int rate, int range, int power, int speed, int type, int price, string comment, SoundEffect shoot)
         {
             _rate = rate;
             _range = range;
@@ -37,6 +39,7 @@ namespace MO.SystemInvader
             _speed = speed;
             _comment = comment;
             _evolutions = evolutions;
+            _shoot = shoot;
         }
 
         public int Type
@@ -64,6 +67,10 @@ namespace MO.SystemInvader
             get { return _range; }
             set { _range = value; }
         }
+        public int Price
+        {
+            get { return _price; }
+        }
         public string Comment
         {
             get { return _comment; }
@@ -72,11 +79,6 @@ namespace MO.SystemInvader
         public Texture2D Sprite
         {
             get { return _sprite; }
-        }
-
-        public int Price
-        {
-            get { return _price; }
         }
 
         public Vector2 Position
@@ -96,6 +98,10 @@ namespace MO.SystemInvader
         public List<Tower> Evolutions
         {
             get { return _evolutions; }
+        }
+        public SoundEffect Shoot
+        {
+            get { return _shoot; }
         }
 
         public bool WasPressed

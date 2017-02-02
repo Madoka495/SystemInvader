@@ -21,7 +21,6 @@ namespace MO.SystemInvader
         private Vector2 _startPoint;
         private Vector2 _quitPoint;
         private Vector2 _velocity;
-        private Random _random;
 
         public Snow(Texture2D texture, Vector2 startPoint, Vector2 quitPoint, int speed)
         {

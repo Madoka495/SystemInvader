@@ -49,3 +49,57 @@
 /processorParam:TextureFormat=Compressed
 /build:stats.spritefont
 
+#begin Sound/title.wma
+/importer:WmaImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sound/title.wma
+
+#begin Sound/stage2.wma
+/importer:WmaImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sound/stage2.wma
+
+#begin Sound/stage1.wma
+/importer:WmaImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sound/stage1.wma
+
+#begin Sound/boss1.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sound/boss1.mp3
+
+#begin Sound/boss2.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sound/boss2.mp3
+
+#begin Sound/Effect/income.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Effect/income.wav
+
+#begin Sound/Effect/shoot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Effect/shoot.wav
+
+#begin Sound/Effect/shoot2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Effect/shoot2.wav
+
+#begin Sound/Effect/shoot3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sound/Effect/shoot3.wav
+
