@@ -35,18 +35,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BulletsData.cs" />
     <Compile Include="EnemiesData.cs" />
-    <Compile Include="LandsData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TowersData.cs" />
     <Compile Include="WavesData.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +51,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MO.SystemInvader\MO.SystemInvader.csproj">

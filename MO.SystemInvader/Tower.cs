@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using MO.SystemInvader;
@@ -10,139 +11,315 @@ using System.Threading.Tasks;
 
 public class Tower
 {
-    private int _rate;
-    private int _range;
-    private int _type;
-    private int _towerWidth;
-    private int _towerHeight;
-    private int _price;
-    private int _upgrade;
-    private int _damage;
-
-    private Texture2D _textureTower;
-    private Texture2D _textureBullet;
-
+    int _rate;
+    int _range;
+    int _type;
+    int _power;
+    int _speed;
+    int _price;
+    string _comment;
+    bool _inGame = true;
+    Vector2 _position = new Vector2();
+    Vector2 _center = new Vector2();
+    Texture2D _sprite;
     List<Projectile> _projectiles;
-    List<Tower> _listContient;
-    Vector2 _position;
-    Vector2 _posBase;
+    List<Tower> _evolutions;
+    Player _player;
+    SoundEffect _shoot;
 
-
-    public Tower(Texture2D textureBullet , Texture2D textureTowers , Vector2 position, int rate, int range, int type, int price, int towerWidth, int towerHeight, int upgrade, List<Tower> listContient, int damage)
+    public Tower(Vector2 position, Texture2D sprite, List<Tower> evolutions, int rate, int range, int power, int speed, int price, int type, string comment, SoundEffect shoot, Player player)
     {
-        _projectiles = new List<Projectile>();
         _position = position;
+        _center = new Vector2(position.X + (sprite.Width / 3), position.Y + (sprite.Height / 3));
         _rate = rate;
         _range = range;
         _type = type;
+        _sprite = sprite;
+        _projectiles = new List<Projectile>();
+        _power = power;
+        _speed = speed;
         _price = price;
-        _upgrade = upgrade;
-        _listContient = listContient;
-        _damage = damage;
-
-        _towerWidth = towerWidth;
-        _towerHeight = towerHeight;
-        _textureTower = textureTowers;
-        _textureBullet = textureBullet;
-
-        _posBase = new Vector2(_position.X, _position.Y + _towerHeight);
-        
+        _comment = comment;
+        _player = player;
+        _evolutions = evolutions;
+        _shoot = shoot;
     }
 
-    public void Shoot(Vector2 enemyPosition)
+    public void Shoot(Vector2 enemyPosition, ContentManager content)
     {
         if (_type == 1)
         {
-            _projectiles.Add(new Projectile(_textureBullet, _position, enemyPosition, 8, 20, 50, 50));
+            Texture2D texture1 = content.Load<Texture2D>("Sprites/bullet2");
+            Texture2D texture2 = content.Load<Texture2D>("Sprites/bullet3");
+            Texture2D texture3 = content.Load<Texture2D>("Sprites/bullet4");
+            Texture2D texture4 = content.Load<Texture2D>("Sprites/bullet6");
+
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 200, _center.Y), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 175, _center.Y + 25), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 150, _center.Y + 50), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 125, _center.Y + 75), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 100, _center.Y + 100), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 75, _center.Y + 125), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 50, _center.Y + 150), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 25, _center.Y + 175), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X, _center.Y + 200), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 25, _center.Y + 175), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 50, _center.Y + 150), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 75, _center.Y + 125), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 100, _center.Y + 100), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 125, _center.Y + 75), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 150, _center.Y + 50), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 175, _center.Y + 25), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 200, _center.Y), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 175, _center.Y - 25), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 150, _center.Y - 50), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 125, _center.Y - 75), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 100, _center.Y - 100), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 75, _center.Y - 125), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 50, _center.Y - 150), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 25, _center.Y - 175), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X, _center.Y - 200), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 25, _center.Y - 175), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 50, _center.Y - 150), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 75, _center.Y - 125), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 100, _center.Y - 100), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 125, _center.Y - 75), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 150, _center.Y - 50), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 175, _center.Y - 25), _speed, _power, texture2, 1));
+            _shoot.Play(0.05f, 0.0f, 0.0f);
         }
         else if (_type == 2)
         {
-            _projectiles.Add(new Projectile(_textureBullet, _position, enemyPosition, 15, 5, 50, 50));
+            Texture2D texture = content.Load<Texture2D>("Sprites/bullet7");
+            _projectiles.Add(new Projectile(new Vector2(enemyPosition.X - 200, enemyPosition.Y), new Vector2(enemyPosition.X, enemyPosition.Y), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(enemyPosition.X + 200, enemyPosition.Y), new Vector2(enemyPosition.X, enemyPosition.Y), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(enemyPosition.X, enemyPosition.Y + 200), new Vector2(enemyPosition.X, enemyPosition.Y), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(enemyPosition.X, enemyPosition.Y - 200), new Vector2(enemyPosition.X, enemyPosition.Y), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(enemyPosition.X + 200, enemyPosition.Y + 200), new Vector2(enemyPosition.X, enemyPosition.Y), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(enemyPosition.X - 200, enemyPosition.Y - 200), new Vector2(enemyPosition.X, enemyPosition.Y), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(enemyPosition.X - 200, enemyPosition.Y + 200), new Vector2(enemyPosition.X, enemyPosition.Y), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(enemyPosition.X + 200, enemyPosition.Y - 200), new Vector2(enemyPosition.X, enemyPosition.Y), _speed, _power, texture, 1));
+            _shoot.Play(0.05f, 0.0f, 0.0f);
+        }
+        else if (_type == 3)
+        {
+            _projectiles.Add(new Projectile(_center, enemyPosition, _speed, _power, content.Load<Texture2D>("Sprites/bullet8"), 2));
+            _shoot.Play(0.03f, -0.3f, 0.0f);
+        }
+        else if (_type == 4)
+        {
+            _projectiles.Add(new Projectile(_center, enemyPosition, _speed, _power, content.Load<Texture2D>("Sprites/bullet10"), 3));
+            _shoot.Play(0.03f, 0.3f, 0.0f);
+        }
+        else if (_type == 5)
+        {
+            _projectiles.Add(new Projectile(_center, enemyPosition, _speed, _power, content.Load<Texture2D>("Sprites/bullet9"), 4));
+            _shoot.Play(0.03f, 0.0f, 0.0f);
+        }
+        else if (_type == 6)
+        {
+            Texture2D texture = content.Load<Texture2D>("Sprites/bullet7");
+            _projectiles.Add(new Projectile(new Vector2(1900, 1100), new Vector2(250, 1700), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 1000), new Vector2(200, 1600), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 900), new Vector2(150, 1500), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 800), new Vector2(100, 1400), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 700), new Vector2(50, 1300), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 600), new Vector2(0, 1200), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 500), new Vector2(-50, 1100), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 400), new Vector2(-100, 1000), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 300), new Vector2(-150, 900), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 200), new Vector2(-200, 800), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 100), new Vector2(-250, 700), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1900, 0), new Vector2(-300, 600), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1800, 0), new Vector2(-350, 500), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1700, 0), new Vector2(-400, 400), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1600, 0), new Vector2(-450, 300), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1500, 0), new Vector2(-500, 200), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1400, 0), new Vector2(-550, 100), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1300, 0), new Vector2(-600, 0), _speed, _power, texture, 1));
+            _projectiles.Add(new Projectile(new Vector2(1200, 0), new Vector2(-650, -100), _speed, _power, texture, 1));
+            _shoot.Play(0.1f, 0.0f, 0.0f);
+        }
+        else if (_type == 7)
+        {
+            Texture2D texture1 = content.Load<Texture2D>("Sprites/bullet2");
+            Texture2D texture2 = content.Load<Texture2D>("Sprites/bullet3");
+            Texture2D texture3 = content.Load<Texture2D>("Sprites/bullet4");
+            Texture2D texture4 = content.Load<Texture2D>("Sprites/bullet6");
+
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 400, _center.Y), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 350, _center.Y + 50), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 300, _center.Y + 100), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 250, _center.Y + 150), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 200, _center.Y + 200), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 150, _center.Y + 250), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 100, _center.Y + 300), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 50, _center.Y + 350), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X, _center.Y + 400), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 50, _center.Y + 350), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 100, _center.Y + 300), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 150, _center.Y + 250), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 200, _center.Y + 200), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 250, _center.Y + 150), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 300, _center.Y + 100), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 350, _center.Y + 50), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 400, _center.Y), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 350, _center.Y - 50), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 300, _center.Y - 100), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 250, _center.Y - 150), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 200, _center.Y - 200), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 150, _center.Y - 250), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 100, _center.Y - 300), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 50, _center.Y - 350), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X, _center.Y - 400), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 50, _center.Y - 350), _speed, _power, texture2, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 100, _center.Y - 300), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 150, _center.Y - 250), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 200, _center.Y - 200), _speed, _power, texture1, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 250, _center.Y - 150), _speed, _power, texture4, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 300, _center.Y - 100), _speed, _power, texture3, 1));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 350, _center.Y - 50), _speed, _power, texture2, 1));
+            _shoot.Play(0.05f, 0.0f, 0.0f);
+        }
+        else if (_type == 8)
+        {
+            Texture2D texture1 = content.Load<Texture2D>("Sprites/bullet5");
+            Texture2D texture2 = content.Load<Texture2D>("Sprites/bullet8");
+            Texture2D texture3 = content.Load<Texture2D>("Sprites/bullet10");
+            Texture2D texture4 = content.Load<Texture2D>("Sprites/bullet9");
+
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 400, _center.Y), _speed, _power, texture1, 5));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 350, _center.Y + 50), _speed, _power, texture2, 2));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 300, _center.Y + 100), _speed, _power, texture3, 3));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 250, _center.Y + 150), _speed, _power, texture4, 4));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 200, _center.Y + 200), _speed, _power, texture1, 5));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 150, _center.Y + 250), _speed, _power, texture4, 4));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 100, _center.Y + 300), _speed, _power, texture3, 3));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 50, _center.Y + 350), _speed, _power, texture2, 2));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X, _center.Y + 400), _speed, _power, texture1, 5));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 50, _center.Y + 350), _speed, _power, texture2, 2));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 100, _center.Y + 300), _speed, _power, texture3, 3));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 150, _center.Y + 250), _speed, _power, texture4, 4));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 200, _center.Y + 200), _speed, _power, texture1, 5));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 250, _center.Y + 150), _speed, _power, texture4, 4));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 300, _center.Y + 100), _speed, _power, texture3, 3));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 350, _center.Y + 50), _speed, _power, texture2, 2));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 400, _center.Y), _speed, _power, texture1, 5));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 350, _center.Y - 50), _speed, _power, texture2, 2));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 300, _center.Y - 100), _speed, _power, texture3, 3));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 250, _center.Y - 150), _speed, _power, texture4, 4));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 200, _center.Y - 200), _speed, _power, texture1, 5));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 150, _center.Y - 250), _speed, _power, texture4, 4));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 100, _center.Y - 300), _speed, _power, texture3, 3));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X - 50, _center.Y - 350), _speed, _power, texture2, 2));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X, _center.Y - 400), _speed, _power, texture1, 5));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 50, _center.Y - 350), _speed, _power, texture2, 2));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 100, _center.Y - 300), _speed, _power, texture3, 3));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 150, _center.Y - 250), _speed, _power, texture4, 4));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 200, _center.Y - 200), _speed, _power, texture1, 5));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 250, _center.Y - 150), _speed, _power, texture4, 4));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 300, _center.Y - 100), _speed, _power, texture3, 3));
+            _projectiles.Add(new Projectile(_center, new Vector2(_center.X + 350, _center.Y - 50), _speed, _power, texture2, 2));
+            _shoot.Play(0.05f, 0.0f, 0.0f);
+        }
+        else if (_type == 9)
+        {
+            _projectiles.Add(new Projectile(_center, enemyPosition, _speed, _power, content.Load<Texture2D>("Sprites/bullet11"), 1));
+            _shoot.Play(0.1f, 0.0f, 0.0f);
+        }
+        else if (_type == 10)
+        {
+            _projectiles.Add(new Projectile(_center, enemyPosition, _speed, _power, content.Load<Texture2D>("Sprites/bullet5"), 5));
+            _shoot.Play(0.03f, 0.0f, 0.0f);
         }
     }
 
-    public bool Inrange(Vector2 enemy)
+    public void Evolve(Tower evolution)
     {
-        if (enemy.X >= _position.X - GiveRange &&
-           enemy.X <= _position.X + GiveRange &&
-           enemy.Y >= _position.Y - GiveRange &&
-           enemy.Y <= _position.Y + GiveRange)
-            return true;
-        return false;
+        if(evolution.Price() <= _player.CurrentGold)
+        {
+            _player.CurrentGold -= evolution.Price();
+            _rate = evolution.GetRate();
+            _range = evolution.GetRange();
+            _type = evolution.Type();
+            _sprite = evolution.Sprite;
+            _power = evolution.GetPower();
+            _speed = evolution.GetSpeed();
+            _price += evolution.Price();
+            _comment = evolution.GetComment();
+            _evolutions = evolution.Evolutions;
+            _shoot = evolution.ShootSound;
+        }
     }
 
-    public int GiveRange
+    public void Sell()
     {
-        get { return _range; }
-        set { _range = value; }
-    }
-    public int GiveRate
-    {
-        get { return _rate; }
-        set { _rate = value; }
-    }
-    public int GivePrice
-    {
-        get { return _price; }
-        set { _price = value; }
-    }
-    public int GiveWidth
-    {
-        get { return _towerWidth; }
-        set { _towerWidth = value; }
-    }
-    public int GiveHeight
-    {
-        get { return _towerHeight; }
-        set { _towerHeight = value; }
-    }
-    public int GiveUpgrade
-    {
-        get { return _upgrade; }
-        set { _upgrade = value; }
+        _inGame = false;
+        _player.CurrentGold += (_price / 4) * 3;
     }
 
-    public int Givetype
+    public bool InGame()
     {
-        get { return _type; }
-        set { _type = value; }
+        return _inGame;
     }
 
-    public int GiveDamage
+    public int Type()
     {
-        get { return _damage; }
-        set { _damage = value; }
+        return _type;
     }
 
-    public List<Tower> GiveListContient => _listContient;
+    public int Price()
+    {
+        return _price;
+    }
 
-    public Texture2D GiveTextureTower
+    public int GetRange()
     {
-        get { return _textureTower; }
-        set { _textureTower = value; }
+        return _range;
     }
-    public Texture2D GiveTextureBullet
-    {
-        get { return _textureBullet; }
-        set { _textureBullet = value; }
-    }
-    public Vector2 GetPos
-    {
-        get { return _position; }
-        set { _position = value; }
-    }
-    public void ChangePosition(Vector2 newPosition)
-    {
-        _position = newPosition;
-    }
-    
-    public List<Projectile> GetProjectiles() => _projectiles;
 
-    public Vector2 GivePosBase => _posBase;
-
-    //Draw///////////////////////////////////////////////////////////////////////////////////////
-    public void Draw(SpriteBatch spriteBatch)
+    public int GetRate()
     {
-        spriteBatch.Draw(_textureTower, new Rectangle((int)GetPos.X, (int)GetPos.Y, _towerWidth, _towerHeight), Color.White);
+        return _rate;
+    }
+
+    public int GetSpeed()
+    {
+        return _speed;
+    }
+
+    public int GetPower()
+    {
+        return _power;
+    }
+
+    public string GetComment()
+    {
+        return _comment;
+    }
+
+    public Vector2 GetPos()
+    {
+        return _position;
+    }
+
+    public SoundEffect ShootSound
+    {
+        get { return _shoot; }
+    }
+
+    public List<Tower> Evolutions
+    {
+        get { return _evolutions; }
+    }
+
+    public Texture2D Sprite
+    {
+        get { return _sprite; }
+    }
+
+    public List<Projectile> GetProjectiles()
+    {
+        return _projectiles;
     }
 }

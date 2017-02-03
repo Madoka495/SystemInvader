@@ -58,6 +58,7 @@ namespace SystemInvader
         public bool Won
         {
             get { return _won; }
+            set { _won = value; }
         }
 
         public List<Wave> Waves

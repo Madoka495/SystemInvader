@@ -4,7 +4,26 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/Vu Tuan Trung/Desktop/SystemInvader/SystemInvader/Content/userName.spritefont</File>
-    <File>C:/Users/Vu Tuan Trung/Desktop/SystemInvader/SystemInvader/Content/timer.spritefont</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/userName.spritefont</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/timer.spritefont</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/won.spritefont</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/score.spritefont</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/comment.spritefont</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/stats.spritefont</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/Effect/income.wav</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/Effect/shoot.wav</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/Effect/shoot2.wav</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/Effect/shoot3.wav</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/Effect/hurt.wav</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/Effect/dead.wav</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/boss1.mp3</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/boss2.mp3</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/boss3.mp3</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/boss4.mp3</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/stage1.mp3</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/stage2.mp3</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/stage3.mp3</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/stage4.mp3</File>
+    <File>C:/Users/xd/Desktop/git/System Invader/SystemInvader/Content/Sound/title.mp3</File>
   </SourceFiles>
 </SourceFileCollection>

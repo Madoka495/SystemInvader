@@ -25,7 +25,6 @@ namespace MO.SystemInvader
         Player _player;
 
         //Fonctions/////////////////////////////////////////////////////////////////////////
-        public bool SpawnNewWave => _spawnNewWave;
 
         public Wave(int numberEnemies, Enemy enemy, Level level, Player player)
         {
@@ -37,12 +36,25 @@ namespace MO.SystemInvader
 
         public void AddEnemies()
         {
-            Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.BountyGiven, _enemy.GiveStrength, _enemy.GiveSpeed, _enemy.GiveWidth, _enemy.GiveHeight, _player);
-            newEnemy.SetWaypoints(_currentLevel.Waypoints);
+            Enemy newEnemy = new Enemy(_enemy.GiveTexture, Vector2.Zero, _enemy.GiveHealth, _enemy.BountyGiven, _enemy.GiveStrength, _enemy.GiveSpeed, _enemy.GiveType, _enemy.GiveWidth, _enemy.GiveHeight, _player, _enemy.LifeBar);
+            if(_player.Map == 1)
+            {
+                newEnemy.SetWaypoints();
+            }
+            else if(_player.Map == 2)
+            {
+                newEnemy.SetWaypointsSnow();
+            }
             _enemies.Add(newEnemy);
 
             _numberCurrentEnemies++;
             _timeSpawnEnemies = 0;
+        }
+
+        public bool SpawnNewWave
+        {
+            get { return _spawnNewWave; }
+            set { _spawnNewWave = value; }
         }
 
         public List<Enemy> Enemies
@@ -61,7 +73,7 @@ namespace MO.SystemInvader
 
             if (_spawnMore)
             {
-                _timeSpawnEnemies += (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _timeSpawnEnemies += (float)gameTime.ElapsedGameTime.TotalSeconds * 2;
                 if (_timeSpawnEnemies > 1)
                 {
                     AddEnemies();
@@ -77,12 +89,16 @@ namespace MO.SystemInvader
 
                     if (enemy.InGame == true)
                     {
-                        if (enemy.GetPos() == _currentLevel.AtTheEnd)
+                        if (enemy.GetPos() == _currentLevel.AtTheEnd - new Vector2(1, 1) * (enemy.GiveHeight / 4) && _player.Map == 1 || enemy.GetPos() == _currentLevel.AtTheEndSnow - new Vector2(1, 1) * (enemy.GiveHeight / 4) && _player.Map == 2)
                         {
                             enemy.AtTheEnd();
                         }
                         _spawnNewWave = false;
                     }
+                }
+                if(_spawnMore == true)
+                {
+                    _spawnNewWave = false;
                 }
             }
         }
